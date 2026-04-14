@@ -77,120 +77,53 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     return sb.toString();
   }
 
+  static const _shareChannel = MethodChannel('com.pizzaorder/share');
+
   Future<void> _sendToLine() async {
     final orderText = _buildOrderText();
 
-    // Copy full order text to clipboard
-    await Clipboard.setData(ClipboardData(text: orderText));
+    // Send directly to LINE using Android share intent with LINE package
+    // This opens LINE's contact picker with the text pre-filled - user picks contact and it sends
+    bool sent = false;
+    try {
+      final result = await _shareChannel.invokeMethod('shareToLine', {'text': orderText});
+      sent = (result == true);
+    } catch (_) {}
+
+    // Fallback: copy to clipboard and use generic share
+    if (!sent && mounted) {
+      await Clipboard.setData(ClipboardData(text: orderText));
+      await Share.share(orderText);
+    }
 
     if (!mounted) return;
 
-    // Show confirmation with instructions, then open LINE when user taps "Open LINE"
-    final result = await showDialog<String>(
+    final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: const Text('Order Copied! / คัดลอกออเดอร์แล้ว!'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.check_circle, color: Colors.green, size: 48),
-            const SizedBox(height: 12),
-            const Text(
-              'Order details copied to clipboard!\n'
-              'รายละเอียดออเดอร์ถูกคัดลอกแล้ว!\n\n'
-              '1. Tap "Open LINE" below\n'
-              '    กด "เปิด LINE" ด้านล่าง\n'
-              '2. Pick your contact\n'
-              '    เลือกผู้ติดต่อ\n'
-              '3. Long-press text field and paste\n'
-              '    กดค้างช่องข้อความแล้ววาง',
-              style: TextStyle(fontSize: 14),
-            ),
-          ],
+        title: const Text('Order Sent! / ส่งออเดอร์แล้ว!'),
+        content: const Text(
+          'Start a new order?\nเริ่มออเดอร์ใหม่?',
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(ctx, 'new'),
-            child: const Text('New Order / ออเดอร์ใหม่'),
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Stay / อยู่ต่อ'),
           ),
-          ElevatedButton.icon(
-            onPressed: () => Navigator.pop(ctx, 'line'),
-            icon: const Icon(Icons.open_in_new),
-            label: const Text('Open LINE / เปิด LINE'),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF06C755),
+              backgroundColor: Colors.deepOrange,
               foregroundColor: Colors.white,
             ),
+            child: const Text('New Order / ออเดอร์ใหม่'),
           ),
         ],
       ),
     );
 
-    if (result == 'line' && mounted) {
-      // Try multiple LINE URL schemes
-      bool opened = false;
-      for (final url in [
-        'line://msg/text/${Uri.encodeComponent(orderText)}',
-        'line://nv/chat',
-        'https://line.me/R/nv/chat',
-      ]) {
-        try {
-          opened = await launchUrl(
-            Uri.parse(url),
-            mode: LaunchMode.externalApplication,
-          );
-          if (opened) break;
-        } catch (_) {}
-      }
-
-      if (!opened && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Could not open LINE. Open it manually and paste.\n'
-                'เปิด LINE ไม่ได้ กรุณาเปิดเองแล้ววาง'),
-            duration: Duration(seconds: 4),
-          ),
-        );
-      }
-
-      // After LINE, ask about new order
-      if (mounted) {
-        final newOrder = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: const Text('Done? / เสร็จแล้ว?'),
-            content: const Text('Start a new order?\nเริ่มออเดอร์ใหม่?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Stay / อยู่ต่อ'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepOrange,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text('New Order / ออเดอร์ใหม่'),
-              ),
-            ],
-          ),
-        );
-        if (newOrder == true && mounted) {
-          context.read<CartProvider>().clear();
-          context.read<ProfileProvider>().clearSelection();
-          setState(() => _paymentScreenshot = null);
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const ProfileScreen()),
-            (route) => false,
-          );
-        }
-      }
-      return;
-    }
-
-    if (result == 'new' && mounted) {
+    if (result == true && mounted) {
       context.read<CartProvider>().clear();
       context.read<ProfileProvider>().clearSelection();
       setState(() => _paymentScreenshot = null);
@@ -198,10 +131,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         MaterialPageRoute(builder: (_) => const ProfileScreen()),
         (route) => false,
       );
-      return;
     }
-
-    // Dialog dismissed - do nothing, stay on page
   }
 
   @override
@@ -548,7 +478,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             child: ElevatedButton.icon(
               onPressed: cart.isEmpty ? null : _sendToLine,
               icon: const Icon(Icons.send, size: 24),
-              label: const Text('Copy & Open LINE / คัดลอก+เปิด LINE',
+              label: const Text('Send to LINE / ส่งไปยัง LINE',
                   style: TextStyle(fontSize: 18)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF06C755), // LINE green
