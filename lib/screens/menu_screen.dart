@@ -242,12 +242,18 @@ class _PizzaCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.local_pizza, color: Colors.deepOrange, size: 22),
+                const Padding(
+                  padding: EdgeInsets.only(top: 2),
+                  child: Icon(Icons.local_pizza, color: Colors.deepOrange, size: 22),
+                ),
                 const SizedBox(width: 8),
-                Text(
-                  '${pizza.nameThai} / ${pizza.name}',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                Expanded(
+                  child: Text(
+                    '${pizza.nameThai} / ${pizza.name}',
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                  ),
                 ),
               ],
             ),
@@ -290,12 +296,18 @@ class _DrinkCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.local_drink, color: Colors.blue, size: 22),
+                const Padding(
+                  padding: EdgeInsets.only(top: 2),
+                  child: Icon(Icons.local_drink, color: Colors.blue, size: 22),
+                ),
                 const SizedBox(width: 8),
-                Text(
-                  '${drink.nameThai} / ${drink.name}',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                Expanded(
+                  child: Text(
+                    '${drink.nameThai} / ${drink.name}',
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                  ),
                 ),
               ],
             ),
