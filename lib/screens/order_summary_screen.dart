@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -323,33 +324,112 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
 
-          if (qrData != null)
-            Center(
+          if (profile.promptPayId.isNotEmpty && cart.finalTotal > 0) ...[
+            // Option 1: Pay from this phone (copy details to banking app)
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.green.shade200),
+              ),
               child: Column(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: QrImageView(
-                      data: qrData,
-                      version: QrVersions.auto,
-                      size: 250,
-                    ),
+                  const Text(
+                    'Pay from this phone / จ่ายจากโทรศัพท์นี้',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Scan to pay ${cart.finalTotal.toInt()} THB\nสแกนเพื่อชำระ ${cart.finalTotal.toInt()} บาท',
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Open your banking app and transfer to:\nเปิดแอปธนาคารแล้วโอนเงินไปที่:',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 13, color: Colors.black54),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('PromptPay: ', style: TextStyle(fontSize: 15)),
+                      Text(
+                        profile.promptPayId,
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.copy, size: 20),
+                        onPressed: () {
+                          Clipboard.setData(
+                              ClipboardData(text: profile.promptPayId));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('PromptPay ID copied! / คัดลอกแล้ว!'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Amount / จำนวน: ',
+                          style: TextStyle(fontSize: 15)),
+                      Text(
+                        '${cart.finalTotal.toInt()} THB',
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.deepOrange),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.copy, size: 20),
+                        onPressed: () {
+                          Clipboard.setData(ClipboardData(
+                              text: cart.finalTotal.toInt().toString()));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
-            )
-          else
+            ),
+
+            const SizedBox(height: 16),
+
+            // Option 2: QR for scanning from another phone
+            if (qrData != null)
+              Center(
+                child: Column(
+                  children: [
+                    const Text(
+                      'Or scan from another phone / หรือสแกนจากโทรศัพท์อื่น',
+                      style: TextStyle(fontSize: 14, color: Colors.black54),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: QrImageView(
+                        data: qrData!,
+                        version: QrVersions.auto,
+                        size: 200,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ] else
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
