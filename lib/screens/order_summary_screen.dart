@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../providers/cart_provider.dart';
 import '../providers/profile_provider.dart';
 import '../utils/promptpay_qr.dart';
+import 'profile_screen.dart';
 
 class OrderSummaryScreen extends StatefulWidget {
   const OrderSummaryScreen({super.key});
@@ -139,8 +140,13 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
       if (result == true && mounted) {
         context.read<CartProvider>().clear();
+        context.read<ProfileProvider>().clearSelection();
         setState(() => _paymentScreenshot = null);
-        Navigator.pop(context); // Go back to menu
+        // Go back to customer selection screen
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const ProfileScreen()),
+          (route) => false,
+        );
       }
     }
   }

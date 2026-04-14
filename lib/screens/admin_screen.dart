@@ -11,7 +11,7 @@ class AdminScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 5,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Admin / ตั้งค่า'),
@@ -22,13 +22,12 @@ class AdminScreen extends StatelessWidget {
             indicatorColor: Colors.deepOrange,
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white70,
-            labelStyle: TextStyle(fontSize: 11),
+            labelStyle: TextStyle(fontSize: 12),
             tabs: [
-              Tab(icon: Icon(Icons.restaurant_menu, size: 18), text: 'Menu'),
-              Tab(icon: Icon(Icons.add_circle_outline, size: 18), text: 'Toppings'),
-              Tab(icon: Icon(Icons.discount, size: 18), text: 'Discounts'),
-              Tab(icon: Icon(Icons.person, size: 18), text: 'Profile'),
-              Tab(icon: Icon(Icons.settings, size: 18), text: 'Settings'),
+              Tab(icon: Icon(Icons.restaurant_menu, size: 20), text: 'Menu'),
+              Tab(icon: Icon(Icons.add_circle_outline, size: 20), text: 'Toppings'),
+              Tab(icon: Icon(Icons.discount, size: 20), text: 'Discounts'),
+              Tab(icon: Icon(Icons.settings, size: 20), text: 'Settings'),
             ],
           ),
         ),
@@ -37,7 +36,6 @@ class AdminScreen extends StatelessWidget {
             _MenuItemsTab(),
             _ToppingsTab(),
             _DiscountsTab(),
-            _ProfileTab(),
             _SettingsTab(),
           ],
         ),
@@ -431,103 +429,6 @@ class _DiscountsTabState extends State<_DiscountsTab> {
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
             child: const Text('Save Discounts'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ============ PROFILE TAB ============
-class _ProfileTab extends StatefulWidget {
-  const _ProfileTab();
-
-  @override
-  State<_ProfileTab> createState() => _ProfileTabState();
-}
-
-class _ProfileTabState extends State<_ProfileTab> {
-  late TextEditingController _nameCtrl;
-  late TextEditingController _businessCtrl;
-
-  @override
-  void initState() {
-    super.initState();
-    final profile = context.read<ProfileProvider>();
-    _nameCtrl = TextEditingController(text: profile.customerName);
-    _businessCtrl = TextEditingController(text: profile.businessName);
-  }
-
-  @override
-  void dispose() {
-    _nameCtrl.dispose();
-    _businessCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text('Customer Profile',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          const Text(
-            'Edit the customer name and business that appear on orders.',
-            style: TextStyle(color: Colors.grey),
-          ),
-          const SizedBox(height: 20),
-          const Text('Customer Name / ชื่อลูกค้า',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-          const SizedBox(height: 6),
-          TextField(
-            controller: _nameCtrl,
-            decoration: const InputDecoration(
-              hintText: 'Enter name',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.person),
-            ),
-          ),
-          const SizedBox(height: 20),
-          const Text('Business Name / ชื่อธุรกิจ',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-          const SizedBox(height: 6),
-          TextField(
-            controller: _businessCtrl,
-            decoration: const InputDecoration(
-              hintText: 'Enter business name',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.business),
-            ),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () async {
-              final name = _nameCtrl.text.trim();
-              if (name.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Name cannot be empty')),
-                );
-                return;
-              }
-              await context
-                  .read<ProfileProvider>()
-                  .saveProfile(name, _businessCtrl.text.trim());
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Profile saved!')),
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepOrange,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-            ),
-            child: const Text('Save Profile'),
           ),
         ],
       ),

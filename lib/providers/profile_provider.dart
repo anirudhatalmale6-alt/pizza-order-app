@@ -1,36 +1,71 @@
 import 'package:flutter/foundation.dart';
+import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/customer.dart';
 
 class ProfileProvider extends ChangeNotifier {
-  String _customerName = '';
-  String _businessName = '';
+  late Box<Customer> _customerBox;
+  Customer? _currentCustomer;
+  int? _currentCustomerIndex;
   String _lineDeepLink = '';
   String _promptPayId = '';
-  bool _isProfileSet = false;
 
-  String get customerName => _customerName;
-  String get businessName => _businessName;
+  String get customerName => _currentCustomer?.name ?? '';
+  String get businessName => _currentCustomer?.businessName ?? '';
   String get lineDeepLink => _lineDeepLink;
   String get promptPayId => _promptPayId;
-  bool get isProfileSet => _isProfileSet;
+  bool get isCustomerSelected => _currentCustomer != null;
+
+  List<Customer> get customers => _customerBox.values.toList();
 
   Future<void> init() async {
+    _customerBox = await Hive.openBox<Customer>('customers');
     final prefs = await SharedPreferences.getInstance();
-    _customerName = prefs.getString('customerName') ?? '';
-    _businessName = prefs.getString('businessName') ?? '';
     _lineDeepLink = prefs.getString('lineDeepLink') ?? '';
     _promptPayId = prefs.getString('promptPayId') ?? '';
-    _isProfileSet = _customerName.isNotEmpty;
     notifyListeners();
   }
 
-  Future<void> saveProfile(String name, String business) async {
-    final prefs = await SharedPreferences.getInstance();
-    _customerName = name;
-    _businessName = business;
-    _isProfileSet = true;
-    await prefs.setString('customerName', name);
-    await prefs.setString('businessName', business);
+  Future<Customer> addCustomer(String name, String business) async {
+    final customer = Customer(name: name, businessName: business);
+    await _customerBox.add(customer);
+    _currentCustomer = customer;
+    _currentCustomerIndex = _customerBox.length - 1;
+    notifyListeners();
+    return customer;
+  }
+
+  void selectCustomer(int index) {
+    _currentCustomer = _customerBox.getAt(index);
+    _currentCustomerIndex = index;
+    notifyListeners();
+  }
+
+  Future<void> updateCustomer(int index, String name, String business) async {
+    final customer = _customerBox.getAt(index);
+    if (customer != null) {
+      customer.name = name;
+      customer.businessName = business;
+      await customer.save();
+      if (_currentCustomerIndex == index) {
+        _currentCustomer = customer;
+      }
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteCustomer(int index) async {
+    await _customerBox.deleteAt(index);
+    if (_currentCustomerIndex == index) {
+      _currentCustomer = null;
+      _currentCustomerIndex = null;
+    }
+    notifyListeners();
+  }
+
+  void clearSelection() {
+    _currentCustomer = null;
+    _currentCustomerIndex = null;
     notifyListeners();
   }
 

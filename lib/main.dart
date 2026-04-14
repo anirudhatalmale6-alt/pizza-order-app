@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'models/customer.dart';
 import 'models/menu_item.dart';
 import 'providers/cart_provider.dart';
 import 'providers/menu_provider.dart';
 import 'providers/profile_provider.dart';
-import 'screens/menu_screen.dart';
 import 'screens/profile_screen.dart';
 
 void main() async {
@@ -14,6 +14,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(MenuItemAdapter());
   Hive.registerAdapter(ToppingItemAdapter());
+  Hive.registerAdapter(CustomerAdapter());
 
   final menuProvider = MenuProvider();
   await menuProvider.init();
@@ -38,8 +39,6 @@ class PizzaOrderApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profile = context.watch<ProfileProvider>();
-
     return MaterialApp(
       title: 'Pizza Order',
       debugShowCheckedModeBanner: false,
@@ -47,7 +46,7 @@ class PizzaOrderApp extends StatelessWidget {
         colorSchemeSeed: Colors.deepOrange,
         useMaterial3: true,
       ),
-      home: profile.isProfileSet ? const MenuScreen() : const ProfileScreen(),
+      home: const ProfileScreen(),
     );
   }
 }

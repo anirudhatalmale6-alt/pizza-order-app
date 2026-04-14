@@ -3,113 +3,267 @@ import 'package:provider/provider.dart';
 import '../providers/profile_provider.dart';
 import 'menu_screen.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  final _nameController = TextEditingController();
-  final _businessController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    final profile = context.read<ProfileProvider>();
-    _nameController.text = profile.customerName;
-    _businessController.text = profile.businessName;
+  void _goToMenu(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const MenuScreen()),
+    );
   }
 
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _businessController.dispose();
-    super.dispose();
+  void _showNewCustomerDialog(BuildContext context) {
+    final nameCtrl = TextEditingController();
+    final businessCtrl = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('New Customer / ลูกค้าใหม่'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Customer Name / ชื่อลูกค้า',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+            const SizedBox(height: 4),
+            TextField(
+              controller: nameCtrl,
+              decoration: const InputDecoration(
+                hintText: 'Enter name',
+                border: OutlineInputBorder(),
+                isDense: true,
+              ),
+            ),
+            const SizedBox(height: 14),
+            const Text('Business Name / ชื่อธุรกิจ',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+            const SizedBox(height: 4),
+            TextField(
+              controller: businessCtrl,
+              decoration: const InputDecoration(
+                hintText: 'Enter business name',
+                border: OutlineInputBorder(),
+                isDense: true,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel / ยกเลิก'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final name = nameCtrl.text.trim();
+              if (name.isEmpty) return;
+              await context
+                  .read<ProfileProvider>()
+                  .addCustomer(name, businessCtrl.text.trim());
+              if (ctx.mounted) Navigator.pop(ctx);
+              if (context.mounted) _goToMenu(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.deepOrange,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Save / บันทึก'),
+          ),
+        ],
+      ),
+    );
   }
 
-  void _save() async {
-    final name = _nameController.text.trim();
-    final business = _businessController.text.trim();
-    if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter your name / กรุณากรอกชื่อ')),
-      );
-      return;
-    }
-    await context.read<ProfileProvider>().saveProfile(name, business);
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const MenuScreen()),
-      );
-    }
+  void _showEditCustomerDialog(
+      BuildContext context, int index, String name, String business) {
+    final nameCtrl = TextEditingController(text: name);
+    final businessCtrl = TextEditingController(text: business);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Edit Profile / แก้ไขโปรไฟล์'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Customer Name / ชื่อลูกค้า',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+            const SizedBox(height: 4),
+            TextField(
+              controller: nameCtrl,
+              decoration: const InputDecoration(
+                hintText: 'Enter name',
+                border: OutlineInputBorder(),
+                isDense: true,
+              ),
+            ),
+            const SizedBox(height: 14),
+            const Text('Business Name / ชื่อธุรกิจ',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+            const SizedBox(height: 4),
+            TextField(
+              controller: businessCtrl,
+              decoration: const InputDecoration(
+                hintText: 'Enter business name',
+                border: OutlineInputBorder(),
+                isDense: true,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await context.read<ProfileProvider>().deleteCustomer(index);
+              if (ctx.mounted) Navigator.pop(ctx);
+            },
+            child:
+                const Text('Delete / ลบ', style: TextStyle(color: Colors.red)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel / ยกเลิก'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final newName = nameCtrl.text.trim();
+              if (newName.isEmpty) return;
+              await context
+                  .read<ProfileProvider>()
+                  .updateCustomer(index, newName, businessCtrl.text.trim());
+              if (ctx.mounted) Navigator.pop(ctx);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.deepOrange,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Save / บันทึก'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final profile = context.watch<ProfileProvider>();
+    final customers = profile.customers;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile / กรอกข้อมูล'),
+        title: const Text('Who is ordering? / ใครสั่ง?'),
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Icon(Icons.local_pizza, size: 80, color: Colors.deepOrange),
-            const SizedBox(height: 24),
-            const Text(
-              'Welcome! / ยินดีต้อนรับ!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Enter your details to get started\nกรอกข้อมูลเพื่อเริ่มต้น',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 32),
-            const Text('Customer Name / ชื่อลูกค้า',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                hintText: 'Enter name here',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.person),
+      body: Column(
+        children: [
+          const SizedBox(height: 16),
+          const Icon(Icons.local_pizza, size: 60, color: Colors.deepOrange),
+          const SizedBox(height: 12),
+          const Text(
+            'Select your name or create a new profile\nเลือกชื่อหรือสร้างโปรไฟล์ใหม่',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey, fontSize: 14),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: customers.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.person_add,
+                            size: 60, color: Colors.grey.shade400),
+                        const SizedBox(height: 8),
+                        const Text('No customers yet\nยังไม่มีลูกค้า',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.grey)),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: customers.length,
+                    itemBuilder: (context, index) {
+                      final customer = customers[index];
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        child: InkWell(
+                          onTap: () {
+                            profile.selectCustomer(index);
+                            _goToMenu(context);
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Row(
+                              children: [
+                                const CircleAvatar(
+                                  backgroundColor: Colors.deepOrange,
+                                  child: Icon(Icons.person,
+                                      color: Colors.white),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        customer.name,
+                                        style: const TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      if (customer.businessName.isNotEmpty)
+                                        Text(
+                                          customer.businessName,
+                                          style: TextStyle(
+                                              color: Colors.grey.shade600,
+                                              fontSize: 14),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.edit,
+                                      size: 20, color: Colors.grey),
+                                  onPressed: () => _showEditCustomerDialog(
+                                    context,
+                                    index,
+                                    customer.name,
+                                    customer.businessName,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: ElevatedButton.icon(
+                onPressed: () => _showNewCustomerDialog(context),
+                icon: const Icon(Icons.person_add),
+                label: const Text('New Customer / ลูกค้าใหม่',
+                    style: TextStyle(fontSize: 16)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepOrange,
+                  foregroundColor: Colors.white,
+                ),
               ),
             ),
-            const SizedBox(height: 20),
-            const Text('Business Name / ชื่อธุรกิจ',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            TextField(
-              controller: _businessController,
-              decoration: const InputDecoration(
-                hintText: 'Enter business name here',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.business),
-              ),
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: _save,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                textStyle: const TextStyle(fontSize: 18),
-              ),
-              child: const Text('Save & Continue / บันทึกและดำเนินการต่อ'),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

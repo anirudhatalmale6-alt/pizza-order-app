@@ -4,9 +4,11 @@ import '../models/cart_item.dart';
 import '../models/menu_item.dart';
 import '../providers/cart_provider.dart';
 import '../providers/menu_provider.dart';
+import '../providers/profile_provider.dart';
 import '../widgets/topping_dialog.dart';
 import 'order_summary_screen.dart';
 import 'admin_screen.dart';
+import 'profile_screen.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -75,11 +77,35 @@ class _MenuScreenState extends State<MenuScreen> {
     final menu = context.watch<MenuProvider>();
     final cart = context.watch<CartProvider>();
 
+    final profile = context.watch<ProfileProvider>();
+
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.people),
+          tooltip: 'Switch customer',
+          onPressed: () {
+            profile.clearSelection();
+            cart.clear();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const ProfileScreen()),
+            );
+          },
+        ),
         title: GestureDetector(
           onTap: _onLogoTap,
-          child: const Text('Menu / เมนู'),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Menu / เมนู', style: TextStyle(fontSize: 18)),
+              if (profile.customerName.isNotEmpty)
+                Text(
+                  profile.customerName,
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+                ),
+            ],
+          ),
         ),
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
