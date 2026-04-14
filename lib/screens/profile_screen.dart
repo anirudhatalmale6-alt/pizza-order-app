@@ -6,10 +6,10 @@ import 'menu_screen.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  void _goToMenu(BuildContext context) {
+  void _goToMenu(BuildContext context, String customerName) {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const MenuScreen()),
+      MaterialPageRoute(builder: (_) => MenuScreen(greeting: customerName)),
     );
   }
 
@@ -19,59 +19,71 @@ class ProfileScreen extends StatelessWidget {
 
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('New Customer / ลูกค้าใหม่'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Customer Name / ชื่อลูกค้า',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 4),
-            TextField(
-              controller: nameCtrl,
-              decoration: const InputDecoration(
-                hintText: 'Enter name',
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
+      builder: (ctx) => Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text('New Customer / ลูกค้าใหม่',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
+                const Text('Customer Name / ชื่อลูกค้า',
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+                const SizedBox(height: 4),
+                TextField(
+                  controller: nameCtrl,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter name',
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                const Text('Business Name / ชื่อธุรกิจ',
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+                const SizedBox(height: 4),
+                TextField(
+                  controller: businessCtrl,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter business name',
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: const Text('Cancel / ยกเลิก'),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final name = nameCtrl.text.trim();
+                        if (name.isEmpty) return;
+                        await context
+                            .read<ProfileProvider>()
+                            .addCustomer(name, businessCtrl.text.trim());
+                        if (ctx.mounted) Navigator.pop(ctx);
+                        if (context.mounted) _goToMenu(context, name);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text('Save / บันทึก'),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(height: 14),
-            const Text('Business Name / ชื่อธุรกิจ',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 4),
-            TextField(
-              controller: businessCtrl,
-              decoration: const InputDecoration(
-                hintText: 'Enter business name',
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
-            ),
-          ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel / ยกเลิก'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final name = nameCtrl.text.trim();
-              if (name.isEmpty) return;
-              await context
-                  .read<ProfileProvider>()
-                  .addCustomer(name, businessCtrl.text.trim());
-              if (ctx.mounted) Navigator.pop(ctx);
-              if (context.mounted) _goToMenu(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepOrange,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Save / บันทึก'),
-          ),
-        ],
       ),
     );
   }
@@ -83,66 +95,83 @@ class ProfileScreen extends StatelessWidget {
 
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Edit Profile / แก้ไขโปรไฟล์'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Customer Name / ชื่อลูกค้า',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 4),
-            TextField(
-              controller: nameCtrl,
-              decoration: const InputDecoration(
-                hintText: 'Enter name',
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
+      builder: (ctx) => Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text('Edit Profile / แก้ไขโปรไฟล์',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
+                const Text('Customer Name / ชื่อลูกค้า',
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+                const SizedBox(height: 4),
+                TextField(
+                  controller: nameCtrl,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter name',
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                const Text('Business Name / ชื่อธุรกิจ',
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+                const SizedBox(height: 4),
+                TextField(
+                  controller: businessCtrl,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter business name',
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        await context
+                            .read<ProfileProvider>()
+                            .deleteCustomer(index);
+                        if (ctx.mounted) Navigator.pop(ctx);
+                      },
+                      child: const Text('Delete / ลบ',
+                          style: TextStyle(color: Colors.red)),
+                    ),
+                    Row(
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx),
+                          child: const Text('Cancel / ยกเลิก'),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: () async {
+                            final newName = nameCtrl.text.trim();
+                            if (newName.isEmpty) return;
+                            await context.read<ProfileProvider>().updateCustomer(
+                                index, newName, businessCtrl.text.trim());
+                            if (ctx.mounted) Navigator.pop(ctx);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepOrange,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text('Save / บันทึก'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(height: 14),
-            const Text('Business Name / ชื่อธุรกิจ',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 4),
-            TextField(
-              controller: businessCtrl,
-              decoration: const InputDecoration(
-                hintText: 'Enter business name',
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
-            ),
-          ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              await context.read<ProfileProvider>().deleteCustomer(index);
-              if (ctx.mounted) Navigator.pop(ctx);
-            },
-            child:
-                const Text('Delete / ลบ', style: TextStyle(color: Colors.red)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel / ยกเลิก'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final newName = nameCtrl.text.trim();
-              if (newName.isEmpty) return;
-              await context
-                  .read<ProfileProvider>()
-                  .updateCustomer(index, newName, businessCtrl.text.trim());
-              if (ctx.mounted) Navigator.pop(ctx);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepOrange,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Save / บันทึก'),
-          ),
-        ],
       ),
     );
   }
@@ -194,7 +223,7 @@ class ProfileScreen extends StatelessWidget {
                         child: InkWell(
                           onTap: () {
                             profile.selectCustomer(index);
-                            _goToMenu(context);
+                            _goToMenu(context, customer.name);
                           },
                           borderRadius: BorderRadius.circular(12),
                           child: Padding(
@@ -203,8 +232,8 @@ class ProfileScreen extends StatelessWidget {
                               children: [
                                 const CircleAvatar(
                                   backgroundColor: Colors.deepOrange,
-                                  child: Icon(Icons.person,
-                                      color: Colors.white),
+                                  child:
+                                      Icon(Icons.person, color: Colors.white),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(

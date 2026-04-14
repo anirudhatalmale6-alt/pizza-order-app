@@ -11,7 +11,8 @@ import 'admin_screen.dart';
 import 'profile_screen.dart';
 
 class MenuScreen extends StatefulWidget {
-  const MenuScreen({super.key});
+  final String? greeting;
+  const MenuScreen({super.key, this.greeting});
 
   @override
   State<MenuScreen> createState() => _MenuScreenState();
@@ -20,6 +21,25 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   int _logoTapCount = 0;
   DateTime? _lastTap;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.greeting != null && widget.greeting!.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Hello ${widget.greeting}! / สวัสดี ${widget.greeting}!',
+              style: const TextStyle(fontSize: 16),
+            ),
+            backgroundColor: Colors.deepOrange,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      });
+    }
+  }
 
   void _onLogoTap() {
     final now = DateTime.now();
