@@ -109,14 +109,38 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              'Order shared! Pick a LINE contact to send.\n'
-              'เลือกผู้ติดต่อ LINE เพื่อส่งออเดอร์'),
-          duration: Duration(seconds: 3),
+      final result = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Order Sent! / ส่งออเดอร์แล้ว!'),
+          content: const Text(
+            'Your order has been shared to LINE.\n'
+            'ออเดอร์ของคุณถูกส่งไปยัง LINE แล้ว\n\n'
+            'Start a new order?\nเริ่มออเดอร์ใหม่?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Stay / อยู่ต่อ'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepOrange,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('New Order / ออเดอร์ใหม่'),
+            ),
+          ],
         ),
       );
+
+      if (result == true && mounted) {
+        context.read<CartProvider>().clear();
+        setState(() => _paymentScreenshot = null);
+        Navigator.pop(context); // Go back to menu
+      }
     }
   }
 

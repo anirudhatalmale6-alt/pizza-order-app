@@ -191,38 +191,36 @@ class _PizzaCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CircleAvatar(
-              backgroundColor: Colors.deepOrange,
-              child: Icon(Icons.local_pizza, color: Colors.white),
+            Row(
+              children: [
+                const Icon(Icons.local_pizza, color: Colors.deepOrange, size: 22),
+                const SizedBox(width: 8),
+                Text(
+                  '${pizza.nameThai} / ${pizza.name}',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${pizza.nameThai} / ${pizza.name}',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+            const SizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('   ${pizza.price.toInt()} THB',
+                    style: const TextStyle(fontSize: 15, color: Colors.black87)),
+                ElevatedButton(
+                  onPressed: onAdd,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepOrange,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   ),
-                  Text('${pizza.price.toInt()} THB',
-                      style: TextStyle(color: Colors.grey.shade600)),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            ElevatedButton(
-              onPressed: onAdd,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              ),
-              child: const Text('+ Add / เพิ่ม'),
+                  child: const Text('+ Add / เพิ่ม'),
+                ),
+              ],
             ),
           ],
         ),
@@ -241,38 +239,36 @@ class _DrinkCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CircleAvatar(
-              backgroundColor: Colors.blue,
-              child: Icon(Icons.local_drink, color: Colors.white),
+            Row(
+              children: [
+                const Icon(Icons.local_drink, color: Colors.blue, size: 22),
+                const SizedBox(width: 8),
+                Text(
+                  '${drink.nameThai} / ${drink.name}',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${drink.nameThai} / ${drink.name}',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+            const SizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('   ${drink.price.toInt()} THB',
+                    style: const TextStyle(fontSize: 15, color: Colors.black87)),
+                ElevatedButton(
+                  onPressed: onAdd,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   ),
-                  Text('${drink.price.toInt()} THB',
-                      style: TextStyle(color: Colors.grey.shade600)),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            ElevatedButton(
-              onPressed: onAdd,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              ),
-              child: const Text('+ Add / เพิ่ม'),
+                  child: const Text('+ Add / เพิ่ม'),
+                ),
+              ],
             ),
           ],
         ),
