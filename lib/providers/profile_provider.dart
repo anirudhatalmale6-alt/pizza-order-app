@@ -22,7 +22,7 @@ class ProfileProvider extends ChangeNotifier {
     _customerBox = await Hive.openBox<Customer>('customers');
     final prefs = await SharedPreferences.getInstance();
     _lineDeepLink = prefs.getString('lineDeepLink') ?? '';
-    _promptPayId = prefs.getString('promptPayId') ?? '';
+    _promptPayId = prefs.getString('promptPayId') ?? '0814726644';
     notifyListeners();
   }
 
