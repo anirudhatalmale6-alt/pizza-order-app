@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../providers/cart_provider.dart';
 import '../providers/profile_provider.dart';
 import '../utils/promptpay_qr.dart';
@@ -80,34 +79,15 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   Future<void> _sendToLine() async {
     final orderText = _buildOrderText();
 
-    // Try LINE's share URL scheme first (opens LINE directly with text)
-    final lineShareUrl = Uri.parse(
-        'https://line.me/R/share?text=${Uri.encodeComponent(orderText)}');
-
-    final hasLine = await canLaunchUrl(lineShareUrl);
-
-    if (hasLine) {
-      // Opens LINE directly with the order text
-      await launchUrl(lineShareUrl, mode: LaunchMode.externalApplication);
-
-      // If there's a payment screenshot, share it separately after
-      if (_paymentScreenshot != null && mounted) {
-        await Future.delayed(const Duration(seconds: 1));
-        await Share.shareXFiles(
-          [XFile(_paymentScreenshot!.path)],
-          text: 'Payment confirmation / หลักฐานการชำระเงิน',
-        );
-      }
+    // Use Android share intent (no text length limit unlike LINE URL scheme)
+    // User picks LINE from share sheet - full order details included
+    if (_paymentScreenshot != null) {
+      await Share.shareXFiles(
+        [XFile(_paymentScreenshot!.path)],
+        text: orderText,
+      );
     } else {
-      // Fallback: use generic share (user picks LINE from share sheet)
-      if (_paymentScreenshot != null) {
-        await Share.shareXFiles(
-          [XFile(_paymentScreenshot!.path)],
-          text: orderText,
-        );
-      } else {
-        await Share.share(orderText);
-      }
+      await Share.share(orderText);
     }
 
     if (mounted) {
