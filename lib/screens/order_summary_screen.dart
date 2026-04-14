@@ -80,64 +80,128 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   Future<void> _sendToLine() async {
     final orderText = _buildOrderText();
 
-    // Step 1: Copy full order text to clipboard
+    // Copy full order text to clipboard
     await Clipboard.setData(ClipboardData(text: orderText));
 
-    // Step 2: Share screenshot via share sheet if available
-    if (_paymentScreenshot != null) {
-      await Share.shareXFiles(
-        [XFile(_paymentScreenshot!.path)],
-        text: 'Payment / หลักฐานการชำระเงิน',
-      );
-    }
+    if (!mounted) return;
 
-    // Step 3: Open LINE app directly so user can pick any contact and paste
-    final lineUrl = Uri.parse('https://line.me/R/nv/chat');
-    if (await canLaunchUrl(lineUrl)) {
-      await launchUrl(lineUrl, mode: LaunchMode.externalApplication);
-    }
-
-    if (mounted) {
-      final result = await showDialog<bool>(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Order Copied! / คัดลอกออเดอร์แล้ว!'),
-          content: const Text(
-            'Order details copied to clipboard.\n'
-            'รายละเอียดออเดอร์ถูกคัดลอกแล้ว\n\n'
-            'Open LINE, pick your contact, and paste.\n'
-            'เปิด LINE เลือกผู้ติดต่อ แล้ววาง\n\n'
-            'Start a new order?\nเริ่มออเดอร์ใหม่?',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Stay / อยู่ต่อ'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('New Order / ออเดอร์ใหม่'),
+    // Show confirmation with instructions, then open LINE when user taps "Open LINE"
+    final result = await showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Order Copied! / คัดลอกออเดอร์แล้ว!'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.check_circle, color: Colors.green, size: 48),
+            const SizedBox(height: 12),
+            const Text(
+              'Order details copied to clipboard!\n'
+              'รายละเอียดออเดอร์ถูกคัดลอกแล้ว!\n\n'
+              '1. Tap "Open LINE" below\n'
+              '    กด "เปิด LINE" ด้านล่าง\n'
+              '2. Pick your contact\n'
+              '    เลือกผู้ติดต่อ\n'
+              '3. Long-press text field and paste\n'
+              '    กดค้างช่องข้อความแล้ววาง',
+              style: TextStyle(fontSize: 14),
             ),
           ],
         ),
-      );
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, 'new'),
+            child: const Text('New Order / ออเดอร์ใหม่'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () => Navigator.pop(ctx, 'line'),
+            icon: const Icon(Icons.open_in_new),
+            label: const Text('Open LINE / เปิด LINE'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF06C755),
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
 
-      if (result == true && mounted) {
-        context.read<CartProvider>().clear();
-        context.read<ProfileProvider>().clearSelection();
-        setState(() => _paymentScreenshot = null);
-        // Go back to customer selection screen
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const ProfileScreen()),
-          (route) => false,
+    if (result == 'line' && mounted) {
+      // Try multiple LINE URL schemes
+      bool opened = false;
+      for (final url in [
+        'line://msg/text/${Uri.encodeComponent(orderText)}',
+        'line://nv/chat',
+        'https://line.me/R/nv/chat',
+      ]) {
+        try {
+          opened = await launchUrl(
+            Uri.parse(url),
+            mode: LaunchMode.externalApplication,
+          );
+          if (opened) break;
+        } catch (_) {}
+      }
+
+      if (!opened && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not open LINE. Open it manually and paste.\n'
+                'เปิด LINE ไม่ได้ กรุณาเปิดเองแล้ววาง'),
+            duration: Duration(seconds: 4),
+          ),
         );
       }
+
+      // After LINE, ask about new order
+      if (mounted) {
+        final newOrder = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Done? / เสร็จแล้ว?'),
+            content: const Text('Start a new order?\nเริ่มออเดอร์ใหม่?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Stay / อยู่ต่อ'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepOrange,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('New Order / ออเดอร์ใหม่'),
+              ),
+            ],
+          ),
+        );
+        if (newOrder == true && mounted) {
+          context.read<CartProvider>().clear();
+          context.read<ProfileProvider>().clearSelection();
+          setState(() => _paymentScreenshot = null);
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const ProfileScreen()),
+            (route) => false,
+          );
+        }
+      }
+      return;
     }
+
+    if (result == 'new' && mounted) {
+      context.read<CartProvider>().clear();
+      context.read<ProfileProvider>().clearSelection();
+      setState(() => _paymentScreenshot = null);
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const ProfileScreen()),
+        (route) => false,
+      );
+      return;
+    }
+
+    // Dialog dismissed - do nothing, stay on page
   }
 
   @override
