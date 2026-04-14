@@ -190,21 +190,41 @@ class _PizzaCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: const CircleAvatar(
-          backgroundColor: Colors.deepOrange,
-          child: Icon(Icons.local_pizza, color: Colors.white),
-        ),
-        title: Text('${pizza.name} / ${pizza.nameThai}'),
-        subtitle: Text('${pizza.price.toInt()} THB'),
-        trailing: ElevatedButton.icon(
-          onPressed: onAdd,
-          icon: const Icon(Icons.add, size: 18),
-          label: const Text('Add / เพิ่ม'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.deepOrange,
-            foregroundColor: Colors.white,
-          ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            const CircleAvatar(
+              backgroundColor: Colors.deepOrange,
+              child: Icon(Icons.local_pizza, color: Colors.white),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${pizza.nameThai} / ${pizza.name}',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text('${pizza.price.toInt()} THB',
+                      style: TextStyle(color: Colors.grey.shade600)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            ElevatedButton(
+              onPressed: onAdd,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepOrange,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              ),
+              child: const Text('+ Add / เพิ่ม'),
+            ),
+          ],
         ),
       ),
     );
@@ -220,21 +240,41 @@ class _DrinkCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: const CircleAvatar(
-          backgroundColor: Colors.blue,
-          child: Icon(Icons.local_drink, color: Colors.white),
-        ),
-        title: Text('${drink.name} / ${drink.nameThai}'),
-        subtitle: Text('${drink.price.toInt()} THB'),
-        trailing: ElevatedButton.icon(
-          onPressed: onAdd,
-          icon: const Icon(Icons.add, size: 18),
-          label: const Text('Add / เพิ่ม'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue,
-            foregroundColor: Colors.white,
-          ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            const CircleAvatar(
+              backgroundColor: Colors.blue,
+              child: Icon(Icons.local_drink, color: Colors.white),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${drink.nameThai} / ${drink.name}',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text('${drink.price.toInt()} THB',
+                      style: TextStyle(color: Colors.grey.shade600)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            ElevatedButton(
+              onPressed: onAdd,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              ),
+              child: const Text('+ Add / เพิ่ม'),
+            ),
+          ],
         ),
       ),
     );

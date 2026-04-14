@@ -26,10 +26,11 @@ class _ToppingDialogState extends State<ToppingDialog> {
             final topping = widget.availableToppings[index];
             final selected = _selectedIndices.contains(index);
             return CheckboxListTile(
-              title: Text('${topping.name} / ${topping.nameThai}'),
-              subtitle: Text('+${topping.price.toInt()} THB'),
+              title: Text('${topping.nameThai} / ${topping.name}  +${topping.price.toInt()} THB'),
               value: selected,
               activeColor: Colors.deepOrange,
+              controlAffinity: ListTileControlAffinity.leading,
+              dense: true,
               onChanged: (val) {
                 setState(() {
                   if (val == true) {

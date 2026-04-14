@@ -76,28 +76,47 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   }
 
   Future<void> _sendToLine() async {
-    final profile = context.read<ProfileProvider>();
     final orderText = _buildOrderText();
 
-    // If payment screenshot exists, share with image
-    if (_paymentScreenshot != null) {
-      await Share.shareXFiles(
-        [XFile(_paymentScreenshot!.path)],
-        text: orderText,
-      );
-    } else {
-      // Try LINE deep link first
-      if (profile.lineDeepLink.isNotEmpty) {
-        final lineUrl = Uri.parse(profile.lineDeepLink);
-        if (await canLaunchUrl(lineUrl)) {
-          await launchUrl(lineUrl, mode: LaunchMode.externalApplication);
-          // After opening LINE, share the text
-          await Share.share(orderText);
-          return;
-        }
+    // Try LINE's share URL scheme first (opens LINE directly with text)
+    final lineShareUrl = Uri.parse(
+        'https://line.me/R/share?text=${Uri.encodeComponent(orderText)}');
+
+    final hasLine = await canLaunchUrl(lineShareUrl);
+
+    if (hasLine) {
+      // Opens LINE directly with the order text
+      await launchUrl(lineShareUrl, mode: LaunchMode.externalApplication);
+
+      // If there's a payment screenshot, share it separately after
+      if (_paymentScreenshot != null && mounted) {
+        await Future.delayed(const Duration(seconds: 1));
+        await Share.shareXFiles(
+          [XFile(_paymentScreenshot!.path)],
+          text: 'Payment confirmation / หลักฐานการชำระเงิน',
+        );
       }
-      // Fallback to share intent
-      await Share.share(orderText);
+    } else {
+      // Fallback: use generic share (user picks LINE from share sheet)
+      if (_paymentScreenshot != null) {
+        await Share.shareXFiles(
+          [XFile(_paymentScreenshot!.path)],
+          text: orderText,
+        );
+      } else {
+        await Share.share(orderText);
+      }
+    }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'Order shared! Pick a LINE contact to send.\n'
+              'เลือกผู้ติดต่อ LINE เพื่อส่งออเดอร์'),
+          duration: Duration(seconds: 3),
+        ),
+      );
     }
   }
 
@@ -131,57 +150,86 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           ...List.generate(cart.items.length, (index) {
             final item = cart.items[index];
             return Card(
-              child: ListTile(
-                leading: Icon(
-                  item.productType == 'pizza'
-                      ? Icons.local_pizza
-                      : Icons.local_drink,
-                  color: item.productType == 'pizza'
-                      ? Colors.deepOrange
-                      : Colors.blue,
-                ),
-                title: Text('${item.productName} / ${item.productNameThai}'),
-                subtitle: Column(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Row(
+                      children: [
+                        Icon(
+                          item.productType == 'pizza'
+                              ? Icons.local_pizza
+                              : Icons.local_drink,
+                          color: item.productType == 'pizza'
+                              ? Colors.deepOrange
+                              : Colors.blue,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            '${item.productNameThai} / ${item.productName}',
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
+                    ),
                     if (item.toppings.isNotEmpty)
-                      Text(item.toppings
-                          .map((t) => '${t.name} +${t.price.toInt()}')
-                          .join(', ')),
-                    Text(
+                      Padding(
+                        padding: const EdgeInsets.only(left: 32, top: 4),
+                        child: Text(
+                          item.toppings
+                              .map((t) =>
+                                  '${t.nameThai} / ${t.name} +${t.price.toInt()}')
+                              .join(', '),
+                          style: TextStyle(
+                              color: Colors.grey.shade600, fontSize: 13),
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 32, top: 4),
+                      child: Text(
                         'x${item.quantity} = ${item.itemTotal.toInt()} THB',
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (item.productType == 'pizza')
-                      IconButton(
-                        icon: const Icon(Icons.copy, size: 20),
-                        tooltip: 'Copy pizza / คัดลอกพิซซ่า',
-                        onPressed: () => cart.duplicateItem(index),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
                       ),
-                    if (item.productType == 'drink') ...[
-                      IconButton(
-                        icon: const Icon(Icons.remove_circle_outline, size: 20),
-                        onPressed: () =>
-                            cart.updateQuantity(index, item.quantity - 1),
-                      ),
-                      Text('${item.quantity}'),
-                      IconButton(
-                        icon: const Icon(Icons.add_circle_outline, size: 20),
-                        onPressed: () =>
-                            cart.updateQuantity(index, item.quantity + 1),
-                      ),
-                    ],
-                    IconButton(
-                      icon: const Icon(Icons.delete, size: 20, color: Colors.red),
-                      onPressed: () => cart.removeItem(index),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (item.productType == 'pizza')
+                          TextButton.icon(
+                            icon: const Icon(Icons.copy, size: 18),
+                            label: const Text('Copy / คัดลอก'),
+                            onPressed: () => cart.duplicateItem(index),
+                          ),
+                        if (item.productType == 'drink') ...[
+                          IconButton(
+                            icon: const Icon(Icons.remove_circle_outline),
+                            onPressed: () =>
+                                cart.updateQuantity(index, item.quantity - 1),
+                          ),
+                          Text('${item.quantity}',
+                              style: const TextStyle(fontSize: 16)),
+                          IconButton(
+                            icon: const Icon(Icons.add_circle_outline),
+                            onPressed: () =>
+                                cart.updateQuantity(index, item.quantity + 1),
+                          ),
+                        ],
+                        const SizedBox(width: 8),
+                        IconButton(
+                          icon: const Icon(Icons.delete,
+                              size: 20, color: Colors.red),
+                          onPressed: () => cart.removeItem(index),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                isThreeLine: item.toppings.isNotEmpty,
               ),
             );
           }),
