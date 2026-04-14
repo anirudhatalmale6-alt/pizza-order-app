@@ -29,31 +29,79 @@ class MenuProvider extends ChangeNotifier {
   }
 
   Future<void> _seedDefaults() async {
-    // Default pizzas
+    // Pizzas
     await _menuBox.add(MenuItem(
-        name: 'Margherita', nameThai: 'พิซซ่ามาร์การิต้า', price: 150, type: 'pizza'));
+        name: 'Margherita', nameThai: 'พิซซ่ามาร์การิต้า', price: 159, type: 'pizza'));
     await _menuBox.add(MenuItem(
-        name: 'Pepperoni', nameThai: 'พิซซ่าเปปเปอโรนี', price: 160, type: 'pizza'));
+        name: 'Spicy Peanut', nameThai: 'พิซซ่าถั่วเผ็ด', price: 159, type: 'pizza'));
 
-    // Default drinks
-    await _menuBox.add(
-        MenuItem(name: 'Coke', nameThai: 'โค้ก', price: 30, type: 'drink'));
-    await _menuBox.add(
-        MenuItem(name: 'Fanta', nameThai: 'แฟนต้า', price: 30, type: 'drink'));
-    await _menuBox.add(
-        MenuItem(name: 'Water', nameThai: 'น้ำเปล่า', price: 20, type: 'drink'));
+    // Hot Coffee
+    await _menuBox.add(MenuItem(
+        name: 'Espresso (Hot)', nameThai: 'เอสเปรสโซ่ (ร้อน)', price: 40, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Americano (Hot)', nameThai: 'อเมริกาโน่ (ร้อน)', price: 40, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Cappuccino (Hot)', nameThai: 'คาปูชิโน่ (ร้อน)', price: 50, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Latte (Hot)', nameThai: 'ลาเต้ (ร้อน)', price: 50, type: 'drink'));
 
-    // Default toppings
+    // Iced Coffee
+    await _menuBox.add(MenuItem(
+        name: 'Espresso (Iced)', nameThai: 'เอสเปรสโซ่ (เย็น)', price: 45, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Americano (Iced)', nameThai: 'อเมริกาโน่ (เย็น)', price: 45, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Cappuccino (Iced)', nameThai: 'คาปูชิโน่ (เย็น)', price: 55, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Latte (Iced)', nameThai: 'ลาเต้ (เย็น)', price: 55, type: 'drink'));
+
+    // Sodas
+    await _menuBox.add(MenuItem(
+        name: 'Mango Soda', nameThai: 'น้ำมะม่วงโซดา', price: 55, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Apple Soda', nameThai: 'โซดาแอปเปิ้ล', price: 55, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Orange Soda', nameThai: 'น้ำส้มโซดา', price: 55, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Passion Fruit Soda', nameThai: 'โซดารสเสาวรส', price: 55, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Pineapple Soda', nameThai: 'น้ำสับปะรดโซดา', price: 55, type: 'drink'));
+
+    // Teas & Others
+    await _menuBox.add(MenuItem(
+        name: 'Lychee Fruit Tea', nameThai: 'ชาลิ้นจี่', price: 50, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Peach Fruit Tea', nameThai: 'ชาพีช', price: 50, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Thai Milk Tea', nameThai: 'ชานมไทย', price: 50, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Taiwanese Bubble Tea', nameThai: 'ชานมมุขไต้หวั่น', price: 50, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Apple Tea', nameThai: 'ชาแอปเปิล', price: 50, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Punch', nameThai: 'พั้นซ์', price: 50, type: 'drink'));
+    await _menuBox.add(MenuItem(
+        name: 'Matcha', nameThai: 'มัทฉะ', price: 70, type: 'drink'));
+
+    // Pizza Toppings
     await _toppingBox.add(
-        ToppingItem(name: 'Bacon', nameThai: 'เบคอน', price: 15));
+        ToppingItem(name: 'Extra Cheese', nameThai: 'ชีสเพิ่ม', price: 45));
     await _toppingBox.add(
-        ToppingItem(name: 'Extra Cheese', nameThai: 'ชีสเพิ่ม', price: 10));
+        ToppingItem(name: 'Ham', nameThai: 'แฮม', price: 50));
     await _toppingBox.add(
-        ToppingItem(name: 'Ham', nameThai: 'แฮม', price: 12));
+        ToppingItem(name: 'Bacon', nameThai: 'เบคอน', price: 60));
     await _toppingBox.add(
-        ToppingItem(name: 'Pineapple', nameThai: 'สับปะรด', price: 10));
+        ToppingItem(name: 'Shrimp', nameThai: 'กุ้ง', price: 50));
     await _toppingBox.add(
-        ToppingItem(name: 'Mushrooms', nameThai: 'เห็ด', price: 10));
+        ToppingItem(name: 'Tomato', nameThai: 'มะเขือเทศ', price: 25));
+    await _toppingBox.add(
+        ToppingItem(name: 'Onion', nameThai: 'หัวหอม', price: 25));
+    await _toppingBox.add(
+        ToppingItem(name: 'Bell Pepper', nameThai: 'พริกหวาน', price: 30));
+    await _toppingBox.add(
+        ToppingItem(name: 'Pineapple', nameThai: 'สัปปะรด', price: 30));
+    await _toppingBox.add(
+        ToppingItem(name: 'Mushroom', nameThai: 'เห็ด', price: 45));
 
     notifyListeners();
   }
