@@ -55,7 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -74,19 +74,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 32),
+            const Text('Customer Name / ชื่อลูกค้า',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+            const SizedBox(height: 6),
             TextField(
               controller: _nameController,
               decoration: const InputDecoration(
-                labelText: 'Customer Name / ชื่อลูกค้า',
+                hintText: 'Enter name here',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.person),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
+            const Text('Business Name / ชื่อธุรกิจ',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+            const SizedBox(height: 6),
             TextField(
               controller: _businessController,
               decoration: const InputDecoration(
-                labelText: 'Business Name / ชื่อธุรกิจ',
+                hintText: 'Enter business name here',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.business),
               ),
