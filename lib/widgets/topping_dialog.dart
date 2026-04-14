@@ -15,46 +15,80 @@ class _ToppingDialogState extends State<ToppingDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Dialog(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.75,
-        ),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      child: SizedBox(
+        height: screenHeight * 0.7,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text('Customize Pizza / เลือกท็อปปิ้ง',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 12),
-              Flexible(
+              const SizedBox(height: 8),
+              Text('${widget.availableToppings.length} toppings available',
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
+              const SizedBox(height: 8),
+              Expanded(
                 child: ListView.builder(
-                  shrinkWrap: true,
                   itemCount: widget.availableToppings.length,
                   itemBuilder: (context, index) {
                     final topping = widget.availableToppings[index];
                     final selected = _selectedIndices.contains(index);
-                    return CheckboxListTile(
-                      title: Text(
-                        '${topping.nameThai} / ${topping.name}',
-                        style: const TextStyle(fontSize: 14),
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 4),
+                      color: selected
+                          ? Colors.deepOrange.shade50
+                          : null,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            if (selected) {
+                              _selectedIndices.remove(index);
+                            } else {
+                              _selectedIndices.add(index);
+                            }
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                          child: Row(
+                            children: [
+                              Icon(
+                                selected
+                                    ? Icons.check_box
+                                    : Icons.check_box_outline_blank,
+                                color: selected
+                                    ? Colors.deepOrange
+                                    : Colors.grey,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${topping.nameThai} / ${topping.name}',
+                                      style: const TextStyle(fontSize: 15),
+                                    ),
+                                    Text(
+                                      '+${topping.price.toInt()} THB',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.grey.shade600),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      subtitle: Text('+${topping.price.toInt()} THB'),
-                      value: selected,
-                      activeColor: Colors.deepOrange,
-                      controlAffinity: ListTileControlAffinity.leading,
-                      dense: true,
-                      onChanged: (val) {
-                        setState(() {
-                          if (val == true) {
-                            _selectedIndices.add(index);
-                          } else {
-                            _selectedIndices.remove(index);
-                          }
-                        });
-                      },
                     );
                   },
                 ),

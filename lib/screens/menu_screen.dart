@@ -304,9 +304,14 @@ class _DrinkCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Text(
-                    '${drink.nameThai} / ${drink.name}',
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(drink.nameThai,
+                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                      Text(drink.name,
+                          style: TextStyle(fontSize: 14, color: Colors.grey.shade700)),
+                    ],
                   ),
                 ),
               ],
