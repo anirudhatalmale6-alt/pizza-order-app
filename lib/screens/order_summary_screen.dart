@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../providers/cart_provider.dart';
 import '../providers/profile_provider.dart';
 import '../utils/promptpay_qr.dart';
@@ -79,15 +80,21 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   Future<void> _sendToLine() async {
     final orderText = _buildOrderText();
 
-    // Use Android share intent (no text length limit unlike LINE URL scheme)
-    // User picks LINE from share sheet - full order details included
+    // Step 1: Copy full order text to clipboard
+    await Clipboard.setData(ClipboardData(text: orderText));
+
+    // Step 2: Share screenshot via share sheet if available
     if (_paymentScreenshot != null) {
       await Share.shareXFiles(
         [XFile(_paymentScreenshot!.path)],
-        text: orderText,
+        text: 'Payment / หลักฐานการชำระเงิน',
       );
-    } else {
-      await Share.share(orderText);
+    }
+
+    // Step 3: Open LINE app directly so user can pick any contact and paste
+    final lineUrl = Uri.parse('https://line.me/R/nv/chat');
+    if (await canLaunchUrl(lineUrl)) {
+      await launchUrl(lineUrl, mode: LaunchMode.externalApplication);
     }
 
     if (mounted) {
@@ -95,10 +102,12 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         context: context,
         barrierDismissible: false,
         builder: (ctx) => AlertDialog(
-          title: const Text('Order Sent! / ส่งออเดอร์แล้ว!'),
+          title: const Text('Order Copied! / คัดลอกออเดอร์แล้ว!'),
           content: const Text(
-            'Your order has been shared to LINE.\n'
-            'ออเดอร์ของคุณถูกส่งไปยัง LINE แล้ว\n\n'
+            'Order details copied to clipboard.\n'
+            'รายละเอียดออเดอร์ถูกคัดลอกแล้ว\n\n'
+            'Open LINE, pick your contact, and paste.\n'
+            'เปิด LINE เลือกผู้ติดต่อ แล้ววาง\n\n'
             'Start a new order?\nเริ่มออเดอร์ใหม่?',
           ),
           actions: [
@@ -475,7 +484,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             child: ElevatedButton.icon(
               onPressed: cart.isEmpty ? null : _sendToLine,
               icon: const Icon(Icons.send, size: 24),
-              label: const Text('Send to LINE / ส่งไปยัง LINE',
+              label: const Text('Copy & Open LINE / คัดลอก+เปิด LINE',
                   style: TextStyle(fontSize: 18)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF06C755), // LINE green
