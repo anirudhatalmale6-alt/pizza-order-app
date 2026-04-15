@@ -21,6 +21,8 @@ class OrderSummaryScreen extends StatefulWidget {
 
 class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   File? _paymentScreenshot;
+  String _orderType = 'pickup'; // 'pickup' or 'delivery'
+  TimeOfDay? _selectedTime;
 
   Future<void> _pickScreenshot() async {
     final picker = ImagePicker();
@@ -46,6 +48,15 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final sb = StringBuffer();
     sb.writeln('คำสั่งซื้อ / Order from: ${profile.customerName}');
     sb.writeln('ชื่อธุรกิจ / Business: ${profile.businessName}');
+    final typeText = _orderType == 'pickup'
+        ? 'รับเอง / Pickup'
+        : 'จัดส่ง / Delivery';
+    sb.writeln('ประเภท / Type: $typeText');
+    if (_selectedTime != null) {
+      final hour = _selectedTime!.hour.toString().padLeft(2, '0');
+      final min = _selectedTime!.minute.toString().padLeft(2, '0');
+      sb.writeln('เวลา / Time wanted: $hour:$min');
+    }
     sb.writeln();
     sb.writeln('รายการอาหาร / Items:');
 
@@ -126,7 +137,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     if (result == true && mounted) {
       context.read<CartProvider>().clear();
       context.read<ProfileProvider>().clearSelection();
-      setState(() => _paymentScreenshot = null);
+      setState(() {
+        _paymentScreenshot = null;
+        _orderType = 'pickup';
+        _selectedTime = null;
+      });
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const ProfileScreen()),
         (route) => false,
@@ -157,6 +172,140 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Pickup or Delivery + Time
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.blue.shade200),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Pickup or Delivery? / รับเองหรือจัดส่ง?',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => setState(() => _orderType = 'pickup'),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(
+                            color: _orderType == 'pickup'
+                                ? Colors.deepOrange
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.deepOrange),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.store,
+                                  color: _orderType == 'pickup'
+                                      ? Colors.white
+                                      : Colors.deepOrange,
+                                  size: 20),
+                              const SizedBox(width: 6),
+                              Text('Pickup\nรับเอง',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: _orderType == 'pickup'
+                                          ? Colors.white
+                                          : Colors.deepOrange,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => setState(() => _orderType = 'delivery'),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(
+                            color: _orderType == 'delivery'
+                                ? Colors.deepOrange
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.deepOrange),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.delivery_dining,
+                                  color: _orderType == 'delivery'
+                                      ? Colors.white
+                                      : Colors.deepOrange,
+                                  size: 20),
+                              const SizedBox(width: 6),
+                              Text('Delivery\nจัดส่ง',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: _orderType == 'delivery'
+                                          ? Colors.white
+                                          : Colors.deepOrange,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                const Text('What time? / เวลาไหน?',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: () async {
+                    final time = await showTimePicker(
+                      context: context,
+                      initialTime: _selectedTime ?? TimeOfDay.now(),
+                    );
+                    if (time != null) {
+                      setState(() => _selectedTime = time);
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade400),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.access_time, color: Colors.deepOrange),
+                        const SizedBox(width: 8),
+                        Text(
+                          _selectedTime != null
+                              ? _selectedTime!.format(context)
+                              : 'Tap to select time / กดเพื่อเลือกเวลา',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: _selectedTime != null
+                                ? Colors.black
+                                : Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
           // Items
           const Text('Items / รายการอาหาร',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
