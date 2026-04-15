@@ -184,7 +184,7 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Who is ordering? / ใครสั่ง?'),
+        title: const Text("Jen's Pizzeria"),
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
         actions: [
@@ -198,8 +198,11 @@ class ProfileScreen extends StatelessWidget {
       body: Column(
         children: [
           const SizedBox(height: 16),
-          const Icon(Icons.local_pizza, size: 60, color: Colors.deepOrange),
-          const SizedBox(height: 12),
+          const Text(
+            'Who is ordering? / ใครสั่ง?',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
           const Text(
             'Select your name or create a new profile\nเลือกชื่อหรือสร้างโปรไฟล์ใหม่',
             textAlign: TextAlign.center,
