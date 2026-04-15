@@ -130,6 +130,46 @@ class _MenuScreenState extends State<MenuScreen> {
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
         actions: [
+          if (!cart.isEmpty)
+            IconButton(
+              icon: const Icon(Icons.cancel_outlined),
+              tooltip: 'Cancel order / ยกเลิก',
+              onPressed: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Cancel Order? / ยกเลิกออเดอร์?'),
+                    content: const Text(
+                        'Clear all items from the cart?\nล้างรายการทั้งหมด?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('No / ไม่'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Yes, Cancel / ใช่ ยกเลิก'),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirm == true) {
+                  cart.clear();
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Order cancelled / ยกเลิกออเดอร์แล้ว'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                }
+              },
+            ),
           Stack(
             alignment: Alignment.center,
             children: [
