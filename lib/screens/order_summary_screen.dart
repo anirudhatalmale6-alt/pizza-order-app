@@ -402,14 +402,14 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Subtotal / ยอดรวม'),
+                    const Flexible(child: Text('Subtotal / รวม')),
                     Text('${cart.subtotal.toInt()} THB'),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Discount / ส่วนลด'),
+                    const Flexible(child: Text('Discount / ลด')),
                     Text('-${cart.totalDiscount.toInt()} THB',
                         style: const TextStyle(color: Colors.green)),
                   ],
@@ -418,9 +418,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Final Total / ยอดรวมสุดท้าย',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    const Flexible(
+                      child: Text('Total / รวม',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                    ),
                     Text('${cart.finalTotal.toInt()} THB',
                         style: const TextStyle(
                             fontSize: 20,
