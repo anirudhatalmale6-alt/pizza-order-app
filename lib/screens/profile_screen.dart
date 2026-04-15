@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/profile_provider.dart';
 import 'menu_screen.dart';
@@ -186,6 +187,13 @@ class ProfileScreen extends StatelessWidget {
         title: const Text('Who is ordering? / ใครสั่ง?'),
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.exit_to_app),
+            tooltip: 'Exit / ออก',
+            onPressed: () => SystemNavigator.pop(),
+          ),
+        ],
       ),
       body: Column(
         children: [
