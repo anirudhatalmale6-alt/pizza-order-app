@@ -234,7 +234,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: [11, 12, 13, 14, 15, 16].map((hour) {
+                  children: profile.availableHours.map((hour) {
                     final isSelected = _selectedHour == hour;
                     final period = hour < 12 ? 'AM' : 'PM';
                     final display12 = hour > 12 ? hour - 12 : hour;

@@ -447,6 +447,17 @@ class _SettingsTab extends StatefulWidget {
 class _SettingsTabState extends State<_SettingsTab> {
   late TextEditingController _lineCtrl;
   late TextEditingController _promptPayCtrl;
+  late int _openHour;
+  late int _closeHour;
+
+  static const _allHours = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+
+  String _hourLabel(int h) {
+    if (h == 0) return '12 AM';
+    if (h < 12) return '$h AM';
+    if (h == 12) return '12 PM';
+    return '${h - 12} PM';
+  }
 
   @override
   void initState() {
@@ -454,6 +465,8 @@ class _SettingsTabState extends State<_SettingsTab> {
     final profile = context.read<ProfileProvider>();
     _lineCtrl = TextEditingController(text: profile.lineDeepLink);
     _promptPayCtrl = TextEditingController(text: profile.promptPayId);
+    _openHour = profile.openHour;
+    _closeHour = profile.closeHour;
   }
 
   @override
@@ -465,59 +478,130 @@ class _SettingsTabState extends State<_SettingsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return ListView(
       padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text('LINE Configuration', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _lineCtrl,
-            decoration: const InputDecoration(
-              labelText: 'LINE Deep Link / URL',
-              hintText: 'e.g., https://line.me/R/ti/p/@yourlineID',
-              border: OutlineInputBorder(),
+      children: [
+        const Text('Opening Hours', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        const Text('Set the hours customers can choose for pickup/delivery',
+            style: TextStyle(color: Colors.grey, fontSize: 12)),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Open', style: TextStyle(fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade400),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: _openHour,
+                        isExpanded: true,
+                        items: _allHours
+                            .where((h) => h < _closeHour)
+                            .map((h) => DropdownMenuItem(value: h, child: Text(_hourLabel(h))))
+                            .toList(),
+                        onChanged: (v) => setState(() => _openHour = v!),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
-          const Text('PromptPay Configuration', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _promptPayCtrl,
-            decoration: const InputDecoration(
-              labelText: 'PromptPay ID',
-              hintText: 'Phone number or National ID',
-              border: OutlineInputBorder(),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Close', style: TextStyle(fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade400),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: _closeHour,
+                        isExpanded: true,
+                        items: _allHours
+                            .where((h) => h > _openHour)
+                            .map((h) => DropdownMenuItem(value: h, child: Text(_hourLabel(h))))
+                            .toList(),
+                        onChanged: (v) => setState(() => _closeHour = v!),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            keyboardType: TextInputType.number,
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Hours shown to customers: ${_hourLabel(_openHour)} - ${_hourLabel(_closeHour)}',
+          style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+        ),
+
+        const SizedBox(height: 24),
+        const Text('PromptPay Configuration', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 16),
+        TextField(
+          controller: _promptPayCtrl,
+          decoration: const InputDecoration(
+            labelText: 'PromptPay ID',
+            hintText: 'Phone number or National ID',
+            border: OutlineInputBorder(),
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'Enter your phone number (e.g., 0812345678) or\nNational ID (13 digits) for QR payment',
-            style: TextStyle(color: Colors.grey, fontSize: 12),
+          keyboardType: TextInputType.number,
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Enter your phone number (e.g., 0812345678) or\nNational ID (13 digits) for QR payment',
+          style: TextStyle(color: Colors.grey, fontSize: 12),
+        ),
+
+        const SizedBox(height: 24),
+        const Text('LINE Configuration', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 16),
+        TextField(
+          controller: _lineCtrl,
+          decoration: const InputDecoration(
+            labelText: 'LINE Deep Link / URL',
+            hintText: 'e.g., https://line.me/R/ti/p/@yourlineID',
+            border: OutlineInputBorder(),
           ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () async {
-              final profile = context.read<ProfileProvider>();
-              await profile.saveLineConfig(_lineCtrl.text.trim());
-              await profile.savePromptPayId(_promptPayCtrl.text.trim());
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Settings saved!')),
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepOrange,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-            ),
-            child: const Text('Save Settings'),
+        ),
+
+        const SizedBox(height: 24),
+        ElevatedButton(
+          onPressed: () async {
+            final profile = context.read<ProfileProvider>();
+            await profile.saveLineConfig(_lineCtrl.text.trim());
+            await profile.savePromptPayId(_promptPayCtrl.text.trim());
+            await profile.saveOpeningHours(_openHour, _closeHour);
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Settings saved!')),
+              );
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.deepOrange,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
           ),
-        ],
-      ),
+          child: const Text('Save Settings'),
+        ),
+      ],
     );
   }
 }
