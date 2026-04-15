@@ -22,7 +22,7 @@ class OrderSummaryScreen extends StatefulWidget {
 class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   File? _paymentScreenshot;
   String _orderType = 'pickup'; // 'pickup' or 'delivery'
-  TimeOfDay? _selectedTime;
+  int? _selectedHour; // 11-16
 
   Future<void> _pickScreenshot() async {
     final picker = ImagePicker();
@@ -52,10 +52,10 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         ? 'รับเอง / Pickup'
         : 'จัดส่ง / Delivery';
     sb.writeln('ประเภท / Type: $typeText');
-    if (_selectedTime != null) {
-      final hour = _selectedTime!.hour.toString().padLeft(2, '0');
-      final min = _selectedTime!.minute.toString().padLeft(2, '0');
-      sb.writeln('เวลา / Time wanted: $hour:$min');
+    if (_selectedHour != null) {
+      final period = _selectedHour! < 12 ? 'AM' : 'PM';
+      final display12 = _selectedHour! > 12 ? _selectedHour! - 12 : _selectedHour!;
+      sb.writeln('เวลา / Time wanted: ${display12}:00 $period ($_selectedHour:00)');
     }
     sb.writeln();
     sb.writeln('รายการอาหาร / Items:');
@@ -107,46 +107,14 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       await Share.share(orderText);
     }
 
+    // Auto-return to start after sending
     if (!mounted) return;
-
-    final result = await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Order Sent! / ส่งออเดอร์แล้ว!'),
-        content: const Text(
-          'Start a new order?\nเริ่มออเดอร์ใหม่?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Stay / อยู่ต่อ'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepOrange,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('New Order / ออเดอร์ใหม่'),
-          ),
-        ],
-      ),
+    context.read<CartProvider>().clear();
+    context.read<ProfileProvider>().clearSelection();
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const ProfileScreen()),
+      (route) => false,
     );
-
-    if (result == true && mounted) {
-      context.read<CartProvider>().clear();
-      context.read<ProfileProvider>().clearSelection();
-      setState(() {
-        _paymentScreenshot = null;
-        _orderType = 'pickup';
-        _selectedTime = null;
-      });
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const ProfileScreen()),
-        (route) => false,
-      );
-    }
   }
 
   @override
@@ -263,42 +231,51 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 const Text('What time? / เวลาไหน?',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
-                GestureDetector(
-                  onTap: () async {
-                    final time = await showTimePicker(
-                      context: context,
-                      initialTime: _selectedTime ?? TimeOfDay.now(),
-                    );
-                    if (time != null) {
-                      setState(() => _selectedTime = time);
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey.shade400),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.access_time, color: Colors.deepOrange),
-                        const SizedBox(width: 8),
-                        Text(
-                          _selectedTime != null
-                              ? _selectedTime!.format(context)
-                              : 'Tap to select time / กดเพื่อเลือกเวลา',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: _selectedTime != null
-                                ? Colors.black
-                                : Colors.grey.shade600,
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [11, 12, 13, 14, 15, 16].map((hour) {
+                    final isSelected = _selectedHour == hour;
+                    final period = hour < 12 ? 'AM' : 'PM';
+                    final display12 = hour > 12 ? hour - 12 : hour;
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedHour = hour),
+                      child: Container(
+                        width: 90,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: BoxDecoration(
+                          color: isSelected ? Colors.deepOrange : Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isSelected
+                                ? Colors.deepOrange
+                                : Colors.grey.shade400,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
+                        child: Column(
+                          children: [
+                            Text(
+                              '$display12 $period',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: isSelected ? Colors.white : Colors.black,
+                              ),
+                            ),
+                            Text(
+                              '$hour:00',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: isSelected
+                                    ? Colors.white70
+                                    : Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 ),
               ],
             ),
