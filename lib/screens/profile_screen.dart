@@ -28,10 +28,10 @@ class ProfileScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text('New Customer / ลูกค้าใหม่',
+                const Text('New Staff Member / พนักงานใหม่',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 16),
-                const Text('Customer Name / ชื่อลูกค้า',
+                const Text('Staff Name / ชื่อพนักงาน',
                     style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 4),
                 TextField(
@@ -43,13 +43,13 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text('Business Name / ชื่อธุรกิจ',
+                const Text('Guest House / ชื่อที่พัก',
                     style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 4),
                 TextField(
                   controller: businessCtrl,
                   decoration: const InputDecoration(
-                    hintText: 'Enter business name',
+                    hintText: 'Enter guest house name',
                     border: OutlineInputBorder(),
                     isDense: true,
                   ),
@@ -104,10 +104,10 @@ class ProfileScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text('Edit Profile / แก้ไขโปรไฟล์',
+                const Text('Edit Staff / แก้ไขพนักงาน',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 16),
-                const Text('Customer Name / ชื่อลูกค้า',
+                const Text('Staff Name / ชื่อพนักงาน',
                     style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 4),
                 TextField(
@@ -119,13 +119,13 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text('Business Name / ชื่อธุรกิจ',
+                const Text('Guest House / ชื่อที่พัก',
                     style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 4),
                 TextField(
                   controller: businessCtrl,
                   decoration: const InputDecoration(
-                    hintText: 'Enter business name',
+                    hintText: 'Enter guest house name',
                     border: OutlineInputBorder(),
                     isDense: true,
                   ),
@@ -199,12 +199,12 @@ class ProfileScreen extends StatelessWidget {
         children: [
           const SizedBox(height: 16),
           const Text(
-            'Who is ordering? / ใครสั่ง?',
+            'Staff Member / พนักงาน',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           const Text(
-            'Select your name or create a new profile\nเลือกชื่อหรือสร้างโปรไฟล์ใหม่',
+            'Select your name to start taking orders\nเลือกชื่อเพื่อเริ่มรับออเดอร์',
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey, fontSize: 14),
           ),
@@ -218,7 +218,7 @@ class ProfileScreen extends StatelessWidget {
                         Icon(Icons.person_add,
                             size: 60, color: Colors.grey.shade400),
                         const SizedBox(height: 8),
-                        const Text('No customers yet\nยังไม่มีลูกค้า',
+                        const Text('No staff members yet\nยังไม่มีพนักงาน',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.grey)),
                       ],
@@ -294,7 +294,7 @@ class ProfileScreen extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed: () => _showNewCustomerDialog(context),
                 icon: const Icon(Icons.person_add),
-                label: const Text('New Customer / ลูกค้าใหม่',
+                label: const Text('New Staff Member / พนักงานใหม่',
                     style: TextStyle(fontSize: 16)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepOrange,

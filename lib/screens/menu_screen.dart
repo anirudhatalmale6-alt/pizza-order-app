@@ -103,7 +103,7 @@ class _MenuScreenState extends State<MenuScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.people),
-          tooltip: 'Switch customer',
+          tooltip: 'Switch staff',
           onPressed: () {
             profile.clearSelection();
             cart.clear();
