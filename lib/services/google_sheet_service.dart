@@ -16,55 +16,77 @@ class SheetData {
 }
 
 class GoogleSheetService {
-  static const _timeout = Duration(seconds: 15);
+  static const _timeout = Duration(seconds: 20);
 
   /// Extract sheet ID from a full URL or return as-is if already an ID
   static String extractSheetId(String input) {
     input = input.trim();
-    // Handle full Google Sheets URL
     final match = RegExp(r'/spreadsheets/d/([a-zA-Z0-9_-]+)').firstMatch(input);
     if (match != null) return match.group(1)!;
-    // Already just an ID
     return input;
   }
 
-  static String _csvUrl(String sheetId, String tabName) =>
+  // Try export URL first (more reliable on mobile), fall back to gviz
+  static String _exportUrl(String sheetId, String tabName) =>
+      'https://docs.google.com/spreadsheets/d/$sheetId/export?format=csv&sheet=${Uri.encodeComponent(tabName)}';
+
+  static String _gvizUrl(String sheetId, String tabName) =>
       'https://docs.google.com/spreadsheets/d/$sheetId/gviz/tq?tqx=out:csv&sheet=${Uri.encodeComponent(tabName)}';
 
   static Future<List<List<dynamic>>> _fetchTab(
       String sheetId, String tabName) async {
-    final url = _csvUrl(sheetId, tabName);
+    // Try export URL first
+    try {
+      return await _fetchFromUrl(_exportUrl(sheetId, tabName));
+    } catch (_) {}
+
+    // Fall back to gviz URL
+    return await _fetchFromUrl(_gvizUrl(sheetId, tabName));
+  }
+
+  static Future<List<List<dynamic>>> _fetchFromUrl(String url) async {
     final response = await http.get(Uri.parse(url), headers: {
       'Accept': 'text/csv',
+      'User-Agent': 'JensPizzeria/3.0',
     }).timeout(_timeout);
     if (response.statusCode != 200) {
-      throw Exception('Failed to fetch $tabName: ${response.statusCode}');
+      throw Exception('HTTP ${response.statusCode}');
     }
-    // Guard against HTML responses (Google login/error pages)
     final body = response.body.trim();
-    if (body.startsWith('<!') || body.startsWith('<html')) {
-      throw Exception('Got HTML instead of CSV for $tabName. Is the sheet shared publicly?');
+    if (body.startsWith('<!') || body.startsWith('<html') || body.startsWith('<HTML')) {
+      throw Exception('Got HTML instead of CSV');
+    }
+    if (body.isEmpty) {
+      throw Exception('Empty response');
     }
     final rows = const CsvToListConverter().convert(body);
-    if (rows.isEmpty) return [];
-    // First row is header, rest is data
+    if (rows.isEmpty) throw Exception('No rows parsed');
     return rows;
   }
 
+  /// Last sync error message (for showing in UI)
+  static String lastError = '';
+
   static Future<SheetData> fetchAll(String sheetId) async {
-    final menuRows = await _fetchTab(sheetId, 'menu');
-    final toppingRows = await _fetchTab(sheetId, 'toppings');
-    final categoryRows = await _fetchTab(sheetId, 'categories');
+    lastError = '';
+    try {
+      final menuRows = await _fetchTab(sheetId, 'menu');
+      final toppingRows = await _fetchTab(sheetId, 'toppings');
+      final categoryRows = await _fetchTab(sheetId, 'categories');
 
-    final categories = _parseCategories(categoryRows);
-    final menuItems = _parseMenu(menuRows);
-    final toppings = _parseToppings(toppingRows);
+      final categories = _parseCategories(categoryRows);
+      final menuItems = _parseMenu(menuRows);
+      final toppings = _parseToppings(toppingRows);
 
-    return SheetData(
-      categories: categories,
-      menuItems: menuItems,
-      toppings: toppings,
-    );
+      return SheetData(
+        categories: categories,
+        menuItems: menuItems,
+        toppings: toppings,
+      );
+    } catch (e) {
+      lastError = e.toString();
+      rethrow;
+    }
   }
 
   static List<CategoryConfig> _parseCategories(List<List<dynamic>> rows) {
@@ -83,8 +105,8 @@ class GoogleSheetService {
         key: _str(map['key']),
         label: _str(map['label']),
         labelThai: _str(map['labelthai']),
-        icon: _str(map['icon'], 'restaurant'),
-        color: _str(map['color'], 'deepOrange'),
+        icon: _strOrFallback(map['icon'], 'restaurant'),
+        color: _strOrFallback(map['color'], 'deepOrange'),
         discount: _num(map['discount']),
         sortOrder: _num(map['sortorder']).toInt(),
         hasToppings: _bool(map['hastoppings']),
@@ -144,6 +166,12 @@ class GoogleSheetService {
 
   static String _str(dynamic val, [String fallback = '']) =>
       val?.toString().trim() ?? fallback;
+
+  /// Returns fallback if value is null OR empty
+  static String _strOrFallback(dynamic val, String fallback) {
+    final s = val?.toString().trim() ?? '';
+    return s.isEmpty ? fallback : s;
+  }
 
   static double _num(dynamic val) {
     if (val is num) return val.toDouble();

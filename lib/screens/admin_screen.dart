@@ -511,12 +511,13 @@ class _SettingsTabState extends State<_SettingsTab> {
     final success = await menu.syncFromSheet();
     if (mounted) {
       setState(() => _syncing = false);
+      final msg = success
+          ? 'Sync OK! ${menu.allItems.length} items, ${menu.categories.length} categories loaded.'
+          : 'Sync failed: ${menu.lastSyncError}';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success
-              ? 'Sync successful! Menu updated from Google Sheet.'
-              : 'Sync failed. Check Sheet ID and make sure the sheet is publicly shared.'),
-          duration: const Duration(seconds: 3),
+          content: Text(msg),
+          duration: const Duration(seconds: 5),
         ),
       );
     }

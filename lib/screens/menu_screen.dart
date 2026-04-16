@@ -273,6 +273,27 @@ class _MenuScreenState extends State<MenuScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Sync status banner
+          if (!menu.syncedFromSheet && menu.lastSyncError.isNotEmpty)
+            Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.amber.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.amber.shade300),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.cloud_off, color: Colors.amber, size: 20),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text('Offline mode - using cached menu',
+                        style: TextStyle(fontSize: 12, color: Colors.black54)),
+                  ),
+                ],
+              ),
+            ),
           for (int ci = 0; ci < categories.length; ci++) ...[
             if (ci > 0) const SizedBox(height: 24),
             _SectionHeader(

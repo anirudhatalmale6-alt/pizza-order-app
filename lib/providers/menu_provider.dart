@@ -14,6 +14,10 @@ class MenuProvider extends ChangeNotifier {
 
   List<CategoryConfig> get categories => List.unmodifiable(_categories);
   String get sheetId => _sheetId;
+  String _lastSyncError = '';
+  bool _syncedFromSheet = false;
+  String get lastSyncError => _lastSyncError;
+  bool get syncedFromSheet => _syncedFromSheet;
 
   List<MenuItem> itemsForCategory(String key) =>
       _menuBox.values.where((i) => i.type == key && i.isActive).toList();
@@ -83,10 +87,16 @@ class MenuProvider extends ChangeNotifier {
         await _toppingBox.add(item);
       }
 
+      _syncedFromSheet = true;
+      _lastSyncError = '';
       notifyListeners();
       return true;
     } catch (e) {
-      debugPrint('Sheet sync failed: $e');
+      _lastSyncError = GoogleSheetService.lastError.isNotEmpty
+          ? GoogleSheetService.lastError
+          : e.toString();
+      debugPrint('Sheet sync failed: $_lastSyncError');
+      _syncedFromSheet = false;
       return false;
     }
   }
