@@ -19,16 +19,6 @@
       "discount": "5",
       "sortOrder": "3",
       "hasToppings": "false"
-    },
-    {
-      "key": "snack",
-      "label": "Snacks",
-      "labelThai": "Snacks",
-      "icon": "",
-      "color": "Green",
-      "discount": "10",
-      "sortOrder": "2",
-      "hasToppings": "FALSE"
     }
   ],
   "menu": [
@@ -185,13 +175,6 @@
       "price": "70",
       "category": "drink",
       "isActive": "true"
-    },
-    {
-      "name": "Samosa",
-      "nameThai": "",
-      "price": "50",
-      "category": "snack",
-      "isActive": "TRUE"
     }
   ],
   "toppings": [
