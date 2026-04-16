@@ -170,7 +170,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       setState(() => _orderConfirmed = true);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Confirmation sent! Now collect payment.\nส่งการยืนยันแล้ว! เก็บเงินได้เลย'),
+          content: Text('Confirmation sent! Wait for reply on LINE before you take payment.\nส่งการยืนยันแล้ว! รอตอบกลับทาง LINE ก่อนเก็บเงิน'),
           duration: Duration(seconds: 3),
         ),
       );
