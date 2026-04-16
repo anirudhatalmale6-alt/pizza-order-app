@@ -23,6 +23,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   File? _paymentScreenshot;
   String _orderType = 'pickup'; // 'pickup' or 'delivery'
   int? _selectedHour; // 11-16
+  bool _orderConfirmed = false;
 
   Future<void> _pickScreenshot() async {
     final picker = ImagePicker();
@@ -88,7 +89,76 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     return sb.toString();
   }
 
+  String _buildConfirmText() {
+    final cart = context.read<CartProvider>();
+    final profile = context.read<ProfileProvider>();
+
+    final sb = StringBuffer();
+    sb.writeln('CONFIRM ORDER / ยืนยันออเดอร์');
+    sb.writeln('================================');
+    sb.writeln('Customer / ลูกค้า: ${profile.customerName}');
+    if (profile.businessName.isNotEmpty) {
+      sb.writeln('Business / ธุรกิจ: ${profile.businessName}');
+    }
+    sb.writeln();
+
+    final typeText = _orderType == 'pickup'
+        ? 'Pickup / รับเอง'
+        : 'Delivery / จัดส่ง';
+    sb.writeln('Type / ประเภท: $typeText');
+    if (_selectedHour != null) {
+      final period = _selectedHour! < 12 ? 'AM' : 'PM';
+      final display12 = _selectedHour! > 12 ? _selectedHour! - 12 : _selectedHour!;
+      sb.writeln('Time / เวลา: ${display12}:00 $period ($_selectedHour:00)');
+    }
+    sb.writeln();
+
+    sb.writeln('Items / รายการ:');
+    for (final item in cart.items) {
+      if (item.productType == 'pizza') {
+        final toppingsStr = item.toppings.isNotEmpty
+            ? ' + ${item.toppings.map((t) => t.name).join(', ')}'
+            : '';
+        sb.writeln('- ${item.productName}$toppingsStr x${item.quantity} = ${item.itemTotal.toInt()} THB');
+      } else {
+        sb.writeln('- ${item.productName} x${item.quantity} = ${item.itemTotal.toInt()} THB');
+      }
+    }
+    sb.writeln();
+    sb.writeln('Total / รวม: ${cart.finalTotal.toInt()} THB');
+    sb.writeln('================================');
+    sb.writeln('Please confirm this order is OK');
+    sb.writeln('กรุณายืนยันว่าออเดอร์ถูกต้อง');
+
+    return sb.toString();
+  }
+
   static const _shareChannel = MethodChannel('com.pizzaorder/share');
+
+  Future<void> _sendConfirmation() async {
+    final confirmText = _buildConfirmText();
+
+    bool sent = false;
+    try {
+      final result = await _shareChannel.invokeMethod('shareToLine', {'text': confirmText});
+      sent = (result == true);
+    } catch (_) {}
+
+    if (!sent && mounted) {
+      await Clipboard.setData(ClipboardData(text: confirmText));
+      await Share.share(confirmText);
+    }
+
+    if (mounted) {
+      setState(() => _orderConfirmed = true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Confirmation sent! Now collect payment.\nส่งการยืนยันแล้ว! เก็บเงินได้เลย'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
 
   Future<void> _sendToLine() async {
     final orderText = _buildOrderText();
@@ -436,6 +506,32 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           const SizedBox(height: 24),
 
+          // Step 1: Confirm Order button (sends LINE message with order details)
+          if (!_orderConfirmed) ...[
+            SizedBox(
+              height: 56,
+              child: ElevatedButton.icon(
+                onPressed: cart.isEmpty ? null : _sendConfirmation,
+                icon: const Icon(Icons.check_circle, size: 24),
+                label: const Text('Confirm Order / ยืนยันออเดอร์',
+                    style: TextStyle(fontSize: 18)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Sends order details via LINE for confirmation before payment\nส่งรายละเอียดทาง LINE เพื่อยืนยันก่อนชำระเงิน',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          // Step 2: Payment (only visible after confirmation)
+          if (_orderConfirmed) ...[
           // Payment QR
           const Text('Payment / การชำระเงิน',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -616,6 +712,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           ),
 
           const SizedBox(height: 16),
+          ], // end if (_orderConfirmed)
         ],
       ),
     );
