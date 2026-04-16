@@ -24,6 +24,13 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   String _orderType = 'pickup'; // 'pickup' or 'delivery'
   int? _selectedHour; // 11-16
   bool _orderConfirmed = false;
+  final _guestNameCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _guestNameCtrl.dispose();
+    super.dispose();
+  }
 
   Future<void> _pickScreenshot() async {
     final picker = ImagePicker();
@@ -49,6 +56,9 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final sb = StringBuffer();
     sb.writeln('PAID ORDER / ออเดอร์ที่ชำระแล้ว');
     sb.writeln('================================');
+    if (_guestNameCtrl.text.trim().isNotEmpty) {
+      sb.writeln('Guest / ชื่อผู้สั่ง: ${_guestNameCtrl.text.trim()}');
+    }
     sb.writeln('Customer / ลูกค้า: ${profile.customerName}');
     if (profile.businessName.isNotEmpty) {
       sb.writeln('Business / ธุรกิจ: ${profile.businessName}');
@@ -100,6 +110,9 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final sb = StringBuffer();
     sb.writeln('CONFIRM ORDER / ยืนยันออเดอร์');
     sb.writeln('================================');
+    if (_guestNameCtrl.text.trim().isNotEmpty) {
+      sb.writeln('Guest / ชื่อผู้สั่ง: ${_guestNameCtrl.text.trim()}');
+    }
     sb.writeln('Customer / ลูกค้า: ${profile.customerName}');
     if (profile.businessName.isNotEmpty) {
       sb.writeln('Business / ธุรกิจ: ${profile.businessName}');
@@ -214,6 +227,38 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Guest Name (not saved, one-time use)
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.orange.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.orange.shade200),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Guest Name / ชื่อผู้สั่ง',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                const Text('Name for this order only / ชื่อสำหรับออเดอร์นี้เท่านั้น',
+                    style: TextStyle(color: Colors.grey, fontSize: 12)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _guestNameCtrl,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter guest name / ใส่ชื่อ',
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
           // Pickup or Delivery + Time
           Container(
             padding: const EdgeInsets.all(16),
