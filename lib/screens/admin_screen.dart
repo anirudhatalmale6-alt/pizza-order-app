@@ -512,10 +512,11 @@ class _SettingsTabState extends State<_SettingsTab> {
     if (mounted) {
       setState(() => _syncing = false);
       if (success) {
+        final source = menu.lastSyncError; // Contains "Loaded from: X"
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Sync OK! ${menu.allItems.length} items, ${menu.categories.length} categories loaded.'),
-            duration: const Duration(seconds: 3),
+            content: Text('Sync OK! ${menu.allItems.length} items, ${menu.categories.length} categories. $source'),
+            duration: const Duration(seconds: 4),
             backgroundColor: Colors.green,
           ),
         );
