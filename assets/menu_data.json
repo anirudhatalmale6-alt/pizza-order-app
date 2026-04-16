@@ -1,0 +1,253 @@
+{
+  "categories": [
+    {
+      "key": "pizza",
+      "label": "Pizza",
+      "labelThai": "พิซซ่า",
+      "icon": "local_pizza",
+      "color": "deepOrange",
+      "discount": "20",
+      "sortOrder": "1",
+      "hasToppings": "true"
+    },
+    {
+      "key": "drink",
+      "label": "Drinks",
+      "labelThai": "เครื่องดื่ม",
+      "icon": "local_drink",
+      "color": "blue",
+      "discount": "5",
+      "sortOrder": "3",
+      "hasToppings": "false"
+    },
+    {
+      "key": "snack",
+      "label": "Snacks",
+      "labelThai": "Snacks",
+      "icon": "",
+      "color": "Green",
+      "discount": "10",
+      "sortOrder": "2",
+      "hasToppings": "FALSE"
+    }
+  ],
+  "menu": [
+    {
+      "name": "Margherita",
+      "nameThai": "พิซซ่ามาร์การิต้า",
+      "price": "159",
+      "category": "pizza",
+      "isActive": "true"
+    },
+    {
+      "name": "Spicy Peanut",
+      "nameThai": "พิซซ่าถั่วเผ็ด",
+      "price": "159",
+      "category": "pizza",
+      "isActive": "true"
+    },
+    {
+      "name": "Espresso (Hot)",
+      "nameThai": "เอสเปรสโซ่ (ร้อน)",
+      "price": "40",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Americano (Hot)",
+      "nameThai": "อเมริกาโน่ (ร้อน)",
+      "price": "40",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Cappuccino (Hot)",
+      "nameThai": "คาปูชิโน่ (ร้อน)",
+      "price": "50",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Latte (Hot)",
+      "nameThai": "ลาเต้ (ร้อน)",
+      "price": "50",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Espresso (Iced)",
+      "nameThai": "เอสเปรสโซ่ (เย็น)",
+      "price": "45",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Americano (Iced)",
+      "nameThai": "อเมริกาโน่ (เย็น)",
+      "price": "45",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Cappuccino (Iced)",
+      "nameThai": "คาปูชิโน่ (เย็น)",
+      "price": "55",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Latte (Iced)",
+      "nameThai": "ลาเต้ (เย็น)",
+      "price": "55",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Mango Soda",
+      "nameThai": "น้ำมะม่วงโซดา",
+      "price": "55",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Apple Soda",
+      "nameThai": "โซดาแอปเปิ้ล",
+      "price": "55",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Orange Soda",
+      "nameThai": "น้ำส้มโซดา",
+      "price": "55",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Passion Fruit Soda",
+      "nameThai": "โซดารสเสาวรส",
+      "price": "55",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Pineapple Soda",
+      "nameThai": "น้ำสับปะรดโซดา",
+      "price": "55",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Lychee Fruit Tea",
+      "nameThai": "ชาลิ้นจี่",
+      "price": "50",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Peach Fruit Tea",
+      "nameThai": "ชาพีช",
+      "price": "50",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Thai Milk Tea",
+      "nameThai": "ชานมไทย",
+      "price": "50",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Taiwanese Bubble Tea",
+      "nameThai": "ชานมมุขไต้หวั่น",
+      "price": "50",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Apple Tea",
+      "nameThai": "ชาแอปเปิล",
+      "price": "50",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Punch",
+      "nameThai": "พั้นซ์",
+      "price": "50",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Matcha",
+      "nameThai": "มัทฉะ",
+      "price": "70",
+      "category": "drink",
+      "isActive": "true"
+    },
+    {
+      "name": "Samosa",
+      "nameThai": "",
+      "price": "50",
+      "category": "snack",
+      "isActive": "TRUE"
+    }
+  ],
+  "toppings": [
+    {
+      "name": "Extra Cheese",
+      "nameThai": "ชีสเพิ่ม",
+      "price": "45",
+      "isActive": "true"
+    },
+    {
+      "name": "Ham",
+      "nameThai": "แฮม",
+      "price": "50",
+      "isActive": "true"
+    },
+    {
+      "name": "Bacon",
+      "nameThai": "เบคอน",
+      "price": "60",
+      "isActive": "true"
+    },
+    {
+      "name": "Shrimp",
+      "nameThai": "กุ้ง",
+      "price": "50",
+      "isActive": "true"
+    },
+    {
+      "name": "Tomato",
+      "nameThai": "มะเขือเทศ",
+      "price": "25",
+      "isActive": "true"
+    },
+    {
+      "name": "Onion",
+      "nameThai": "หัวหอม",
+      "price": "25",
+      "isActive": "true"
+    },
+    {
+      "name": "Bell Pepper",
+      "nameThai": "พริกหวาน",
+      "price": "30",
+      "isActive": "true"
+    },
+    {
+      "name": "Pineapple",
+      "nameThai": "สัปปะรด",
+      "price": "30",
+      "isActive": "true"
+    },
+    {
+      "name": "Mushroom",
+      "nameThai": "เห็ด",
+      "price": "45",
+      "isActive": "true"
+    }
+  ]
+}
