@@ -539,10 +539,11 @@ class _SettingsTabState extends State<_SettingsTab> {
         TextField(
           controller: _sheetIdCtrl,
           decoration: const InputDecoration(
-            labelText: 'Google Sheet ID',
-            hintText: 'e.g., 1abc...xyz from the sheet URL',
+            labelText: 'Google Sheet ID or URL',
+            hintText: 'Paste the full Google Sheet link here',
             border: OutlineInputBorder(),
           ),
+          maxLines: 2,
         ),
         const SizedBox(height: 12),
         ElevatedButton.icon(

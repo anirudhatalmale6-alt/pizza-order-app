@@ -16,7 +16,17 @@ class SheetData {
 }
 
 class GoogleSheetService {
-  static const _timeout = Duration(seconds: 8);
+  static const _timeout = Duration(seconds: 15);
+
+  /// Extract sheet ID from a full URL or return as-is if already an ID
+  static String extractSheetId(String input) {
+    input = input.trim();
+    // Handle full Google Sheets URL
+    final match = RegExp(r'/spreadsheets/d/([a-zA-Z0-9_-]+)').firstMatch(input);
+    if (match != null) return match.group(1)!;
+    // Already just an ID
+    return input;
+  }
 
   static String _csvUrl(String sheetId, String tabName) =>
       'https://docs.google.com/spreadsheets/d/$sheetId/gviz/tq?tqx=out:csv&sheet=${Uri.encodeComponent(tabName)}';
@@ -24,11 +34,18 @@ class GoogleSheetService {
   static Future<List<List<dynamic>>> _fetchTab(
       String sheetId, String tabName) async {
     final url = _csvUrl(sheetId, tabName);
-    final response = await http.get(Uri.parse(url)).timeout(_timeout);
+    final response = await http.get(Uri.parse(url), headers: {
+      'Accept': 'text/csv',
+    }).timeout(_timeout);
     if (response.statusCode != 200) {
       throw Exception('Failed to fetch $tabName: ${response.statusCode}');
     }
-    final rows = const CsvToListConverter().convert(response.body);
+    // Guard against HTML responses (Google login/error pages)
+    final body = response.body.trim();
+    if (body.startsWith('<!') || body.startsWith('<html')) {
+      throw Exception('Got HTML instead of CSV for $tabName. Is the sheet shared publicly?');
+    }
+    final rows = const CsvToListConverter().convert(body);
     if (rows.isEmpty) return [];
     // First row is header, rest is data
     return rows;

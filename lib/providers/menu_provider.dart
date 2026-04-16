@@ -92,7 +92,7 @@ class MenuProvider extends ChangeNotifier {
   }
 
   Future<void> saveSheetId(String id) async {
-    _sheetId = id.trim();
+    _sheetId = GoogleSheetService.extractSheetId(id);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('googleSheetId', _sheetId);
     notifyListeners();
