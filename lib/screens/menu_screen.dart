@@ -13,7 +13,9 @@ import 'profile_screen.dart';
 
 // Map icon name strings to IconData
 IconData iconFromString(String name) {
-  switch (name) {
+  switch (name.toLowerCase().trim()) {
+    case '':
+      return Icons.restaurant;
     case 'local_pizza':
       return Icons.local_pizza;
     case 'local_drink':
@@ -47,7 +49,7 @@ IconData iconFromString(String name) {
 
 // Map color name strings to Color
 Color colorFromString(String name) {
-  switch (name) {
+  switch (name.toLowerCase()) {
     case 'deepOrange':
       return Colors.deepOrange;
     case 'blue':
