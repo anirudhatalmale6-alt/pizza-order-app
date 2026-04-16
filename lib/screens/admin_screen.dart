@@ -512,12 +512,25 @@ class _SettingsTabState extends State<_SettingsTab> {
     if (mounted) {
       setState(() => _syncing = false);
       if (success) {
-        final source = menu.lastSyncError; // Contains "Loaded from: X"
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Sync OK! ${menu.allItems.length} items, ${menu.categories.length} categories. $source'),
-            duration: const Duration(seconds: 4),
-            backgroundColor: Colors.green,
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Row(
+              children: const [
+                Icon(Icons.check_circle, color: Colors.green),
+                SizedBox(width: 8),
+                Text('Sync OK!'),
+              ],
+            ),
+            content: Text(menu.lastSyncError.isNotEmpty
+                ? menu.lastSyncError
+                : '${menu.allItems.length} menu items\n${menu.categories.length} categories'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('OK'),
+              ),
+            ],
           ),
         );
       } else {
