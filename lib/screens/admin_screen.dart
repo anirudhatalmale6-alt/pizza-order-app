@@ -52,6 +52,7 @@ class _MenuItemsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final menu = context.watch<MenuProvider>();
     final items = menu.allItems;
+    final categories = menu.categories;
 
     return Scaffold(
       body: items.isEmpty
@@ -61,21 +62,22 @@ class _MenuItemsTab extends StatelessWidget {
               itemCount: items.length,
               itemBuilder: (context, index) {
                 final item = items[index];
+                final cat = menu.categoryFor(item.type);
                 return Card(
                   child: ListTile(
                     leading: Icon(
-                      item.type == 'pizza' ? Icons.local_pizza : Icons.local_drink,
+                      Icons.restaurant,
                       color: item.isActive ? Colors.deepOrange : Colors.grey,
                     ),
                     title: Text('${item.name} / ${item.nameThai}'),
                     subtitle: Text(
-                        '${item.price.toInt()} THB - ${item.type} - ${item.isActive ? "Active" : "Inactive"}'),
+                        '${item.price.toInt()} THB - ${cat?.label ?? item.type} - ${item.isActive ? "Active" : "Inactive"}'),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
                           icon: const Icon(Icons.edit, size: 20),
-                          onPressed: () => _showEditDialog(context, menu, index, item),
+                          onPressed: () => _showEditDialog(context, menu, index, item, categories),
                         ),
                         IconButton(
                           icon: const Icon(Icons.delete, size: 20, color: Colors.red),
@@ -88,18 +90,18 @@ class _MenuItemsTab extends StatelessWidget {
               },
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddDialog(context, menu),
+        onPressed: () => _showAddDialog(context, menu, categories),
         backgroundColor: Colors.deepOrange,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
-  void _showAddDialog(BuildContext context, MenuProvider menu) {
+  void _showAddDialog(BuildContext context, MenuProvider menu, List categories) {
     final nameCtrl = TextEditingController();
     final nameThaiCtrl = TextEditingController();
     final priceCtrl = TextEditingController();
-    String type = 'pizza';
+    String type = categories.isNotEmpty ? categories.first.key : 'pizza';
 
     showDialog(
       context: context,
@@ -122,10 +124,10 @@ class _MenuItemsTab extends StatelessWidget {
               const SizedBox(height: 8),
               DropdownButton<String>(
                 value: type,
-                items: const [
-                  DropdownMenuItem(value: 'pizza', child: Text('Pizza')),
-                  DropdownMenuItem(value: 'drink', child: Text('Drink')),
-                ],
+                items: categories
+                    .map<DropdownMenuItem<String>>((c) =>
+                        DropdownMenuItem(value: c.key, child: Text(c.label)))
+                    .toList(),
                 onChanged: (v) => setState(() => type = v!),
               ),
             ],
@@ -152,12 +154,17 @@ class _MenuItemsTab extends StatelessWidget {
     );
   }
 
-  void _showEditDialog(BuildContext context, MenuProvider menu, int index, MenuItem item) {
+  void _showEditDialog(BuildContext context, MenuProvider menu, int index, MenuItem item, List categories) {
     final nameCtrl = TextEditingController(text: item.name);
     final nameThaiCtrl = TextEditingController(text: item.nameThai);
     final priceCtrl = TextEditingController(text: item.price.toString());
     String type = item.type;
     bool isActive = item.isActive;
+
+    // Make sure type is valid
+    if (!categories.any((c) => c.key == type)) {
+      type = categories.isNotEmpty ? categories.first.key : 'pizza';
+    }
 
     showDialog(
       context: context,
@@ -180,10 +187,10 @@ class _MenuItemsTab extends StatelessWidget {
               const SizedBox(height: 8),
               DropdownButton<String>(
                 value: type,
-                items: const [
-                  DropdownMenuItem(value: 'pizza', child: Text('Pizza')),
-                  DropdownMenuItem(value: 'drink', child: Text('Drink')),
-                ],
+                items: categories
+                    .map<DropdownMenuItem<String>>((c) =>
+                        DropdownMenuItem(value: c.key, child: Text(c.label)))
+                    .toList(),
                 onChanged: (v) => setState(() => type = v!),
               ),
               SwitchListTile(
@@ -369,56 +376,63 @@ class _DiscountsTab extends StatefulWidget {
 }
 
 class _DiscountsTabState extends State<_DiscountsTab> {
-  late TextEditingController _pizzaDiscountCtrl;
-  late TextEditingController _drinkDiscountCtrl;
+  final Map<String, TextEditingController> _controllers = {};
 
   @override
   void initState() {
     super.initState();
+    final menu = context.read<MenuProvider>();
     final cart = context.read<CartProvider>();
-    _pizzaDiscountCtrl = TextEditingController(text: cart.pizzaDiscount.toInt().toString());
-    _drinkDiscountCtrl = TextEditingController(text: cart.drinkDiscount.toInt().toString());
+    for (final cat in menu.categories) {
+      final discount = cart.categoryDiscounts[cat.key] ?? cat.discount;
+      _controllers[cat.key] = TextEditingController(text: discount.toInt().toString());
+    }
   }
 
   @override
   void dispose() {
-    _pizzaDiscountCtrl.dispose();
-    _drinkDiscountCtrl.dispose();
+    for (final ctrl in _controllers.values) {
+      ctrl.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final menu = context.watch<MenuProvider>();
+    final categories = menu.categories;
+
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Text('Discount Settings', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          const Text('These discounts are managed via Google Sheets when synced.\nLocal changes here will be overwritten on next sync.',
+              style: TextStyle(color: Colors.grey, fontSize: 12)),
           const SizedBox(height: 16),
-          TextField(
-            controller: _pizzaDiscountCtrl,
-            decoration: const InputDecoration(
-              labelText: 'Pizza Discount (THB per pizza)',
-              border: OutlineInputBorder(),
+          for (final cat in categories) ...[
+            TextField(
+              controller: _controllers[cat.key] ??
+                  (_controllers[cat.key] = TextEditingController(text: cat.discount.toInt().toString())),
+              decoration: InputDecoration(
+                labelText: '${cat.label} Discount (THB per item)',
+                border: const OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
             ),
-            keyboardType: TextInputType.number,
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _drinkDiscountCtrl,
-            decoration: const InputDecoration(
-              labelText: 'Drink Discount (THB per drink)',
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-          ),
-          const SizedBox(height: 24),
+            const SizedBox(height: 16),
+          ],
           ElevatedButton(
             onPressed: () {
               final cart = context.read<CartProvider>();
-              cart.pizzaDiscount = double.tryParse(_pizzaDiscountCtrl.text) ?? 20;
-              cart.drinkDiscount = double.tryParse(_drinkDiscountCtrl.text) ?? 5;
+              final discounts = <String, double>{};
+              for (final cat in categories) {
+                final ctrl = _controllers[cat.key];
+                discounts[cat.key] = double.tryParse(ctrl?.text ?? '') ?? cat.discount;
+              }
+              cart.setCategoryDiscounts(discounts);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Discounts saved!')),
               );
@@ -447,8 +461,10 @@ class _SettingsTab extends StatefulWidget {
 class _SettingsTabState extends State<_SettingsTab> {
   late TextEditingController _lineCtrl;
   late TextEditingController _promptPayCtrl;
+  late TextEditingController _sheetIdCtrl;
   late int _openHour;
   late int _closeHour;
+  bool _syncing = false;
 
   static const _allHours = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 
@@ -463,8 +479,10 @@ class _SettingsTabState extends State<_SettingsTab> {
   void initState() {
     super.initState();
     final profile = context.read<ProfileProvider>();
+    final menu = context.read<MenuProvider>();
     _lineCtrl = TextEditingController(text: profile.lineDeepLink);
     _promptPayCtrl = TextEditingController(text: profile.promptPayId);
+    _sheetIdCtrl = TextEditingController(text: menu.sheetId);
     _openHour = profile.openHour;
     _closeHour = profile.closeHour;
   }
@@ -473,7 +491,35 @@ class _SettingsTabState extends State<_SettingsTab> {
   void dispose() {
     _lineCtrl.dispose();
     _promptPayCtrl.dispose();
+    _sheetIdCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _syncSheet() async {
+    final menu = context.read<MenuProvider>();
+    final id = _sheetIdCtrl.text.trim();
+
+    if (id.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a Google Sheet ID first')),
+      );
+      return;
+    }
+
+    setState(() => _syncing = true);
+    await menu.saveSheetId(id);
+    final success = await menu.syncFromSheet();
+    if (mounted) {
+      setState(() => _syncing = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success
+              ? 'Sync successful! Menu updated from Google Sheet.'
+              : 'Sync failed. Check Sheet ID and make sure the sheet is publicly shared.'),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   @override
@@ -481,6 +527,40 @@ class _SettingsTabState extends State<_SettingsTab> {
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
+        // Google Sheet Sync
+        const Text('Google Sheet Sync', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        const Text(
+          'Enter your Google Sheet ID to sync menu, toppings, categories and discounts.\n'
+          'The sheet must be shared as "Anyone with the link can view".',
+          style: TextStyle(color: Colors.grey, fontSize: 12),
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _sheetIdCtrl,
+          decoration: const InputDecoration(
+            labelText: 'Google Sheet ID',
+            hintText: 'e.g., 1abc...xyz from the sheet URL',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        const SizedBox(height: 12),
+        ElevatedButton.icon(
+          onPressed: _syncing ? null : _syncSheet,
+          icon: _syncing
+              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+              : const Icon(Icons.sync),
+          label: Text(_syncing ? 'Syncing...' : 'Sync Now'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 14),
+          ),
+        ),
+
+        const SizedBox(height: 32),
+
+        // Opening Hours
         const Text('Opening Hours', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         const Text('Set the hours customers can choose for pickup/delivery',
@@ -585,9 +665,11 @@ class _SettingsTabState extends State<_SettingsTab> {
         ElevatedButton(
           onPressed: () async {
             final profile = context.read<ProfileProvider>();
+            final menu = context.read<MenuProvider>();
             await profile.saveLineConfig(_lineCtrl.text.trim());
             await profile.savePromptPayId(_promptPayCtrl.text.trim());
             await profile.saveOpeningHours(_openHour, _closeHour);
+            await menu.saveSheetId(_sheetIdCtrl.text.trim());
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Settings saved!')),

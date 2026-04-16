@@ -7,9 +7,12 @@ import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../models/category_config.dart';
 import '../providers/cart_provider.dart';
+import '../providers/menu_provider.dart';
 import '../providers/profile_provider.dart';
 import '../utils/promptpay_qr.dart';
+import 'menu_screen.dart';
 import 'profile_screen.dart';
 
 class OrderSummaryScreen extends StatefulWidget {
@@ -48,9 +51,18 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
   }
 
+  List<CategoryConfig> _categoriesWithItems() {
+    final menu = context.read<MenuProvider>();
+    final cart = context.read<CartProvider>();
+    final categories = menu.categories;
+    // Return only categories that have items in the cart
+    return categories.where((c) => cart.countForCategory(c.key) > 0).toList();
+  }
+
   String _buildOrderText() {
     final cart = context.read<CartProvider>();
     final profile = context.read<ProfileProvider>();
+    final menu = context.read<MenuProvider>();
     final now = DateFormat('dd MMM yyyy, HH:mm').format(DateTime.now());
 
     final sb = StringBuffer();
@@ -76,10 +88,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     sb.writeln('Items / รายการ:');
 
     for (final item in cart.items) {
-      if (item.productType == 'pizza') {
-        final toppingsStr = item.toppings.isNotEmpty
-            ? ' (${item.toppings.map((t) => '${t.nameThai} +${t.price.toInt()} / ${t.name} +${t.price.toInt()}').join(', ')})'
-            : '';
+      final cat = menu.categoryFor(item.productType);
+      final hasToppings = cat?.hasToppings ?? false;
+      if (hasToppings && item.toppings.isNotEmpty) {
+        final toppingsStr =
+            ' (${item.toppings.map((t) => '${t.nameThai} +${t.price.toInt()} / ${t.name} +${t.price.toInt()}').join(', ')})';
         sb.writeln(
             '- ${item.productNameThai} / ${item.productName}$toppingsStr x${item.quantity} → ${item.basePrice.toInt()} +${item.toppingsTotal.toInt()} = ${item.itemTotal.toInt()} THB');
       } else {
@@ -90,10 +103,15 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
     sb.writeln();
     sb.writeln('ส่วนลด / Discount:');
-    sb.writeln(
-        '- พิซซ่า ${cart.pizzaCount} ชิ้น ×${cart.pizzaDiscount.toInt()} / ${cart.pizzaCount} pizzas ×${cart.pizzaDiscount.toInt()} = ${cart.totalPizzaDiscount.toInt()} THB');
-    sb.writeln(
-        '- เครื่องดื่ม ${cart.drinkCount} ขวด ×${cart.drinkDiscount.toInt()} / ${cart.drinkCount} drinks ×${cart.drinkDiscount.toInt()} = ${cart.totalDrinkDiscount.toInt()} THB');
+    for (final cat in _categoriesWithItems()) {
+      final count = cart.countForCategory(cat.key);
+      final discount = cart.categoryDiscounts[cat.key] ?? 0;
+      final total = cart.discountForCategory(cat.key);
+      if (discount > 0) {
+        sb.writeln(
+            '- ${cat.labelThai} ${count} × ${discount.toInt()} / ${count} ${cat.label.toLowerCase()} × ${discount.toInt()} = ${total.toInt()} THB');
+      }
+    }
     sb.writeln();
     sb.writeln('ยอดรวมสุดท้าย / Final total: ${cart.finalTotal.toInt()} THB');
     sb.writeln();
@@ -106,6 +124,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   String _buildConfirmText() {
     final cart = context.read<CartProvider>();
     final profile = context.read<ProfileProvider>();
+    final menu = context.read<MenuProvider>();
 
     final sb = StringBuffer();
     sb.writeln('CONFIRM ORDER / ยืนยันออเดอร์');
@@ -132,10 +151,10 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
     sb.writeln('Items / รายการ:');
     for (final item in cart.items) {
-      if (item.productType == 'pizza') {
-        final toppingsStr = item.toppings.isNotEmpty
-            ? ' + ${item.toppings.map((t) => t.name).join(', ')}'
-            : '';
+      final cat = menu.categoryFor(item.productType);
+      final hasToppings = cat?.hasToppings ?? false;
+      if (hasToppings && item.toppings.isNotEmpty) {
+        final toppingsStr = ' + ${item.toppings.map((t) => t.name).join(', ')}';
         sb.writeln('- ${item.productName}$toppingsStr x${item.quantity} = ${item.itemTotal.toInt()} THB');
       } else {
         sb.writeln('- ${item.productName} x${item.quantity} = ${item.itemTotal.toInt()} THB');
@@ -180,21 +199,17 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   Future<void> _sendToLine() async {
     final orderText = _buildOrderText();
 
-    // Send directly to LINE using Android share intent with LINE package
-    // This opens LINE's contact picker with the text pre-filled - user picks contact and it sends
     bool sent = false;
     try {
       final result = await _shareChannel.invokeMethod('shareToLine', {'text': orderText});
       sent = (result == true);
     } catch (_) {}
 
-    // Fallback: copy to clipboard and use generic share
     if (!sent && mounted) {
       await Clipboard.setData(ClipboardData(text: orderText));
       await Share.share(orderText);
     }
 
-    // Auto-return to start after sending
     if (!mounted) return;
     context.read<CartProvider>().clear();
     context.read<ProfileProvider>().clearSelection();
@@ -208,6 +223,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   Widget build(BuildContext context) {
     final cart = context.watch<CartProvider>();
     final profile = context.watch<ProfileProvider>();
+    final menu = context.watch<MenuProvider>();
+    final categories = menu.categories;
 
     // Generate PromptPay QR data
     String? qrData;
@@ -408,6 +425,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           const SizedBox(height: 8),
           ...List.generate(cart.items.length, (index) {
             final item = cart.items[index];
+            final cat = menu.categoryFor(item.productType);
+            final hasToppings = cat?.hasToppings ?? false;
+            final itemIcon = cat != null ? iconFromString(cat.icon) : Icons.restaurant;
+            final itemColor = cat != null ? colorFromString(cat.color) : Colors.deepOrange;
+
             return Card(
               margin: const EdgeInsets.only(bottom: 8),
               child: Padding(
@@ -417,14 +439,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(
-                          item.productType == 'pizza'
-                              ? Icons.local_pizza
-                              : Icons.local_drink,
-                          color: item.productType == 'pizza'
-                              ? Colors.deepOrange
-                              : Colors.blue,
-                        ),
+                        Icon(itemIcon, color: itemColor),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -459,13 +474,13 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        if (item.productType == 'pizza')
+                        if (hasToppings)
                           TextButton.icon(
                             icon: const Icon(Icons.copy, size: 18),
                             label: const Text('Copy / คัดลอก'),
                             onPressed: () => cart.duplicateItem(index),
                           ),
-                        if (item.productType == 'drink') ...[
+                        if (!hasToppings) ...[
                           IconButton(
                             icon: const Icon(Icons.remove_circle_outline),
                             onPressed: () =>
@@ -495,17 +510,19 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           const Divider(height: 32),
 
-          // Discount
+          // Discount - dynamic per category
           const Text('Discount / ส่วนลด',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          Text(
-              'พิซซ่า ${cart.pizzaCount} ชิ้น × ${cart.pizzaDiscount.toInt()} = -${cart.totalPizzaDiscount.toInt()} THB\n'
-              'Pizzas: ${cart.pizzaCount} × ${cart.pizzaDiscount.toInt()} THB'),
-          const SizedBox(height: 4),
-          Text(
-              'เครื่องดื่ม ${cart.drinkCount} ขวด × ${cart.drinkDiscount.toInt()} = -${cart.totalDrinkDiscount.toInt()} THB\n'
-              'Drinks: ${cart.drinkCount} × ${cart.drinkDiscount.toInt()} THB'),
+          for (final cat in categories) ...[
+            if (cart.countForCategory(cat.key) > 0 && (cart.categoryDiscounts[cat.key] ?? 0) > 0)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Text(
+                    '${cat.labelThai} ${cart.countForCategory(cat.key)} × ${(cart.categoryDiscounts[cat.key] ?? 0).toInt()} = -${cart.discountForCategory(cat.key).toInt()} THB\n'
+                    '${cat.label}: ${cart.countForCategory(cat.key)} × ${(cart.categoryDiscounts[cat.key] ?? 0).toInt()} THB'),
+              ),
+          ],
 
           const Divider(height: 32),
 

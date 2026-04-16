@@ -1,16 +1,26 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/menu_item.dart';
+import '../models/category_config.dart';
+import '../services/google_sheet_service.dart';
 
 class MenuProvider extends ChangeNotifier {
   late Box<MenuItem> _menuBox;
   late Box<ToppingItem> _toppingBox;
+  List<CategoryConfig> _categories = [];
+  String _sheetId = '';
 
-  List<MenuItem> get pizzas =>
-      _menuBox.values.where((i) => i.type == 'pizza' && i.isActive).toList();
+  List<CategoryConfig> get categories => List.unmodifiable(_categories);
+  String get sheetId => _sheetId;
 
-  List<MenuItem> get drinks =>
-      _menuBox.values.where((i) => i.type == 'drink' && i.isActive).toList();
+  List<MenuItem> itemsForCategory(String key) =>
+      _menuBox.values.where((i) => i.type == key && i.isActive).toList();
+
+  // Legacy getters for backward compatibility
+  List<MenuItem> get pizzas => itemsForCategory('pizza');
+  List<MenuItem> get drinks => itemsForCategory('drink');
 
   List<MenuItem> get allItems => _menuBox.values.toList();
 
@@ -23,10 +33,105 @@ class MenuProvider extends ChangeNotifier {
     _menuBox = await Hive.openBox<MenuItem>('menu');
     _toppingBox = await Hive.openBox<ToppingItem>('toppings');
 
+    // Load cached categories and sheet ID
+    final prefs = await SharedPreferences.getInstance();
+    _sheetId = prefs.getString('googleSheetId') ?? '';
+    final cachedCats = prefs.getString('cachedCategories');
+    if (cachedCats != null) {
+      final list = jsonDecode(cachedCats) as List;
+      _categories = list.map((e) => CategoryConfig.fromJson(e)).toList();
+    }
+
+    // Try to sync from Google Sheet
+    if (_sheetId.isNotEmpty) {
+      await syncFromSheet();
+    }
+
+    // If still no categories, use defaults
+    if (_categories.isEmpty) {
+      _categories = _defaultCategories();
+    }
+
+    // If menu is empty, seed defaults
     if (_menuBox.isEmpty) {
       await _seedDefaults();
     }
+
+    notifyListeners();
   }
+
+  Future<bool> syncFromSheet() async {
+    if (_sheetId.isEmpty) return false;
+    try {
+      final data = await GoogleSheetService.fetchAll(_sheetId);
+
+      // Update categories
+      _categories = data.categories;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('cachedCategories',
+          jsonEncode(_categories.map((c) => c.toJson()).toList()));
+
+      // Update menu items
+      await _menuBox.clear();
+      for (final item in data.menuItems) {
+        await _menuBox.add(item);
+      }
+
+      // Update toppings
+      await _toppingBox.clear();
+      for (final item in data.toppings) {
+        await _toppingBox.add(item);
+      }
+
+      notifyListeners();
+      return true;
+    } catch (e) {
+      debugPrint('Sheet sync failed: $e');
+      return false;
+    }
+  }
+
+  Future<void> saveSheetId(String id) async {
+    _sheetId = id.trim();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('googleSheetId', _sheetId);
+    notifyListeners();
+  }
+
+  Map<String, double> get categoryDiscounts => {
+        for (final cat in _categories) cat.key: cat.discount,
+      };
+
+  CategoryConfig? categoryFor(String key) {
+    try {
+      return _categories.firstWhere((c) => c.key == key);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static List<CategoryConfig> _defaultCategories() => [
+        CategoryConfig(
+          key: 'pizza',
+          label: 'Pizza',
+          labelThai: 'พิซซ่า',
+          icon: 'local_pizza',
+          color: 'deepOrange',
+          discount: 20,
+          sortOrder: 1,
+          hasToppings: true,
+        ),
+        CategoryConfig(
+          key: 'drink',
+          label: 'Drinks',
+          labelThai: 'เครื่องดื่ม',
+          icon: 'local_drink',
+          color: 'blue',
+          discount: 5,
+          sortOrder: 2,
+          hasToppings: false,
+        ),
+      ];
 
   Future<void> _seedDefaults() async {
     // Pizzas
