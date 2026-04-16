@@ -39,7 +39,14 @@ class MenuProvider extends ChangeNotifier {
 
     // Load cached categories and sheet ID
     final prefs = await SharedPreferences.getInstance();
-    _sheetId = prefs.getString('googleSheetId') ?? '14NlT5XPpuBIEe-v9aoGvSvXbGdldq9pCWvgUdQeayug';
+    final storedId = prefs.getString('googleSheetId') ?? '';
+    _sheetId = storedId.isNotEmpty
+        ? GoogleSheetService.extractSheetId(storedId)
+        : '14NlT5XPpuBIEe-v9aoGvSvXbGdldq9pCWvgUdQeayug';
+    // Fix any previously stored full URL
+    if (storedId != _sheetId) {
+      await prefs.setString('googleSheetId', _sheetId);
+    }
     final cachedCats = prefs.getString('cachedCategories');
     if (cachedCats != null) {
       final list = jsonDecode(cachedCats) as List;
@@ -88,7 +95,7 @@ class MenuProvider extends ChangeNotifier {
       }
 
       _syncedFromSheet = true;
-      _lastSyncError = '';
+      _lastSyncError = 'Loaded from: ${data.source}';
       notifyListeners();
       return true;
     } catch (e) {
