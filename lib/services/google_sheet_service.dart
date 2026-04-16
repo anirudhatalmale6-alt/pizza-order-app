@@ -62,7 +62,7 @@ class GoogleSheetService {
     if (body.isEmpty) {
       throw Exception('Empty response for $tabName');
     }
-    final rows = const CsvToListConverter().convert(body);
+    final rows = const CsvToListConverter(eol: '\n').convert(body);
     if (rows.isEmpty) throw Exception('No rows parsed for $tabName');
     return rows;
   }
