@@ -47,19 +47,23 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final now = DateFormat('dd MMM yyyy, HH:mm').format(DateTime.now());
 
     final sb = StringBuffer();
-    sb.writeln('คำสั่งซื้อ / Order from: ${profile.customerName}');
-    sb.writeln('ชื่อธุรกิจ / Business: ${profile.businessName}');
+    sb.writeln('PAID ORDER / ออเดอร์ที่ชำระแล้ว');
+    sb.writeln('================================');
+    sb.writeln('Customer / ลูกค้า: ${profile.customerName}');
+    if (profile.businessName.isNotEmpty) {
+      sb.writeln('Business / ธุรกิจ: ${profile.businessName}');
+    }
     final typeText = _orderType == 'pickup'
-        ? 'รับเอง / Pickup'
-        : 'จัดส่ง / Delivery';
-    sb.writeln('ประเภท / Type: $typeText');
+        ? 'Pickup / รับเอง'
+        : 'Delivery / จัดส่ง';
+    sb.writeln('Type / ประเภท: $typeText');
     if (_selectedHour != null) {
       final period = _selectedHour! < 12 ? 'AM' : 'PM';
       final display12 = _selectedHour! > 12 ? _selectedHour! - 12 : _selectedHour!;
-      sb.writeln('เวลา / Time wanted: ${display12}:00 $period ($_selectedHour:00)');
+      sb.writeln('Time / เวลา: ${display12}:00 $period ($_selectedHour:00)');
     }
     sb.writeln();
-    sb.writeln('รายการอาหาร / Items:');
+    sb.writeln('Items / รายการ:');
 
     for (final item in cart.items) {
       if (item.productType == 'pizza') {
