@@ -112,13 +112,13 @@ class MenuProvider extends ChangeNotifier {
       _lastSyncResult = 'Source: ${data.source.toUpperCase()}\n'
           '${data.menuItems.length} menu items\n'
           '${data.categories.length} categories\n'
-          '${data.toppings.length} toppings';
+          '${data.toppings.length} toppings\n'
+          '\nDebug:\n${GoogleSheetService.debugInfo}';
       notifyListeners();
       return true;
     } catch (e) {
-      _lastSyncResult = GoogleSheetService.lastError.isNotEmpty
-          ? GoogleSheetService.lastError
-          : e.toString();
+      _lastSyncResult = '${GoogleSheetService.lastError.isNotEmpty ? GoogleSheetService.lastError : e.toString()}'
+          '\n\nDebug:\n${GoogleSheetService.debugInfo}';
       debugPrint('Sheet sync failed: $_lastSyncResult');
       _syncedFromSheet = false;
       return false;

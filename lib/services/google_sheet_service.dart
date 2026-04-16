@@ -39,6 +39,8 @@ class GoogleSheetService {
   static String _gvizUrl(String sheetId, String tabName) =>
       'https://docs.google.com/spreadsheets/d/$sheetId/gviz/tq?tqx=out:csv&sheet=${Uri.encodeComponent(tabName)}';
 
+  static String _lastRawPreview = '';
+
   static Future<List<List<dynamic>>> _fetchCsvTab(
       String sheetId, String tabName) async {
     final url = _gvizUrl(sheetId, tabName);
@@ -47,27 +49,33 @@ class GoogleSheetService {
       'User-Agent': 'JensPizzeria/3.0',
     }).timeout(_timeout);
     if (response.statusCode != 200) {
-      throw Exception('HTTP ${response.statusCode}');
+      throw Exception('HTTP ${response.statusCode} for $tabName');
     }
     final body = response.body.trim();
+    // Save preview of raw response for debugging
+    final preview = body.length > 150 ? body.substring(0, 150) : body;
+    _lastRawPreview = '[$tabName] ${body.length} chars: $preview';
+
     if (body.startsWith('<!') || body.startsWith('<html') || body.startsWith('<HTML')) {
-      throw Exception('Got HTML instead of CSV');
+      throw Exception('Got HTML instead of CSV ($tabName): ${body.substring(0, 80)}');
     }
     if (body.isEmpty) {
-      throw Exception('Empty response');
+      throw Exception('Empty response for $tabName');
     }
     final rows = const CsvToListConverter().convert(body);
-    if (rows.isEmpty) throw Exception('No rows parsed');
+    if (rows.isEmpty) throw Exception('No rows parsed for $tabName');
     return rows;
   }
 
   /// Last sync error and source
   static String lastError = '';
   static String lastSource = '';
+  static String debugInfo = '';
 
   static Future<SheetData> fetchAll(String sheetId) async {
     lastError = '';
     lastSource = '';
+    debugInfo = '';
 
     // Try 1: Google Sheets CSV
     if (sheetId.isNotEmpty && !sheetId.startsWith('http')) {
@@ -76,16 +84,30 @@ class GoogleSheetService {
         final toppingRows = await _fetchCsvTab(sheetId, 'toppings');
         final categoryRows = await _fetchCsvTab(sheetId, 'categories');
 
+        final cats = _parseCategories(categoryRows);
+        final items = _parseMenu(menuRows);
+        final tops = _parseToppings(toppingRows);
+
+        debugInfo = 'Sheet ID: ${sheetId.substring(0, 8)}...\n'
+            'Menu CSV: ${menuRows.length} rows (hdr: ${menuRows.isNotEmpty ? menuRows[0].length : 0} cols)\n'
+            'Categories CSV: ${categoryRows.length} rows\n'
+            'Toppings CSV: ${toppingRows.length} rows\n'
+            'Parsed: ${items.length} items, ${cats.length} cats, ${tops.length} tops\n'
+            'Raw: $_lastRawPreview';
+
         lastSource = 'google';
         return SheetData(
-          categories: _parseCategories(categoryRows),
-          menuItems: _parseMenu(menuRows),
-          toppings: _parseToppings(toppingRows),
+          categories: cats,
+          menuItems: items,
+          toppings: tops,
           source: 'google',
         );
       } catch (e) {
         lastError = 'Google: $e';
+        debugInfo = 'Google failed: $e\nSheet ID: $sheetId';
       }
+    } else {
+      debugInfo = 'Sheet ID empty or starts with http: "$sheetId"';
     }
 
     // Try 2: GitHub JSON

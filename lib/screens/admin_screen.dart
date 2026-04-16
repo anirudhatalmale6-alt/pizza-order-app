@@ -522,9 +522,11 @@ class _SettingsTabState extends State<_SettingsTab> {
                 Text('Sync OK!'),
               ],
             ),
-            content: Text(menu.lastSyncError.isNotEmpty
-                ? menu.lastSyncError
-                : '${menu.allItems.length} menu items\n${menu.categories.length} categories'),
+            content: SingleChildScrollView(
+              child: SelectableText(menu.lastSyncError.isNotEmpty
+                  ? menu.lastSyncError
+                  : '${menu.allItems.length} menu items\n${menu.categories.length} categories'),
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
@@ -538,9 +540,11 @@ class _SettingsTabState extends State<_SettingsTab> {
           context: context,
           builder: (ctx) => AlertDialog(
             title: const Text('Sync Result'),
-            content: Text(menu.lastSyncError.isEmpty
-                ? 'Unknown error'
-                : menu.lastSyncError),
+            content: SingleChildScrollView(
+              child: SelectableText(menu.lastSyncError.isEmpty
+                  ? 'Unknown error'
+                  : menu.lastSyncError),
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
