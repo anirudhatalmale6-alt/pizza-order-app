@@ -35,7 +35,7 @@ class MenuProvider extends ChangeNotifier {
 
     // Load cached categories and sheet ID
     final prefs = await SharedPreferences.getInstance();
-    _sheetId = prefs.getString('googleSheetId') ?? '';
+    _sheetId = prefs.getString('googleSheetId') ?? '14NlT5XPpuBIEe-v9aoGvSvXbGdldq9pCWvgUdQeayug';
     final cachedCats = prefs.getString('cachedCategories');
     if (cachedCats != null) {
       final list = jsonDecode(cachedCats) as List;
