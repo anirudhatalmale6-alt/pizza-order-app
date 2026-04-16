@@ -88,8 +88,7 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  int _logoTapCount = 0;
-  DateTime? _lastTap;
+  static const _adminPassword = 'tg308111';
 
   @override
   void initState() {
@@ -110,17 +109,46 @@ class _MenuScreenState extends State<MenuScreen> {
     }
   }
 
-  void _onLogoTap() {
-    final now = DateTime.now();
-    if (_lastTap != null && now.difference(_lastTap!).inSeconds > 3) {
-      _logoTapCount = 0;
-    }
-    _lastTap = now;
-    _logoTapCount++;
-    if (_logoTapCount >= 5) {
-      _logoTapCount = 0;
-      Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminScreen()));
-    }
+  void _openAdmin() {
+    final ctrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Admin Access'),
+        content: TextField(
+          controller: ctrl,
+          obscureText: true,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: 'Enter password',
+            border: OutlineInputBorder(),
+          ),
+          onSubmitted: (val) {
+            if (val == _adminPassword) {
+              Navigator.pop(ctx);
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminScreen()));
+            }
+          },
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              if (ctrl.text == _adminPassword) {
+                Navigator.pop(ctx);
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminScreen()));
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Wrong password'), duration: Duration(seconds: 2)),
+                );
+                Navigator.pop(ctx);
+              }
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _addItemToCart(MenuItem item, CategoryConfig category) async {
@@ -182,23 +210,25 @@ class _MenuScreenState extends State<MenuScreen> {
             );
           },
         ),
-        title: GestureDetector(
-          onTap: _onLogoTap,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Menu / เมนู', style: TextStyle(fontSize: 18)),
-              if (profile.customerName.isNotEmpty)
-                Text(
-                  profile.customerName,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-                ),
-            ],
-          ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Menu / เมนู', style: TextStyle(fontSize: 18)),
+            if (profile.customerName.isNotEmpty)
+              Text(
+                profile.customerName,
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+              ),
+          ],
         ),
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
         actions: [
+          IconButton(
+            icon: Icon(Icons.settings, size: 20, color: Colors.white.withOpacity(0.7)),
+            tooltip: 'Admin',
+            onPressed: _openAdmin,
+          ),
           if (!cart.isEmpty)
             IconButton(
               icon: const Icon(Icons.cancel_outlined),
