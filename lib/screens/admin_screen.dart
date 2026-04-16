@@ -511,15 +511,31 @@ class _SettingsTabState extends State<_SettingsTab> {
     final success = await menu.syncFromSheet();
     if (mounted) {
       setState(() => _syncing = false);
-      final msg = success
-          ? 'Sync OK! ${menu.allItems.length} items, ${menu.categories.length} categories loaded.'
-          : 'Sync failed: ${menu.lastSyncError}';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(msg),
-          duration: const Duration(seconds: 5),
-        ),
-      );
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Sync OK! ${menu.allItems.length} items, ${menu.categories.length} categories loaded.'),
+            duration: const Duration(seconds: 3),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Sync Result'),
+            content: Text(menu.lastSyncError.isEmpty
+                ? 'Unknown error'
+                : menu.lastSyncError),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 
