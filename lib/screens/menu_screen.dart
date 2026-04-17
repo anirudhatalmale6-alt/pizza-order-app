@@ -294,53 +294,54 @@ class _MenuScreenState extends State<MenuScreen> {
             const SizedBox(height: 8),
             const Text('Choose a category / เลือกหมวดหมู่',
                 style: TextStyle(fontSize: 16, color: Colors.black54)),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 1.2,
-                ),
+              child: ListView.builder(
                 itemCount: categories.length,
                 itemBuilder: (context, index) {
                   final cat = categories[index];
                   final color = colorFromString(cat.color);
                   final icon = iconFromString(cat.icon);
-                  final itemCount = menu.itemsForCategory(cat.key).length;
 
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => CategoryItemsScreen(category: cat),
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => CategoryItemsScreen(category: cat),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: color.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: color.withOpacity(0.3), width: 2),
                         ),
-                      );
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: color.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: color.withOpacity(0.3), width: 2),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(icon, color: color, size: 48),
-                          const SizedBox(height: 10),
-                          Text(cat.label,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold, color: color)),
-                          Text(cat.labelThai,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 14, color: color.withOpacity(0.8))),
-                          const SizedBox(height: 4),
-                          Text('$itemCount items',
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey.shade700)),
-                        ],
+                        child: Row(
+                          children: [
+                            Icon(icon, color: color, size: 40),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(cat.label,
+                                      style: TextStyle(
+                                          fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+                                  if (cat.labelThai.isNotEmpty)
+                                    Text(cat.labelThai,
+                                        style: TextStyle(fontSize: 15, color: color.withOpacity(0.8))),
+                                ],
+                              ),
+                            ),
+                            Icon(Icons.chevron_right, color: color, size: 28),
+                          ],
+                        ),
                       ),
                     ),
                   );
