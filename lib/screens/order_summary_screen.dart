@@ -538,7 +538,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Flexible(child: Text('Subtotal / รวม')),
+                    const Flexible(child: Text('Guest Pays / แขกจ่าย')),
                     Text('${cart.subtotal.toInt()} THB'),
                   ],
                 ),
@@ -555,7 +555,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Flexible(
-                      child: Text('Total / รวม',
+                      child: Text('You Pay / คุณจ่าย',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold)),
                     ),

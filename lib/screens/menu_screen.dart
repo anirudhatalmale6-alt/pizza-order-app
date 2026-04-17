@@ -196,9 +196,7 @@ class _MenuScreenState extends State<MenuScreen> {
             onPressed: _openAdmin,
           ),
           if (!cart.isEmpty)
-            IconButton(
-              icon: const Icon(Icons.cancel_outlined),
-              tooltip: 'Cancel order / ยกเลิก',
+            TextButton(
               onPressed: () async {
                 final confirm = await showDialog<bool>(
                   context: context,
@@ -217,7 +215,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
                         ),
-                        child: const Text('Yes, Cancel / ใช่ ยกเลิก'),
+                        child: const Text('Yes / ใช่'),
                       ),
                     ],
                   ),
@@ -234,6 +232,9 @@ class _MenuScreenState extends State<MenuScreen> {
                   }
                 }
               },
+              child: const Text('Cancel\nยกเลิก',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontSize: 11)),
             ),
           Stack(
             alignment: Alignment.center,
