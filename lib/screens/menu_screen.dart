@@ -481,19 +481,50 @@ class CategoryItemsScreen extends StatelessWidget {
                 );
               },
             ),
-      floatingActionButton: cart.isEmpty
-          ? null
-          : FloatingActionButton.extended(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const OrderSummaryScreen()),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: OutlinedButton.icon(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.menu_book),
+                  label: const Text('Main Menu / เมนูหลัก',
+                      style: TextStyle(fontSize: 16)),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: color,
+                    side: BorderSide(color: color, width: 2),
+                  ),
+                ),
               ),
-              backgroundColor: Colors.deepOrange,
-              foregroundColor: Colors.white,
-              icon: const Icon(Icons.receipt_long),
-              label: Text(
-                  'View Order (${cart.items.length}) / ดูออเดอร์'),
-            ),
+              if (!cart.isEmpty) ...[
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton.icon(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const OrderSummaryScreen()),
+                    ),
+                    icon: const Icon(Icons.receipt_long),
+                    label: Text('View Order (${cart.items.length}) / ดูออเดอร์',
+                        style: const TextStyle(fontSize: 16)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepOrange,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
