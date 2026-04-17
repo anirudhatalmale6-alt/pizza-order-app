@@ -73,7 +73,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
     sb.writeln('Staff / พนักงาน: ${profile.customerName}');
     if (profile.businessName.isNotEmpty) {
-      sb.writeln('Guest House / ที่พัก: ${profile.businessName}');
+      sb.writeln('Business / ธุรกิจ: ${profile.businessName}');
     }
     final typeText = _orderType == 'pickup'
         ? 'Pickup / รับเอง'
@@ -134,7 +134,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
     sb.writeln('Staff / พนักงาน: ${profile.customerName}');
     if (profile.businessName.isNotEmpty) {
-      sb.writeln('Guest House / ที่พัก: ${profile.businessName}');
+      sb.writeln('Business / ธุรกิจ: ${profile.businessName}');
     }
     sb.writeln();
 

@@ -44,13 +44,13 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text('Guest House / ชื่อที่พัก',
+                const Text('Business Name / ชื่อธุรกิจ',
                     style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 4),
                 TextField(
                   controller: businessCtrl,
                   decoration: const InputDecoration(
-                    hintText: 'Enter guest house name',
+                    hintText: 'Enter business name',
                     border: OutlineInputBorder(),
                     isDense: true,
                   ),
@@ -120,13 +120,13 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text('Guest House / ชื่อที่พัก',
+                const Text('Business Name / ชื่อธุรกิจ',
                     style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 4),
                 TextField(
                   controller: businessCtrl,
                   decoration: const InputDecoration(
-                    hintText: 'Enter guest house name',
+                    hintText: 'Enter business name',
                     border: OutlineInputBorder(),
                     isDense: true,
                   ),
