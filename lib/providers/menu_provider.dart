@@ -7,7 +7,7 @@ import '../models/category_config.dart';
 import '../services/google_sheet_service.dart';
 
 class MenuProvider extends ChangeNotifier {
-  static const _appDataVersion = 3; // Bump this to force clear old data
+  static const _appDataVersion = 4; // Bump this to force clear old data
 
   late Box<MenuItem> _menuBox;
   late Box<ToppingItem> _toppingBox;
@@ -31,6 +31,10 @@ class MenuProvider extends ChangeNotifier {
 
   List<ToppingItem> get toppings =>
       _toppingBox.values.where((t) => t.isActive).toList();
+
+  List<ToppingItem> toppingsForCategory(String categoryKey) =>
+      _toppingBox.values.where((t) =>
+          t.isActive && (t.category == categoryKey || t.category == 'all')).toList();
 
   List<ToppingItem> get allToppings => _toppingBox.values.toList();
 
@@ -174,15 +178,15 @@ class MenuProvider extends ChangeNotifier {
     await _menuBox.add(MenuItem(name: 'Apple Tea', nameThai: 'ชาแอปเปิล', price: 50, type: 'drink'));
     await _menuBox.add(MenuItem(name: 'Punch', nameThai: 'พั้นซ์', price: 50, type: 'drink'));
     await _menuBox.add(MenuItem(name: 'Matcha', nameThai: 'มัทฉะ', price: 70, type: 'drink'));
-    await _toppingBox.add(ToppingItem(name: 'Extra Cheese', nameThai: 'ชีสเพิ่ม', price: 45));
-    await _toppingBox.add(ToppingItem(name: 'Ham', nameThai: 'แฮม', price: 50));
-    await _toppingBox.add(ToppingItem(name: 'Bacon', nameThai: 'เบคอน', price: 60));
-    await _toppingBox.add(ToppingItem(name: 'Shrimp', nameThai: 'กุ้ง', price: 50));
-    await _toppingBox.add(ToppingItem(name: 'Tomato', nameThai: 'มะเขือเทศ', price: 25));
-    await _toppingBox.add(ToppingItem(name: 'Onion', nameThai: 'หัวหอม', price: 25));
-    await _toppingBox.add(ToppingItem(name: 'Bell Pepper', nameThai: 'พริกหวาน', price: 30));
-    await _toppingBox.add(ToppingItem(name: 'Pineapple', nameThai: 'สัปปะรด', price: 30));
-    await _toppingBox.add(ToppingItem(name: 'Mushroom', nameThai: 'เห็ด', price: 45));
+    await _toppingBox.add(ToppingItem(name: 'Extra Cheese', nameThai: 'ชีสเพิ่ม', price: 45, category: 'pizza'));
+    await _toppingBox.add(ToppingItem(name: 'Ham', nameThai: 'แฮม', price: 50, category: 'pizza'));
+    await _toppingBox.add(ToppingItem(name: 'Bacon', nameThai: 'เบคอน', price: 60, category: 'pizza'));
+    await _toppingBox.add(ToppingItem(name: 'Shrimp', nameThai: 'กุ้ง', price: 50, category: 'pizza'));
+    await _toppingBox.add(ToppingItem(name: 'Tomato', nameThai: 'มะเขือเทศ', price: 25, category: 'pizza'));
+    await _toppingBox.add(ToppingItem(name: 'Onion', nameThai: 'หัวหอม', price: 25, category: 'pizza'));
+    await _toppingBox.add(ToppingItem(name: 'Bell Pepper', nameThai: 'พริกหวาน', price: 30, category: 'pizza'));
+    await _toppingBox.add(ToppingItem(name: 'Pineapple', nameThai: 'สัปปะรด', price: 30, category: 'pizza'));
+    await _toppingBox.add(ToppingItem(name: 'Mushroom', nameThai: 'เห็ด', price: 45, category: 'pizza'));
     notifyListeners();
   }
 

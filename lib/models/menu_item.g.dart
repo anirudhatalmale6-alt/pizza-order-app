@@ -65,13 +65,14 @@ class ToppingItemAdapter extends TypeAdapter<ToppingItem> {
       nameThai: fields[1] as String,
       price: fields[2] as double,
       isActive: fields[3] as bool,
+      category: fields[4] as String? ?? 'all',
     );
   }
 
   @override
   void write(BinaryWriter writer, ToppingItem obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -79,7 +80,9 @@ class ToppingItemAdapter extends TypeAdapter<ToppingItem> {
       ..writeByte(2)
       ..write(obj.price)
       ..writeByte(3)
-      ..write(obj.isActive);
+      ..write(obj.isActive)
+      ..writeByte(4)
+      ..write(obj.category);
   }
 
   @override

@@ -42,10 +42,14 @@ class ToppingItem extends HiveObject {
   @HiveField(3)
   bool isActive;
 
+  @HiveField(4)
+  String category; // category key, or 'all' for shared toppings
+
   ToppingItem({
     required this.name,
     required this.nameThai,
     required this.price,
     this.isActive = true,
+    this.category = 'all',
   });
 }

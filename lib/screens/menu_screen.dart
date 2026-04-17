@@ -372,7 +372,7 @@ class CategoryItemsScreen extends StatelessWidget {
   void _addItemToCart(BuildContext context, MenuItem item) async {
     final cart = context.read<CartProvider>();
     if (category.hasToppings) {
-      final toppings = context.read<MenuProvider>().toppings;
+      final toppings = context.read<MenuProvider>().toppingsForCategory(category.key);
       final selected = await showDialog<List<SelectedTopping>>(
         context: context,
         builder: (_) => ToppingDialog(availableToppings: toppings),

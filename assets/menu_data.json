@@ -186,67 +186,69 @@
       "category": "drink",
       "isActive": "true"
     },
-    {
-      "name": "Samosa",
-      "nameThai": "",
-      "price": "40",
-      "category": "snack",
-      "isActive": "TRUE"
-    }
   ],
   "toppings": [
     {
       "name": "Extra Cheese",
       "nameThai": "ชีสเพิ่ม",
       "price": "45",
+      "category": "pizza",
       "isActive": "true"
     },
     {
       "name": "Ham",
       "nameThai": "แฮม",
       "price": "50",
+      "category": "pizza",
       "isActive": "true"
     },
     {
       "name": "Bacon",
       "nameThai": "เบคอน",
       "price": "60",
+      "category": "pizza",
       "isActive": "true"
     },
     {
       "name": "Shrimp",
       "nameThai": "กุ้ง",
       "price": "50",
+      "category": "pizza",
       "isActive": "true"
     },
     {
       "name": "Tomato",
       "nameThai": "มะเขือเทศ",
       "price": "25",
+      "category": "pizza",
       "isActive": "true"
     },
     {
       "name": "Onion",
       "nameThai": "หัวหอม",
       "price": "25",
+      "category": "pizza",
       "isActive": "true"
     },
     {
       "name": "Bell Pepper",
       "nameThai": "พริกหวาน",
       "price": "30",
+      "category": "pizza",
       "isActive": "true"
     },
     {
       "name": "Pineapple",
       "nameThai": "สัปปะรด",
       "price": "30",
+      "category": "pizza",
       "isActive": "true"
     },
     {
       "name": "Mushroom",
       "nameThai": "เห็ด",
       "price": "45",
+      "category": "pizza",
       "isActive": "true"
     }
   ]
