@@ -50,7 +50,7 @@ IconData iconFromString(String name) {
 // Map color name strings to Color
 Color colorFromString(String name) {
   switch (name.toLowerCase()) {
-    case 'deepOrange':
+    case 'deeporange':
       return Colors.deepOrange;
     case 'blue':
       return Colors.blue;
@@ -78,6 +78,8 @@ Color colorFromString(String name) {
       return Colors.deepOrange;
   }
 }
+
+// ============ CATEGORY SELECTION SCREEN (Main Menu) ============
 
 class MenuScreen extends StatefulWidget {
   final String? greeting;
@@ -151,44 +153,6 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  void _addItemToCart(MenuItem item, CategoryConfig category) async {
-    if (category.hasToppings) {
-      final toppings = context.read<MenuProvider>().toppings;
-      final selected = await showDialog<List<SelectedTopping>>(
-        context: context,
-        builder: (_) => ToppingDialog(availableToppings: toppings),
-      );
-      if (selected != null && mounted) {
-        context.read<CartProvider>().addItem(CartItem(
-          productName: item.name,
-          productNameThai: item.nameThai,
-          productType: category.key,
-          basePrice: item.price,
-          toppings: selected,
-        ));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${item.name} added / เพิ่ม${item.nameThai}แล้ว'),
-            duration: const Duration(seconds: 1),
-          ),
-        );
-      }
-    } else {
-      context.read<CartProvider>().addItem(CartItem(
-        productName: item.name,
-        productNameThai: item.nameThai,
-        productType: category.key,
-        basePrice: item.price,
-      ));
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${item.name} added / เพิ่ม${item.nameThai}แล้ว'),
-          duration: const Duration(seconds: 1),
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final menu = context.watch<MenuProvider>();
@@ -199,7 +163,7 @@ class _MenuScreenState extends State<MenuScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.people),
+          icon: const Icon(Icons.arrow_back),
           tooltip: 'Switch staff',
           onPressed: () {
             profile.clearSelection();
@@ -300,46 +264,87 @@ class _MenuScreenState extends State<MenuScreen> {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // Sync status banner
-          if (!menu.syncedFromSheet && menu.lastSyncError.isNotEmpty)
-            Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.amber.shade50,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.amber.shade300),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            // Sync status banner
+            if (!menu.syncedFromSheet && menu.lastSyncError.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.amber.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.amber.shade300),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.cloud_off, color: Colors.amber, size: 20),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text('Offline mode - using cached menu',
+                          style: TextStyle(fontSize: 12, color: Colors.black54)),
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
-                children: [
-                  const Icon(Icons.cloud_off, color: Colors.amber, size: 20),
-                  const SizedBox(width: 8),
-                  const Expanded(
-                    child: Text('Offline mode - using cached menu',
-                        style: TextStyle(fontSize: 12, color: Colors.black54)),
-                  ),
-                ],
+            const SizedBox(height: 8),
+            const Text('Choose a category / เลือกหมวดหมู่',
+                style: TextStyle(fontSize: 16, color: Colors.black54)),
+            const SizedBox(height: 20),
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 1.2,
+                ),
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  final cat = categories[index];
+                  final color = colorFromString(cat.color);
+                  final icon = iconFromString(cat.icon);
+                  final itemCount = menu.itemsForCategory(cat.key).length;
+
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CategoryItemsScreen(category: cat),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: color.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: color.withOpacity(0.3), width: 2),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(icon, color: color, size: 48),
+                          const SizedBox(height: 10),
+                          Text(cat.label,
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold, color: color)),
+                          Text(cat.labelThai,
+                              style: TextStyle(fontSize: 14, color: color.withOpacity(0.8))),
+                          const SizedBox(height: 4),
+                          Text('$itemCount items',
+                              style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
-          for (int ci = 0; ci < categories.length; ci++) ...[
-            if (ci > 0) const SizedBox(height: 24),
-            _SectionHeader(
-              icon: iconFromString(categories[ci].icon),
-              title: '${categories[ci].label} / ${categories[ci].labelThai}',
-              color: colorFromString(categories[ci].color),
-            ),
-            ...menu.itemsForCategory(categories[ci].key).map((item) =>
-                _MenuItemCard(
-                  item: item,
-                  category: categories[ci],
-                  onAdd: () => _addItemToCart(item, categories[ci]),
-                )),
           ],
-          const SizedBox(height: 80),
-        ],
+        ),
       ),
       floatingActionButton: cart.isEmpty
           ? null
@@ -358,29 +363,137 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final Color color;
-  const _SectionHeader({required this.icon, required this.title, this.color = Colors.deepOrange});
+// ============ CATEGORY ITEMS SCREEN ============
+
+class CategoryItemsScreen extends StatelessWidget {
+  final CategoryConfig category;
+  const CategoryItemsScreen({super.key, required this.category});
+
+  void _addItemToCart(BuildContext context, MenuItem item) async {
+    final cart = context.read<CartProvider>();
+    if (category.hasToppings) {
+      final toppings = context.read<MenuProvider>().toppings;
+      final selected = await showDialog<List<SelectedTopping>>(
+        context: context,
+        builder: (_) => ToppingDialog(availableToppings: toppings),
+      );
+      if (selected != null) {
+        cart.addItem(CartItem(
+          productName: item.name,
+          productNameThai: item.nameThai,
+          productType: category.key,
+          basePrice: item.price,
+          toppings: selected,
+        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${item.name} added / เพิ่ม${item.nameThai}แล้ว'),
+            duration: const Duration(seconds: 1),
+          ),
+        );
+      }
+    } else {
+      cart.addItem(CartItem(
+        productName: item.name,
+        productNameThai: item.nameThai,
+        productType: category.key,
+        basePrice: item.price,
+      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${item.name} added / เพิ่ม${item.nameThai}แล้ว'),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(title,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+    final menu = context.watch<MenuProvider>();
+    final cart = context.watch<CartProvider>();
+    final items = menu.itemsForCategory(category.key);
+    final color = colorFromString(category.color);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Icon(iconFromString(category.icon), size: 24),
+            const SizedBox(width: 8),
+            Text('${category.label} / ${category.labelThai}'),
+          ],
+        ),
+        backgroundColor: color,
+        foregroundColor: Colors.white,
+        actions: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: cart.isEmpty
+                    ? null
+                    : () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const OrderSummaryScreen())),
+              ),
+              if (!cart.isEmpty)
+                Positioned(
+                  right: 4,
+                  top: 4,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.yellow,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '${cart.items.length}',
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ],
       ),
+      body: items.isEmpty
+          ? const Center(
+              child: Text('No items in this category\nยังไม่มีรายการในหมวดนี้',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.grey)),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return _MenuItemCard(
+                  item: item,
+                  category: category,
+                  onAdd: () => _addItemToCart(context, item),
+                );
+              },
+            ),
+      floatingActionButton: cart.isEmpty
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const OrderSummaryScreen()),
+              ),
+              backgroundColor: Colors.deepOrange,
+              foregroundColor: Colors.white,
+              icon: const Icon(Icons.receipt_long),
+              label: Text(
+                  'View Order (${cart.items.length}) / ดูออเดอร์'),
+            ),
     );
   }
 }
+
+// ============ SHARED WIDGETS ============
 
 class _MenuItemCard extends StatelessWidget {
   final MenuItem item;
