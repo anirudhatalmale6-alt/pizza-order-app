@@ -95,8 +95,10 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.greeting != null && widget.greeting!.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    // Sync menu from Google Sheet every time a staff member starts an order
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<MenuProvider>().syncFromSheet();
+      if (widget.greeting != null && widget.greeting!.isNotEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -107,8 +109,8 @@ class _MenuScreenState extends State<MenuScreen> {
             duration: const Duration(seconds: 2),
           ),
         );
-      });
-    }
+      }
+    });
   }
 
   void _openAdmin() {
