@@ -182,19 +182,24 @@ class ProfileScreen extends StatelessWidget {
     final profile = context.watch<ProfileProvider>();
     final customers = profile.customers;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Jen's Pizzeria"),
-        backgroundColor: Colors.deepOrange,
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.exit_to_app),
-            tooltip: 'Exit / ออก',
-            onPressed: () => SystemNavigator.pop(),
-          ),
-        ],
-      ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) SystemNavigator.pop();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Jen's Pizzeria"),
+          backgroundColor: Colors.deepOrange,
+          foregroundColor: Colors.white,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.exit_to_app),
+              tooltip: 'Exit / ออก',
+              onPressed: () => SystemNavigator.pop(),
+            ),
+          ],
+        ),
       body: Column(
         children: [
           const SizedBox(height: 16),
@@ -305,6 +310,7 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }
