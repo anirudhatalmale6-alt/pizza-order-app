@@ -1,3 +1,4 @@
+import 'dart:io' show exit;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -185,7 +186,7 @@ class ProfileScreen extends StatelessWidget {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) SystemNavigator.pop();
+        if (!didPop) exit(0);
       },
       child: Scaffold(
         appBar: AppBar(
@@ -196,7 +197,7 @@ class ProfileScreen extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.exit_to_app),
               tooltip: 'Exit / ออก',
-              onPressed: () => SystemNavigator.pop(),
+              onPressed: () => exit(0),
             ),
           ],
         ),
