@@ -194,21 +194,24 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   Future<void> _sendToLine() async {
     final orderText = _buildOrderText();
 
-    bool sent = false;
-    try {
-      final result = await _shareChannel.invokeMethod('shareToLine', {'text': orderText});
-      sent = (result == true);
-    } catch (_) {}
-
-    if (!sent && mounted) {
+    if (mounted) {
       await Clipboard.setData(ClipboardData(text: orderText));
       if (_paymentScreenshot != null && _paymentScreenshot!.existsSync()) {
+        // Share text + image together
         await Share.shareXFiles(
           [XFile(_paymentScreenshot!.path)],
           text: orderText,
         );
       } else {
-        await Share.share(orderText);
+        // Text only - try LINE first, fall back to share sheet
+        bool sent = false;
+        try {
+          final result = await _shareChannel.invokeMethod('shareToLine', {'text': orderText});
+          sent = (result == true);
+        } catch (_) {}
+        if (!sent && mounted) {
+          await Share.share(orderText);
+        }
       }
     }
 
