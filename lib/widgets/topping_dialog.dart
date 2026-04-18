@@ -119,7 +119,7 @@ class _ToppingDialogState extends State<ToppingDialog> {
                       backgroundColor: Colors.deepOrange,
                       foregroundColor: Colors.white,
                     ),
-                    child: const Text('Add Pizza / เพิ่มพิซซ่า'),
+                    child: Text('Add ${widget.categoryLabel} / เพิ่ม'),
                   ),
                 ],
               ),
