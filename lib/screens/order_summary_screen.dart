@@ -1,8 +1,7 @@
 import 'dart:io';
-import 'dart:ui' as ui;
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -193,90 +192,65 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
   }
 
-  /// Creates a composite image with order text header above the payment screenshot.
-  Future<File?> _createCompositeImage(String orderText, File screenshot) async {
-    try {
-      final imageBytes = await screenshot.readAsBytes();
-      final codec = await ui.instantiateImageCodec(imageBytes);
-      final frame = await codec.getNextFrame();
-      final original = frame.image;
-
-      // Layout text to calculate header height
-      const textStyle = TextStyle(fontSize: 28, color: Colors.black, height: 1.4);
-      final textSpan = TextSpan(text: orderText, style: textStyle);
-      final textPainter = TextPainter(
-        text: textSpan,
-        textDirection: ui.TextDirection.ltr,
-      );
-      textPainter.layout(maxWidth: original.width.toDouble() - 40);
-
-      final headerHeight = textPainter.height + 40; // 20px padding top + bottom
-      final totalHeight = headerHeight + original.height;
-
-      final recorder = ui.PictureRecorder();
-      final canvas = Canvas(recorder);
-
-      // White header background
-      canvas.drawRect(
-        Rect.fromLTWH(0, 0, original.width.toDouble(), headerHeight),
-        Paint()..color = Colors.white,
-      );
-
-      // Draw order text
-      textPainter.paint(canvas, const Offset(20, 20));
-
-      // Draw the original screenshot below
-      canvas.drawImage(original, Offset(0, headerHeight), Paint());
-
-      final picture = recorder.endRecording();
-      final compositeImage = await picture.toImage(
-        original.width,
-        totalHeight.toInt(),
-      );
-      final byteData = await compositeImage.toByteData(format: ui.ImageByteFormat.png);
-      if (byteData == null) return null;
-
-      final tempDir = Directory.systemTemp;
-      final compositeFile = File('${tempDir.path}/paid_order_${DateTime.now().millisecondsSinceEpoch}.png');
-      await compositeFile.writeAsBytes(byteData.buffer.asUint8List());
-      return compositeFile;
-    } catch (e) {
-      return null;
-    }
-  }
-
   Future<void> _sendToLine() async {
     final orderText = _buildOrderText();
 
-    if (mounted) {
-      await Clipboard.setData(ClipboardData(text: orderText));
+    if (!mounted) return;
+    await Clipboard.setData(ClipboardData(text: orderText));
 
-      if (_paymentScreenshot != null && _paymentScreenshot!.existsSync()) {
-        // Create composite image with order text burned onto the screenshot
-        final compositeFile = await _createCompositeImage(orderText, _paymentScreenshot!);
-        final imageToShare = compositeFile ?? _paymentScreenshot!;
+    if (_paymentScreenshot != null && _paymentScreenshot!.existsSync()) {
+      // Copy screenshot to app cache so FileProvider can access it
+      final cacheDir = await getTemporaryDirectory();
+      final cachedImage = File('${cacheDir.path}/payment_${DateTime.now().millisecondsSinceEpoch}.jpg');
+      await _paymentScreenshot!.copy(cachedImage.path);
 
-        bool sent = false;
-        try {
-          final result = await _shareChannel.invokeMethod('shareToLine', {
-            'text': '',
-            'imagePath': imageToShare.path,
-          });
-          sent = (result == true);
-        } catch (_) {}
-        if (!sent && mounted) {
-          await Share.shareXFiles([XFile(imageToShare.path)], text: orderText);
-        }
-      } else {
-        // Text only - use LINE direct or share sheet fallback
-        bool sent = false;
-        try {
-          final result = await _shareChannel.invokeMethod('shareToLine', {'text': orderText});
-          sent = (result == true);
-        } catch (_) {}
-        if (!sent && mounted) {
-          await Share.share(orderText);
-        }
+      // First send the order text to LINE
+      try {
+        await _shareChannel.invokeMethod('shareToLine', {'text': orderText});
+      } catch (_) {}
+
+      // Wait for user to come back, then show dialog to send the image
+      if (!mounted) return;
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Send Payment Slip'),
+          content: const Text(
+            'Order text sent! Now tap below to send the payment slip photo.\n\n'
+            'ส่งข้อความสั่งซื้อแล้ว! กดด้านล่างเพื่อส่งสลิปการชำระเงิน',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Send Payment Slip / ส่งสลิป'),
+            ),
+          ],
+        ),
+      );
+
+      // Now send the image to LINE
+      if (!mounted) return;
+      bool sent = false;
+      try {
+        final result = await _shareChannel.invokeMethod('shareToLine', {
+          'text': '',
+          'imagePath': cachedImage.path,
+        });
+        sent = (result == true);
+      } catch (_) {}
+      if (!sent && mounted) {
+        await Share.shareXFiles([XFile(cachedImage.path)]);
+      }
+    } else {
+      // Text only - use LINE direct or share sheet fallback
+      bool sent = false;
+      try {
+        final result = await _shareChannel.invokeMethod('shareToLine', {'text': orderText});
+        sent = (result == true);
+      } catch (_) {}
+      if (!sent && mounted) {
+        await Share.share(orderText);
       }
     }
 
