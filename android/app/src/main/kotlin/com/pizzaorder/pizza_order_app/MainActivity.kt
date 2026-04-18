@@ -1,5 +1,6 @@
 package com.pizzaorder.pizza_order_app
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.core.content.FileProvider
@@ -10,6 +11,8 @@ import java.io.File
 
 class MainActivity : FlutterActivity() {
     private val CHANNEL = "com.pizzaorder/share"
+    private val SHARE_REQUEST_CODE = 9001
+    private var pendingResult: MethodChannel.Result? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -18,39 +21,44 @@ class MainActivity : FlutterActivity() {
                 val text = call.argument<String>("text") ?: ""
                 val imagePath = call.argument<String>("imagePath")
                 try {
+                    val intent: Intent
                     if (imagePath != null) {
-                        // Share image + text to LINE
                         val file = File(imagePath)
                         val uri: Uri = FileProvider.getUriForFile(
                             this,
                             "${applicationContext.packageName}.fileprovider",
                             file
                         )
-                        val intent = Intent(Intent.ACTION_SEND).apply {
+                        intent = Intent(Intent.ACTION_SEND).apply {
                             type = "image/*"
                             putExtra(Intent.EXTRA_STREAM, uri)
                             putExtra(Intent.EXTRA_TEXT, text)
                             setPackage("jp.naver.line.android")
                             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                         }
-                        startActivity(intent)
-                        result.success(true)
                     } else {
-                        // Text only to LINE
-                        val intent = Intent(Intent.ACTION_SEND).apply {
+                        intent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
                             putExtra(Intent.EXTRA_TEXT, text)
                             setPackage("jp.naver.line.android")
                         }
-                        startActivity(intent)
-                        result.success(true)
                     }
+                    pendingResult = result
+                    startActivityForResult(intent, SHARE_REQUEST_CODE)
                 } catch (e: Exception) {
                     result.success(false)
                 }
             } else {
                 result.notImplemented()
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SHARE_REQUEST_CODE) {
+            pendingResult?.success(true)
+            pendingResult = null
         }
     }
 }
