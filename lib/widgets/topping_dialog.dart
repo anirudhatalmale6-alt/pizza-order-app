@@ -4,7 +4,8 @@ import '../models/menu_item.dart';
 
 class ToppingDialog extends StatefulWidget {
   final List<ToppingItem> availableToppings;
-  const ToppingDialog({super.key, required this.availableToppings});
+  final String categoryLabel;
+  const ToppingDialog({super.key, required this.availableToppings, this.categoryLabel = 'Pizza'});
 
   @override
   State<ToppingDialog> createState() => _ToppingDialogState();
@@ -26,8 +27,8 @@ class _ToppingDialogState extends State<ToppingDialog> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text('Customize Pizza / เลือกท็อปปิ้ง',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text('Customize ${widget.categoryLabel} / เลือกท็อปปิ้ง',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Text('${widget.availableToppings.length} toppings available',
                   style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
