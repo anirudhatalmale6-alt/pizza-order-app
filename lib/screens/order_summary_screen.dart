@@ -174,20 +174,10 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   Future<void> _sendConfirmation() async {
     final confirmText = _buildConfirmText();
 
-    bool sent = false;
-    try {
-      final result = await _shareChannel.invokeMethod('shareToLine', {'text': confirmText});
-      sent = (result == true);
-    } catch (_) {}
-
-    if (!sent && mounted) {
-      await Clipboard.setData(ClipboardData(text: confirmText));
-      await Share.share(confirmText);
-    }
-
+    // Show warning dialog FIRST, then share after user taps OK
     if (mounted) {
       setState(() => _orderConfirmed = true);
-      showDialog(
+      await showDialog(
         context: context,
         barrierDismissible: false,
         builder: (ctx) => AlertDialog(
@@ -199,7 +189,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             ],
           ),
           content: const Text(
-            'Confirmation sent!\n\nWait for reply on LINE before you take payment.\n\nส่งการยืนยันแล้ว!\n\nรอตอบกลับทาง LINE ก่อนเก็บเงิน',
+            'After sending, wait for reply on LINE before you take payment.\n\nหลังจากส่งแล้ว รอตอบกลับทาง LINE ก่อนเก็บเงิน',
             style: TextStyle(fontSize: 16),
           ),
           actions: [
@@ -209,11 +199,24 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 backgroundColor: Colors.deepOrange,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('OK / ตกลง', style: TextStyle(fontSize: 16)),
+              child: const Text('OK, Send Now / ตกลง ส่งเลย', style: TextStyle(fontSize: 16)),
             ),
           ],
         ),
       );
+    }
+
+    // Now share after they acknowledged the warning
+    if (!mounted) return;
+    bool sent = false;
+    try {
+      final result = await _shareChannel.invokeMethod('shareToLine', {'text': confirmText});
+      sent = (result == true);
+    } catch (_) {}
+
+    if (!sent && mounted) {
+      await Clipboard.setData(ClipboardData(text: confirmText));
+      await Share.share(confirmText);
     }
   }
 
