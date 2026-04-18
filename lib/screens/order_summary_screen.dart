@@ -632,7 +632,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               child: ElevatedButton.icon(
                 onPressed: cart.isEmpty ? null : _doShareConfirmation,
                 icon: const Icon(Icons.send, size: 24),
-                label: const Text('Send to LINE / ส่งไปยัง LINE',
+                label: const Text('Send to shop on LINE / ส่งไปร้านทาง LINE',
                     style: TextStyle(fontSize: 18)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF06C755),
@@ -815,7 +815,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             child: ElevatedButton.icon(
               onPressed: cart.isEmpty ? null : _sendToLine,
               icon: const Icon(Icons.send, size: 24),
-              label: const Text('Send to LINE / ส่งไปยัง LINE',
+              label: const Text('Send to shop on LINE / ส่งไปร้านทาง LINE',
                   style: TextStyle(fontSize: 18)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF06C755), // LINE green
