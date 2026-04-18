@@ -172,46 +172,13 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   static const _shareChannel = MethodChannel('com.pizzaorder/share');
 
   Future<void> _sendConfirmation() async {
+    // Just set the state to show warning + send button on the page
+    setState(() => _orderConfirmed = true);
+  }
+
+  Future<void> _doShareConfirmation() async {
     final confirmText = _buildConfirmText();
 
-    // Show warning dialog FIRST, then share after user taps OK
-    if (!mounted) return;
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => PopScope(
-        canPop: false,
-        child: AlertDialog(
-          title: Row(
-            children: const [
-              Icon(Icons.warning_amber_rounded, color: Colors.deepOrange, size: 28),
-              SizedBox(width: 8),
-              Expanded(child: Text('Important / สำคัญ')),
-            ],
-          ),
-          content: const Text(
-            'After sending, wait for reply on LINE before you take payment.\n\nหลังจากส่งแล้ว รอตอบกลับทาง LINE ก่อนเก็บเงิน',
-            style: TextStyle(fontSize: 16),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () => Navigator.pop(ctx),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('OK, Send Now / ตกลง ส่งเลย', style: TextStyle(fontSize: 16)),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    // Update state after dialog dismissed
-    if (!mounted) return;
-    setState(() => _orderConfirmed = true);
-
-    // Now share after they acknowledged the warning
     bool sent = false;
     try {
       final result = await _shareChannel.invokeMethod('shareToLine', {'text': confirmText});
@@ -600,7 +567,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           const SizedBox(height: 24),
 
-          // Step 1: Confirm Order button (sends LINE message with order details)
+          // Step 1: Confirm Order button
           if (!_orderConfirmed) ...[
             SizedBox(
               height: 56,
@@ -620,6 +587,58 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               'Sends order details via LINE for confirmation before payment\nส่งรายละเอียดทาง LINE เพื่อยืนยันก่อนชำระเงิน',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          // Warning banner + Send button (visible after confirm tapped)
+          if (_orderConfirmed) ...[
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.red.shade300, width: 2),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.warning_amber_rounded, color: Colors.red.shade700, size: 32),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'IMPORTANT',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red.shade700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Wait for reply on LINE before you take payment!\n\nรอตอบกลับทาง LINE ก่อนเก็บเงิน!',
+                    style: TextStyle(fontSize: 16, color: Colors.red.shade700, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 56,
+              child: ElevatedButton.icon(
+                onPressed: cart.isEmpty ? null : _doShareConfirmation,
+                icon: const Icon(Icons.send, size: 24),
+                label: const Text('Send to LINE / ส่งไปยัง LINE',
+                    style: TextStyle(fontSize: 18)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF06C755),
+                  foregroundColor: Colors.white,
+                ),
+              ),
             ),
             const SizedBox(height: 16),
           ],
