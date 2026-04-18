@@ -202,7 +202,14 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
     if (!sent && mounted) {
       await Clipboard.setData(ClipboardData(text: orderText));
-      await Share.share(orderText);
+      if (_paymentScreenshot != null && _paymentScreenshot!.existsSync()) {
+        await Share.shareXFiles(
+          [XFile(_paymentScreenshot!.path)],
+          text: orderText,
+        );
+      } else {
+        await Share.share(orderText);
+      }
     }
 
     if (!mounted) return;
