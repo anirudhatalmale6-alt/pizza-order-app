@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -191,28 +193,88 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
   }
 
+  /// Creates a composite image with order text header above the payment screenshot.
+  Future<File?> _createCompositeImage(String orderText, File screenshot) async {
+    try {
+      final imageBytes = await screenshot.readAsBytes();
+      final codec = await ui.instantiateImageCodec(imageBytes);
+      final frame = await codec.getNextFrame();
+      final original = frame.image;
+
+      // Layout text to calculate header height
+      const textStyle = TextStyle(fontSize: 28, color: Colors.black, height: 1.4);
+      final textSpan = TextSpan(text: orderText, style: textStyle);
+      final textPainter = TextPainter(
+        text: textSpan,
+        textDirection: ui.TextDirection.ltr,
+      );
+      textPainter.layout(maxWidth: original.width.toDouble() - 40);
+
+      final headerHeight = textPainter.height + 40; // 20px padding top + bottom
+      final totalHeight = headerHeight + original.height;
+
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder);
+
+      // White header background
+      canvas.drawRect(
+        Rect.fromLTWH(0, 0, original.width.toDouble(), headerHeight),
+        Paint()..color = Colors.white,
+      );
+
+      // Draw order text
+      textPainter.paint(canvas, const Offset(20, 20));
+
+      // Draw the original screenshot below
+      canvas.drawImage(original, Offset(0, headerHeight), Paint());
+
+      final picture = recorder.endRecording();
+      final compositeImage = await picture.toImage(
+        original.width,
+        totalHeight.toInt(),
+      );
+      final byteData = await compositeImage.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData == null) return null;
+
+      final tempDir = Directory.systemTemp;
+      final compositeFile = File('${tempDir.path}/paid_order_${DateTime.now().millisecondsSinceEpoch}.png');
+      await compositeFile.writeAsBytes(byteData.buffer.asUint8List());
+      return compositeFile;
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<void> _sendToLine() async {
     final orderText = _buildOrderText();
 
     if (mounted) {
       await Clipboard.setData(ClipboardData(text: orderText));
-      bool sent = false;
-      try {
-        final args = <String, String>{'text': orderText};
-        if (_paymentScreenshot != null && _paymentScreenshot!.existsSync()) {
-          args['imagePath'] = _paymentScreenshot!.path;
+
+      if (_paymentScreenshot != null && _paymentScreenshot!.existsSync()) {
+        // Create composite image with order text burned onto the screenshot
+        final compositeFile = await _createCompositeImage(orderText, _paymentScreenshot!);
+        final imageToShare = compositeFile ?? _paymentScreenshot!;
+
+        bool sent = false;
+        try {
+          final result = await _shareChannel.invokeMethod('shareToLine', {
+            'text': '',
+            'imagePath': imageToShare.path,
+          });
+          sent = (result == true);
+        } catch (_) {}
+        if (!sent && mounted) {
+          await Share.shareXFiles([XFile(imageToShare.path)], text: orderText);
         }
-        final result = await _shareChannel.invokeMethod('shareToLine', args);
-        sent = (result == true);
-      } catch (_) {}
-      if (!sent && mounted) {
-        // Fallback: use share sheet
-        if (_paymentScreenshot != null && _paymentScreenshot!.existsSync()) {
-          await Share.shareXFiles(
-            [XFile(_paymentScreenshot!.path)],
-            text: orderText,
-          );
-        } else {
+      } else {
+        // Text only - use LINE direct or share sheet fallback
+        bool sent = false;
+        try {
+          final result = await _shareChannel.invokeMethod('shareToLine', {'text': orderText});
+          sent = (result == true);
+        } catch (_) {}
+        if (!sent && mounted) {
           await Share.share(orderText);
         }
       }
