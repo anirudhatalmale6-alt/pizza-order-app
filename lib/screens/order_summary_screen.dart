@@ -187,10 +187,31 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
     if (mounted) {
       setState(() => _orderConfirmed = true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Confirmation sent! Wait for reply on LINE before you take payment.\nส่งการยืนยันแล้ว! รอตอบกลับทาง LINE ก่อนเก็บเงิน'),
-          duration: Duration(seconds: 3),
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          title: Row(
+            children: const [
+              Icon(Icons.warning_amber_rounded, color: Colors.deepOrange, size: 28),
+              SizedBox(width: 8),
+              Expanded(child: Text('Important / สำคัญ')),
+            ],
+          ),
+          content: const Text(
+            'Confirmation sent!\n\nWait for reply on LINE before you take payment.\n\nส่งการยืนยันแล้ว!\n\nรอตอบกลับทาง LINE ก่อนเก็บเงิน',
+            style: TextStyle(fontSize: 16),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.pop(ctx),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepOrange,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('OK / ตกลง', style: TextStyle(fontSize: 16)),
+            ),
+          ],
         ),
       );
     }
