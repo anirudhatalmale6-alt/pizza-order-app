@@ -175,12 +175,13 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final confirmText = _buildConfirmText();
 
     // Show warning dialog FIRST, then share after user taps OK
-    if (mounted) {
-      setState(() => _orderConfirmed = true);
-      await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => AlertDialog(
+    if (!mounted) return;
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => PopScope(
+        canPop: false,
+        child: AlertDialog(
           title: Row(
             children: const [
               Icon(Icons.warning_amber_rounded, color: Colors.deepOrange, size: 28),
@@ -203,11 +204,14 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             ),
           ],
         ),
-      );
-    }
+      ),
+    );
+
+    // Update state after dialog dismissed
+    if (!mounted) return;
+    setState(() => _orderConfirmed = true);
 
     // Now share after they acknowledged the warning
-    if (!mounted) return;
     bool sent = false;
     try {
       final result = await _shareChannel.invokeMethod('shareToLine', {'text': confirmText});
