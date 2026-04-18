@@ -196,20 +196,23 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
     if (mounted) {
       await Clipboard.setData(ClipboardData(text: orderText));
-      if (_paymentScreenshot != null && _paymentScreenshot!.existsSync()) {
-        // Share text + image together
-        await Share.shareXFiles(
-          [XFile(_paymentScreenshot!.path)],
-          text: orderText,
-        );
-      } else {
-        // Text only - try LINE first, fall back to share sheet
-        bool sent = false;
-        try {
-          final result = await _shareChannel.invokeMethod('shareToLine', {'text': orderText});
-          sent = (result == true);
-        } catch (_) {}
-        if (!sent && mounted) {
+      bool sent = false;
+      try {
+        final args = <String, String>{'text': orderText};
+        if (_paymentScreenshot != null && _paymentScreenshot!.existsSync()) {
+          args['imagePath'] = _paymentScreenshot!.path;
+        }
+        final result = await _shareChannel.invokeMethod('shareToLine', args);
+        sent = (result == true);
+      } catch (_) {}
+      if (!sent && mounted) {
+        // Fallback: use share sheet
+        if (_paymentScreenshot != null && _paymentScreenshot!.existsSync()) {
+          await Share.shareXFiles(
+            [XFile(_paymentScreenshot!.path)],
+            text: orderText,
+          );
+        } else {
           await Share.share(orderText);
         }
       }
@@ -601,8 +604,22 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             const SizedBox(height: 16),
           ],
 
-          // Warning banner + Send button (visible after confirm tapped)
+          // Send button + Warning banner (visible after confirm tapped)
           if (_orderConfirmed) ...[
+            SizedBox(
+              height: 56,
+              child: ElevatedButton.icon(
+                onPressed: cart.isEmpty ? null : _doShareConfirmation,
+                icon: const Icon(Icons.send, size: 24),
+                label: const Text('Send to shop on LINE / ส่งไปร้านทาง LINE',
+                    style: TextStyle(fontSize: 18)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF06C755),
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -634,20 +651,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     style: TextStyle(fontSize: 16, color: Colors.red.shade700, fontWeight: FontWeight.w500),
                   ),
                 ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 56,
-              child: ElevatedButton.icon(
-                onPressed: cart.isEmpty ? null : _doShareConfirmation,
-                icon: const Icon(Icons.send, size: 24),
-                label: const Text('Send to shop on LINE / ส่งไปร้านทาง LINE',
-                    style: TextStyle(fontSize: 18)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF06C755),
-                  foregroundColor: Colors.white,
-                ),
               ),
             ),
             const SizedBox(height: 16),
