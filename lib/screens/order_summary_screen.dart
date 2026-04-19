@@ -5,14 +5,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../models/category_config.dart';
 import '../providers/cart_provider.dart';
 import '../providers/menu_provider.dart';
 import '../providers/profile_provider.dart';
-import '../utils/promptpay_qr.dart';
 import 'menu_screen.dart';
 import 'profile_screen.dart';
 
@@ -116,7 +113,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     sb.writeln();
     sb.writeln('ยอดรวมสุดท้าย / Final total: ${cart.finalTotal.toInt()} THB');
     sb.writeln();
-    sb.writeln('ชำระโดย / Payment via PromptPay QR');
+    sb.writeln('ชำระโดย / Payment via PromptPay');
     sb.writeln('เวลา / Time: $now');
 
     return sb.toString();
@@ -128,7 +125,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final menu = context.read<MenuProvider>();
 
     final sb = StringBuffer();
-    sb.writeln('CONFIRM ORDER / ยืนยันออเดอร์');
+    sb.writeln('ORDER COMPLETE / สั่งซื้อเสร็จสิ้น');
     sb.writeln('================================');
     if (_guestNameCtrl.text.trim().isNotEmpty) {
       sb.writeln('Guest / ชื่อผู้สั่ง: ${_guestNameCtrl.text.trim()}');
@@ -269,15 +266,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final profile = context.watch<ProfileProvider>();
     final menu = context.watch<MenuProvider>();
     final categories = menu.categories;
-
-    // Generate PromptPay QR data
-    String? qrData;
-    if (profile.promptPayId.isNotEmpty && cart.finalTotal > 0) {
-      qrData = PromptPayQR.generate(
-        promptPayId: profile.promptPayId,
-        amount: cart.finalTotal,
-      );
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -623,7 +611,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               child: ElevatedButton.icon(
                 onPressed: cart.isEmpty ? null : _sendConfirmation,
                 icon: const Icon(Icons.check_circle, size: 24),
-                label: const Text('Confirm Order / ยืนยันออเดอร์',
+                label: const Text('Order Complete / สั่งซื้อเสร็จสิ้น',
                     style: TextStyle(fontSize: 18)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
@@ -633,7 +621,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             ),
             const SizedBox(height: 8),
             const Text(
-              'Sends order details via LINE for confirmation before payment\nส่งรายละเอียดทาง LINE เพื่อยืนยันก่อนชำระเงิน',
+              'Sends order details to the shop via LINE\nส่งรายละเอียดไปยังร้านทาง LINE',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey, fontSize: 12),
             ),
@@ -711,12 +699,12 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               child: Column(
                 children: [
                   const Text(
-                    'Pay from this phone / จ่ายจากโทรศัพท์นี้',
+                    'Transfer to / โอนเงินไปที่',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   const Text(
-                    'Open your banking app and transfer to:\nเปิดแอปธนาคารแล้วโอนเงินไปที่:',
+                    'Open banking app and transfer to:\nเปิดแอปธนาคารแล้วโอนเงินไปที่:',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 13, color: Colors.black54),
                   ),
@@ -776,34 +764,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               ),
             ),
 
-            const SizedBox(height: 16),
-
-            // Option 2: QR for scanning from another phone
-            if (qrData != null)
-              Center(
-                child: Column(
-                  children: [
-                    const Text(
-                      'Or scan from another phone / หรือสแกนจากโทรศัพท์อื่น',
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade300),
-                      ),
-                      child: QrImageView(
-                        data: qrData!,
-                        version: QrVersions.auto,
-                        size: 200,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
           ] else
             Container(
               padding: const EdgeInsets.all(16),

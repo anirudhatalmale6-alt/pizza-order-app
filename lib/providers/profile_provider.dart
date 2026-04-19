@@ -28,7 +28,7 @@ class ProfileProvider extends ChangeNotifier {
     _customerBox = await Hive.openBox<Customer>('customers');
     final prefs = await SharedPreferences.getInstance();
     _lineDeepLink = prefs.getString('lineDeepLink') ?? '';
-    _promptPayId = prefs.getString('promptPayId') ?? '0814726644';
+    _promptPayId = prefs.getString('promptPayId') ?? '356 030 025 9093';
     _openHour = prefs.getInt('openHour') ?? 11;
     _closeHour = prefs.getInt('closeHour') ?? 16;
     notifyListeners();
