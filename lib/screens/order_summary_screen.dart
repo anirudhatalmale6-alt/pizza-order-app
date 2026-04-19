@@ -723,36 +723,39 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   ),
                   const SizedBox(height: 12),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      OutlinedButton.icon(
-                        icon: const Icon(Icons.copy, size: 16),
-                        label: const Text('Copy Account'),
-                        onPressed: () {
-                          Clipboard.setData(
-                              ClipboardData(text: profile.promptPayId));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Account number copied! / คัดลอกแล้ว!'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                        },
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.copy, size: 16),
+                          label: const Text('Copy Acct'),
+                          onPressed: () {
+                            Clipboard.setData(
+                                ClipboardData(text: profile.promptPayId));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Account number copied! / คัดลอกแล้ว!'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                      const SizedBox(width: 12),
-                      OutlinedButton.icon(
-                        icon: const Icon(Icons.copy, size: 16),
-                        label: const Text('Copy Amount'),
-                        onPressed: () {
-                          Clipboard.setData(ClipboardData(
-                              text: cart.finalTotal.toInt().toString()));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                        },
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.copy, size: 16),
+                          label: const Text('Copy Amt'),
+                          onPressed: () {
+                            Clipboard.setData(ClipboardData(
+                                text: cart.finalTotal.toInt().toString()));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ],
                   ),
