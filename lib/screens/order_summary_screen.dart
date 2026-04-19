@@ -709,44 +709,40 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     style: TextStyle(fontSize: 13, color: Colors.black54),
                   ),
                   const SizedBox(height: 12),
+                  Text(
+                    'PromptPay: ${profile.promptPayId}',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Amount / จำนวน: ${cart.finalTotal.toInt()} THB',
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepOrange),
+                  ),
+                  const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('PromptPay: ', style: TextStyle(fontSize: 15)),
-                      Text(
-                        profile.promptPayId,
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.copy, size: 20),
+                      OutlinedButton.icon(
+                        icon: const Icon(Icons.copy, size: 16),
+                        label: const Text('Copy Account'),
                         onPressed: () {
                           Clipboard.setData(
                               ClipboardData(text: profile.promptPayId));
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('PromptPay ID copied! / คัดลอกแล้ว!'),
+                              content: Text('Account number copied! / คัดลอกแล้ว!'),
                               duration: Duration(seconds: 2),
                             ),
                           );
                         },
                       ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Amount / จำนวน: ',
-                          style: TextStyle(fontSize: 15)),
-                      Text(
-                        '${cart.finalTotal.toInt()} THB',
-                        style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.deepOrange),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.copy, size: 20),
+                      const SizedBox(width: 12),
+                      OutlinedButton.icon(
+                        icon: const Icon(Icons.copy, size: 16),
+                        label: const Text('Copy Amount'),
                         onPressed: () {
                           Clipboard.setData(ClipboardData(
                               text: cart.finalTotal.toInt().toString()));
