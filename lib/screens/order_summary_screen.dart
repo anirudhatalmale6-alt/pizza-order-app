@@ -161,6 +161,22 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       }
     }
     sb.writeln();
+    sb.writeln('ส่วนลด / Discount:');
+    bool hasDiscount = false;
+    for (final cat in _categoriesWithItems()) {
+      final count = cart.countForCategory(cat.key);
+      final discount = cart.categoryDiscounts[cat.key] ?? 0;
+      final total = cart.discountForCategory(cat.key);
+      if (discount > 0) {
+        hasDiscount = true;
+        sb.writeln(
+            '- ${cat.label} ${count} x ${discount.toInt()} = -${total.toInt()} THB');
+      }
+    }
+    if (!hasDiscount) {
+      sb.writeln('- None');
+    }
+    sb.writeln();
     sb.writeln('Total / รวม: ${cart.finalTotal.toInt()} THB');
     sb.writeln('================================');
     sb.writeln('Please confirm this order is OK');
@@ -308,43 +324,34 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         );
 
         if (!mounted) return;
-        // Show payment slip with option to download/share
+        // Show payment slip - user can right-click to save or screenshot it
         final imageBytes = await _paymentScreenshot!.readAsBytes();
         if (!mounted) return;
         await showDialog(
           context: context,
           barrierDismissible: false,
           builder: (ctx) => AlertDialog(
-            title: const Text('Step 2: Send Payment Slip'),
+            title: const Text('Step 2: Payment Slip'),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
-                    'Save this image and send it in LINE.\n'
-                    'Long-press the image to save, or use the button below.\n\n'
-                    'บันทึกรูปนี้แล้วส่งใน LINE',
+                    'Right-click the image below and "Save image as..." '
+                    'then send it in LINE.\n\n'
+                    'คลิกขวาที่รูปด้านล่างแล้ว "บันทึกรูปภาพเป็น..." '
+                    'จากนั้นส่งใน LINE',
                     style: TextStyle(fontSize: 14),
                   ),
                   const SizedBox(height: 12),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.memory(imageBytes, height: 200, fit: BoxFit.cover),
+                    child: Image.memory(imageBytes, height: 250, fit: BoxFit.contain),
                   ),
                 ],
               ),
             ),
             actions: [
-              TextButton(
-                onPressed: () async {
-                  try {
-                    await Share.shareXFiles([_paymentScreenshot!]);
-                  } catch (_) {
-                    // If share fails, at least the image is visible to screenshot
-                  }
-                },
-                child: const Text('Share Image'),
-              ),
               ElevatedButton(
                 onPressed: () => Navigator.of(ctx).pop(),
                 child: const Text('Done / เสร็จ'),
