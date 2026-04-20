@@ -1,4 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import '../models/menu_item.dart';
 import '../providers/cart_provider.dart';
@@ -462,9 +465,11 @@ class _SettingsTabState extends State<_SettingsTab> {
   late TextEditingController _lineCtrl;
   late TextEditingController _promptPayCtrl;
   late TextEditingController _sheetIdCtrl;
+  late TextEditingController _appNameCtrl;
   late int _openHour;
   late int _closeHour;
   bool _syncing = false;
+  String _logoPath = '';
 
   static const _allHours = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 
@@ -483,8 +488,10 @@ class _SettingsTabState extends State<_SettingsTab> {
     _lineCtrl = TextEditingController(text: profile.lineDeepLink);
     _promptPayCtrl = TextEditingController(text: profile.promptPayId);
     _sheetIdCtrl = TextEditingController(text: menu.sheetId);
+    _appNameCtrl = TextEditingController(text: profile.appName);
     _openHour = profile.openHour;
     _closeHour = profile.closeHour;
+    _logoPath = profile.logoPath;
   }
 
   @override
@@ -492,6 +499,7 @@ class _SettingsTabState extends State<_SettingsTab> {
     _lineCtrl.dispose();
     _promptPayCtrl.dispose();
     _sheetIdCtrl.dispose();
+    _appNameCtrl.dispose();
     super.dispose();
   }
 
@@ -562,6 +570,73 @@ class _SettingsTabState extends State<_SettingsTab> {
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
+        // App Name
+        const Text('App Name', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _appNameCtrl,
+          decoration: const InputDecoration(
+            labelText: 'App Name',
+            hintText: "e.g., Jen's Pizzeria",
+            border: OutlineInputBorder(),
+          ),
+        ),
+
+        const SizedBox(height: 24),
+
+        // Logo
+        const Text('Logo', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        if (_logoPath.isNotEmpty && File(_logoPath).existsSync()) ...[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.file(File(_logoPath), height: 100, fit: BoxFit.contain),
+          ),
+          const SizedBox(height: 8),
+          TextButton.icon(
+            onPressed: () => setState(() => _logoPath = ''),
+            icon: const Icon(Icons.close, color: Colors.red),
+            label: const Text('Remove Logo', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.photo_library),
+                label: const Text('Gallery'),
+                onPressed: () async {
+                  final picker = ImagePicker();
+                  final image = await picker.pickImage(source: ImageSource.gallery);
+                  if (image != null) {
+                    final appDir = await getApplicationDocumentsDirectory();
+                    final saved = await File(image.path).copy('${appDir.path}/logo.png');
+                    setState(() => _logoPath = saved.path);
+                  }
+                },
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.camera_alt),
+                label: const Text('Camera'),
+                onPressed: () async {
+                  final picker = ImagePicker();
+                  final image = await picker.pickImage(source: ImageSource.camera);
+                  if (image != null) {
+                    final appDir = await getApplicationDocumentsDirectory();
+                    final saved = await File(image.path).copy('${appDir.path}/logo.png');
+                    setState(() => _logoPath = saved.path);
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 32),
+
         // Google Sheet Sync
         const Text('Google Sheet Sync', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
@@ -681,7 +756,7 @@ class _SettingsTabState extends State<_SettingsTab> {
         ),
         const SizedBox(height: 8),
         const Text(
-          'Enter your phone number (e.g., 0812345678) or\nNational ID (13 digits) for QR payment',
+          'Enter your PromptPay account number for payment',
           style: TextStyle(color: Colors.grey, fontSize: 12),
         ),
 
@@ -702,6 +777,8 @@ class _SettingsTabState extends State<_SettingsTab> {
           onPressed: () async {
             final profile = context.read<ProfileProvider>();
             final menu = context.read<MenuProvider>();
+            await profile.saveAppName(_appNameCtrl.text.trim());
+            await profile.saveLogoPath(_logoPath);
             await profile.saveLineConfig(_lineCtrl.text.trim());
             await profile.savePromptPayId(_promptPayCtrl.text.trim());
             await profile.saveOpeningHours(_openHour, _closeHour);

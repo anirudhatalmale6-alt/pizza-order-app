@@ -11,6 +11,8 @@ class ProfileProvider extends ChangeNotifier {
   String _promptPayId = '';
   int _openHour = 11;
   int _closeHour = 16;
+  String _appName = "Jen's Pizzeria";
+  String _logoPath = '';
 
   String get customerName => _currentCustomer?.name ?? '';
   String get businessName => _currentCustomer?.businessName ?? '';
@@ -18,6 +20,8 @@ class ProfileProvider extends ChangeNotifier {
   String get promptPayId => _promptPayId;
   int get openHour => _openHour;
   int get closeHour => _closeHour;
+  String get appName => _appName;
+  String get logoPath => _logoPath;
   List<int> get availableHours =>
       List.generate(_closeHour - _openHour + 1, (i) => _openHour + i);
   bool get isCustomerSelected => _currentCustomer != null;
@@ -31,6 +35,8 @@ class ProfileProvider extends ChangeNotifier {
     _promptPayId = prefs.getString('promptPayId') ?? '356 030 025 9093';
     _openHour = prefs.getInt('openHour') ?? 11;
     _closeHour = prefs.getInt('closeHour') ?? 16;
+    _appName = prefs.getString('appName') ?? "Jen's Pizzeria";
+    _logoPath = prefs.getString('logoPath') ?? '';
     notifyListeners();
   }
 
@@ -97,6 +103,20 @@ class ProfileProvider extends ChangeNotifier {
     _closeHour = close;
     await prefs.setInt('openHour', open);
     await prefs.setInt('closeHour', close);
+    notifyListeners();
+  }
+
+  Future<void> saveAppName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    _appName = name;
+    await prefs.setString('appName', name);
+    notifyListeners();
+  }
+
+  Future<void> saveLogoPath(String path) async {
+    final prefs = await SharedPreferences.getInstance();
+    _logoPath = path;
+    await prefs.setString('logoPath', path);
     notifyListeners();
   }
 }

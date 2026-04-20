@@ -1,4 +1,4 @@
-import 'dart:io' show exit;
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -190,7 +190,7 @@ class ProfileScreen extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Jen's Pizzeria"),
+          title: Text(profile.appName),
           backgroundColor: Colors.deepOrange,
           foregroundColor: Colors.white,
           actions: [
@@ -204,6 +204,17 @@ class ProfileScreen extends StatelessWidget {
       body: Column(
         children: [
           const SizedBox(height: 16),
+          if (profile.logoPath.isNotEmpty && File(profile.logoPath).existsSync()) ...[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.file(
+                File(profile.logoPath),
+                height: 100,
+                fit: BoxFit.contain,
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
           const Text(
             'Staff Member / พนักงาน',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
