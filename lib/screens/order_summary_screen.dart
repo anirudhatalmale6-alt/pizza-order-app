@@ -195,57 +195,65 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     if (kIsWeb) {
       await Clipboard.setData(ClipboardData(text: text));
       if (!mounted) return;
-      // Show the full order text and let user copy/paste to LINE
-      await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Order Text Copied!'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'The order text has been copied to your clipboard.\n'
-                  'Open LINE and paste it (Ctrl+V) into your chat.\n\n'
-                  'ข้อความถูกคัดลอกแล้ว เปิด LINE แล้ววาง (Ctrl+V) ในแชท',
-                  style: TextStyle(fontSize: 14),
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(8),
+      // Try native share sheet first (works on mobile browsers)
+      bool shared = false;
+      try {
+        await Share.share(text);
+        shared = true;
+      } catch (_) {}
+      // If share API failed (e.g. desktop browser), show copy dialog
+      if (!shared && mounted) {
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Order Text Copied!'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'The order text has been copied to your clipboard.\n'
+                    'Open LINE and paste it into your chat.\n\n'
+                    'ข้อความถูกคัดลอกแล้ว เปิด LINE แล้ววางในแชท',
+                    style: TextStyle(fontSize: 14),
                   ),
-                  child: Text(
-                    text,
-                    style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      text,
+                      style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  await Clipboard.setData(ClipboardData(text: text));
+                  if (ctx.mounted) {
+                    ScaffoldMessenger.of(ctx).showSnackBar(
+                      const SnackBar(content: Text('Copied again!'), duration: Duration(seconds: 1)),
+                    );
+                  }
+                },
+                child: const Text('Copy Again'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Done / เสร็จ'),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                await Clipboard.setData(ClipboardData(text: text));
-                if (ctx.mounted) {
-                  ScaffoldMessenger.of(ctx).showSnackBar(
-                    const SnackBar(content: Text('Copied again!'), duration: Duration(seconds: 1)),
-                  );
-                }
-              },
-              child: const Text('Copy Again'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Done / เสร็จ'),
-            ),
-          ],
-        ),
-      );
+        );
+      }
     } else {
       bool sent = false;
       try {
@@ -272,93 +280,56 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
     if (_paymentScreenshot != null) {
       if (kIsWeb) {
-        // On web: include note about payment slip in the order text
-        final textWithSlipNote = '$orderText\n(Payment slip attached separately)';
-        await Clipboard.setData(ClipboardData(text: textWithSlipNote));
-        if (!mounted) return;
+        // Step 1: Share or copy order text
+        await _shareTextViaLine(orderText);
 
-        // Show order text dialog, then payment slip dialog
-        await showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (ctx) => AlertDialog(
-            title: const Text('Step 1: Order Text Copied!'),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Paste this text into LINE (Ctrl+V).\nThen come back here to send the payment slip.\n\n'
-                    'วางข้อความนี้ใน LINE (Ctrl+V) แล้วกลับมาส่งสลิป',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
+        if (!mounted) return;
+        // Step 2: Share payment slip image
+        // Try native share (works on mobile browsers)
+        bool imageShared = false;
+        try {
+          await Share.shareXFiles(
+            [_paymentScreenshot!],
+            text: 'Payment slip / สลิปการชำระเงิน',
+          );
+          imageShared = true;
+        } catch (_) {}
+
+        // If share failed (desktop browser), show image in dialog
+        if (!imageShared && mounted) {
+          final imageBytes = await _paymentScreenshot!.readAsBytes();
+          if (!mounted) return;
+          await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (ctx) => AlertDialog(
+              title: const Text('Send Payment Slip'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Save this image and send it in LINE.\n\n'
+                      'บันทึกรูปนี้แล้วส่งใน LINE',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    const SizedBox(height: 12),
+                    ClipRRect(
                       borderRadius: BorderRadius.circular(8),
+                      child: Image.memory(imageBytes, height: 250, fit: BoxFit.contain),
                     ),
-                    child: Text(
-                      orderText,
-                      style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text('Done / เสร็จ'),
+                ),
+              ],
             ),
-            actions: [
-              TextButton(
-                onPressed: () async {
-                  await Clipboard.setData(ClipboardData(text: textWithSlipNote));
-                },
-                child: const Text('Copy Again'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('Next: Payment Slip'),
-              ),
-            ],
-          ),
-        );
-
-        if (!mounted) return;
-        // Show payment slip - user can right-click to save or screenshot it
-        final imageBytes = await _paymentScreenshot!.readAsBytes();
-        if (!mounted) return;
-        await showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (ctx) => AlertDialog(
-            title: const Text('Step 2: Payment Slip'),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Right-click the image below and "Save image as..." '
-                    'then send it in LINE.\n\n'
-                    'คลิกขวาที่รูปด้านล่างแล้ว "บันทึกรูปภาพเป็น..." '
-                    'จากนั้นส่งใน LINE',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  const SizedBox(height: 12),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.memory(imageBytes, height: 250, fit: BoxFit.contain),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('Done / เสร็จ'),
-              ),
-            ],
-          ),
-        );
+          );
+        }
       } else {
         // On mobile: use native LINE intent
         final cachePath = await getTemporaryCachePath();
