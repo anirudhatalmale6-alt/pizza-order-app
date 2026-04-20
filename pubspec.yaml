@@ -1,7 +1,7 @@
 name: pizza_order_app
 description: "Pizza ordering app with PromptPay QR and LINE integration"
 publish_to: 'none'
-version: 4.0.1+1
+version: 4.0.2+1
 
 environment:
   sdk: ^3.7.2

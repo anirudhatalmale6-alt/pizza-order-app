@@ -162,7 +162,10 @@ class _SettingsTabState extends State<_SettingsTab> {
           ),
           const SizedBox(height: 8),
           TextButton.icon(
-            onPressed: () => setState(() => _logoPath = ''),
+            onPressed: () {
+              setState(() => _logoPath = '');
+              context.read<ProfileProvider>().saveLogoPath('');
+            },
             icon: const Icon(Icons.close, color: Colors.red),
             label: const Text('Remove Logo', style: TextStyle(color: Colors.red)),
           ),
@@ -180,6 +183,9 @@ class _SettingsTabState extends State<_SettingsTab> {
                     final appDir = await getApplicationDocumentsDirectory();
                     final saved = await File(image.path).copy('${appDir.path}/logo.png');
                     setState(() => _logoPath = saved.path);
+                    if (mounted) {
+                      await context.read<ProfileProvider>().saveLogoPath(saved.path);
+                    }
                   }
                 },
               ),
@@ -196,6 +202,9 @@ class _SettingsTabState extends State<_SettingsTab> {
                     final appDir = await getApplicationDocumentsDirectory();
                     final saved = await File(image.path).copy('${appDir.path}/logo.png');
                     setState(() => _logoPath = saved.path);
+                    if (mounted) {
+                      await context.read<ProfileProvider>().saveLogoPath(saved.path);
+                    }
                   }
                 },
               ),
