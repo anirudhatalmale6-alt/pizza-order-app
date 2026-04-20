@@ -178,31 +178,58 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   Future<void> _shareTextViaLine(String text) async {
     if (kIsWeb) {
       await Clipboard.setData(ClipboardData(text: text));
-      // Try Web Share API first (handles multi-line text properly)
-      try {
-        await Share.share(text);
-      } catch (_) {
-        // If Web Share API not available, show dialog
-        if (mounted) {
-          await showDialog(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: const Text('Text Copied!'),
-              content: const Text(
-                'The order text has been copied to your clipboard.\n'
-                'Open LINE and paste it into your chat.\n\n'
-                'ข้อความถูกคัดลอกแล้ว เปิด LINE แล้ววางในแชท',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(ctx).pop(),
-                  child: const Text('OK'),
+      if (!mounted) return;
+      // Show the full order text and let user copy/paste to LINE
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Order Text Copied!'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'The order text has been copied to your clipboard.\n'
+                  'Open LINE and paste it (Ctrl+V) into your chat.\n\n'
+                  'ข้อความถูกคัดลอกแล้ว เปิด LINE แล้ววาง (Ctrl+V) ในแชท',
+                  style: TextStyle(fontSize: 14),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    text,
+                    style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
+                  ),
                 ),
               ],
             ),
-          );
-        }
-      }
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                await Clipboard.setData(ClipboardData(text: text));
+                if (ctx.mounted) {
+                  ScaffoldMessenger.of(ctx).showSnackBar(
+                    const SnackBar(content: Text('Copied again!'), duration: Duration(seconds: 1)),
+                  );
+                }
+              },
+              child: const Text('Copy Again'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Done / เสร็จ'),
+            ),
+          ],
+        ),
+      );
     } else {
       bool sent = false;
       try {
