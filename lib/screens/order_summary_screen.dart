@@ -178,12 +178,30 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   Future<void> _shareTextViaLine(String text) async {
     if (kIsWeb) {
       await Clipboard.setData(ClipboardData(text: text));
-      final lineUrl = 'https://line.me/R/msg/text/?${Uri.encodeComponent(text)}';
-      final uri = Uri.parse(lineUrl);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
+      // Try Web Share API first (handles multi-line text properly)
+      try {
         await Share.share(text);
+      } catch (_) {
+        // If Web Share API not available, show dialog
+        if (mounted) {
+          await showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text('Text Copied!'),
+              content: const Text(
+                'The order text has been copied to your clipboard.\n'
+                'Open LINE and paste it into your chat.\n\n'
+                'ข้อความถูกคัดลอกแล้ว เปิด LINE แล้ววางในแชท',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
       }
     } else {
       bool sent = false;
