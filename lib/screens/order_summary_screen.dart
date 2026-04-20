@@ -102,6 +102,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
 
     sb.writeln();
+    sb.writeln('ยอดรวมก่อนส่วนลด / Subtotal: ${cart.subtotal.toInt()} THB');
+    sb.writeln();
     sb.writeln('ส่วนลด / Discount:');
     for (final cat in _categoriesWithItems()) {
       final count = cart.countForCategory(cat.key);
@@ -109,7 +111,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       final total = cart.discountForCategory(cat.key);
       if (discount > 0) {
         sb.writeln(
-            '- ${cat.labelThai} ${count} × ${discount.toInt()} / ${count} ${cat.label.toLowerCase()} × ${discount.toInt()} = ${total.toInt()} THB');
+            '- ${cat.labelThai} ${count} × ${discount.toInt()} / ${count} ${cat.label.toLowerCase()} × ${discount.toInt()} = -${total.toInt()} THB');
       }
     }
     sb.writeln();
@@ -161,22 +163,10 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       }
     }
     sb.writeln();
-    sb.writeln('ส่วนลด / Discount:');
-    bool hasDiscount = false;
-    for (final cat in _categoriesWithItems()) {
-      final count = cart.countForCategory(cat.key);
-      final discount = cart.categoryDiscounts[cat.key] ?? 0;
-      final total = cart.discountForCategory(cat.key);
-      if (discount > 0) {
-        hasDiscount = true;
-        sb.writeln(
-            '- ${cat.label} ${count} x ${discount.toInt()} = -${total.toInt()} THB');
-      }
+    sb.writeln('Subtotal / ยอดรวม: ${cart.subtotal.toInt()} THB');
+    if (cart.totalDiscount > 0) {
+      sb.writeln('Discount / ส่วนลด: -${cart.totalDiscount.toInt()} THB');
     }
-    if (!hasDiscount) {
-      sb.writeln('- None');
-    }
-    sb.writeln();
     sb.writeln('Total / รวม: ${cart.finalTotal.toInt()} THB');
     sb.writeln('================================');
     sb.writeln('Please confirm this order is OK');
