@@ -221,8 +221,9 @@ class _SettingsTabState extends State<_SettingsTab> {
             hintText: 'Paste the full Google Sheet link here',
             border: OutlineInputBorder(),
           ),
-          maxLines: null,
-          minLines: 2,
+          maxLines: 5,
+          minLines: 3,
+          style: const TextStyle(fontSize: 13),
         ),
         const SizedBox(height: 12),
         ElevatedButton.icon(
