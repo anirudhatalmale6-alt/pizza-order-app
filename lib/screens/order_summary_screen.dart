@@ -1,8 +1,10 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../utils/platform_helper.dart';
+import '../utils/platform_image.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -21,7 +23,7 @@ class OrderSummaryScreen extends StatefulWidget {
 }
 
 class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
-  File? _paymentScreenshot;
+  XFile? _paymentScreenshot;
   String _orderType = 'pickup'; // 'pickup' or 'delivery'
   int? _selectedHour; // 11-16
   bool _orderConfirmed = false;
@@ -37,7 +39,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final picker = ImagePicker();
     final image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      setState(() => _paymentScreenshot = File(image.path));
+      setState(() => _paymentScreenshot = image);
     }
   }
 
@@ -45,7 +47,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final picker = ImagePicker();
     final image = await picker.pickImage(source: ImageSource.camera);
     if (image != null) {
-      setState(() => _paymentScreenshot = File(image.path));
+      setState(() => _paymentScreenshot = image);
     }
   }
 
@@ -170,23 +172,35 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   static const _shareChannel = MethodChannel('com.pizzaorder/share');
 
   Future<void> _sendConfirmation() async {
-    // Just set the state to show warning + send button on the page
     setState(() => _orderConfirmed = true);
+  }
+
+  Future<void> _shareTextViaLine(String text) async {
+    if (kIsWeb) {
+      await Clipboard.setData(ClipboardData(text: text));
+      final lineUrl = 'https://line.me/R/msg/text/?${Uri.encodeComponent(text)}';
+      final uri = Uri.parse(lineUrl);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        await Share.share(text);
+      }
+    } else {
+      bool sent = false;
+      try {
+        final result = await _shareChannel.invokeMethod('shareToLine', {'text': text});
+        sent = (result == true);
+      } catch (_) {}
+      if (!sent && mounted) {
+        await Clipboard.setData(ClipboardData(text: text));
+        await Share.share(text);
+      }
+    }
   }
 
   Future<void> _doShareConfirmation() async {
     final confirmText = _buildConfirmText();
-
-    bool sent = false;
-    try {
-      final result = await _shareChannel.invokeMethod('shareToLine', {'text': confirmText});
-      sent = (result == true);
-    } catch (_) {}
-
-    if (!sent && mounted) {
-      await Clipboard.setData(ClipboardData(text: confirmText));
-      await Share.share(confirmText);
-    }
+    await _shareTextViaLine(confirmText);
   }
 
   Future<void> _sendToLine() async {
@@ -195,60 +209,76 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     if (!mounted) return;
     await Clipboard.setData(ClipboardData(text: orderText));
 
-    if (_paymentScreenshot != null && _paymentScreenshot!.existsSync()) {
-      // Copy screenshot to app cache so FileProvider can access it
-      final cacheDir = await getTemporaryDirectory();
-      final cachedImage = File('${cacheDir.path}/payment_${DateTime.now().millisecondsSinceEpoch}.jpg');
-      await _paymentScreenshot!.copy(cachedImage.path);
+    if (_paymentScreenshot != null) {
+      if (kIsWeb) {
+        // On web: share text via LINE, then share image via Web Share API
+        await _shareTextViaLine(orderText);
 
-      // First send the order text to LINE
-      try {
-        await _shareChannel.invokeMethod('shareToLine', {'text': orderText});
-      } catch (_) {}
-
-      // Wait for user to come back, then show dialog to send the image
-      if (!mounted) return;
-      await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Send Payment Slip'),
-          content: const Text(
-            'Order text sent! Now tap below to send the payment slip photo.\n\n'
-            'ส่งข้อความสั่งซื้อแล้ว! กดด้านล่างเพื่อส่งสลิปการชำระเงิน',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Send Payment Slip / ส่งสลิป'),
+        if (!mounted) return;
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Send Payment Slip'),
+            content: const Text(
+              'Order text sent! Now tap below to send the payment slip photo.\n\n'
+              'ส่งข้อความสั่งซื้อแล้ว! กดด้านล่างเพื่อส่งสลิปการชำระเงิน',
             ),
-          ],
-        ),
-      );
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Send Payment Slip / ส่งสลิป'),
+              ),
+            ],
+          ),
+        );
 
-      // Now send the image to LINE
-      if (!mounted) return;
-      bool sent = false;
-      try {
-        final result = await _shareChannel.invokeMethod('shareToLine', {
-          'text': '',
-          'imagePath': cachedImage.path,
-        });
-        sent = (result == true);
-      } catch (_) {}
-      if (!sent && mounted) {
-        await Share.shareXFiles([XFile(cachedImage.path)]);
+        if (!mounted) return;
+        await Share.shareXFiles([_paymentScreenshot!]);
+      } else {
+        // On mobile: use native LINE intent
+        final cachePath = await getTemporaryCachePath();
+        final cachedImage = File('$cachePath/payment_${DateTime.now().millisecondsSinceEpoch}.jpg');
+        await File(_paymentScreenshot!.path).copy(cachedImage.path);
+
+        try {
+          await _shareChannel.invokeMethod('shareToLine', {'text': orderText});
+        } catch (_) {}
+
+        if (!mounted) return;
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Send Payment Slip'),
+            content: const Text(
+              'Order text sent! Now tap below to send the payment slip photo.\n\n'
+              'ส่งข้อความสั่งซื้อแล้ว! กดด้านล่างเพื่อส่งสลิปการชำระเงิน',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Send Payment Slip / ส่งสลิป'),
+              ),
+            ],
+          ),
+        );
+
+        if (!mounted) return;
+        bool sent = false;
+        try {
+          final result = await _shareChannel.invokeMethod('shareToLine', {
+            'text': '',
+            'imagePath': cachedImage.path,
+          });
+          sent = (result == true);
+        } catch (_) {}
+        if (!sent && mounted) {
+          await Share.shareXFiles([XFile(cachedImage.path)]);
+        }
       }
     } else {
-      // Text only - use LINE direct or share sheet fallback
-      bool sent = false;
-      try {
-        final result = await _shareChannel.invokeMethod('shareToLine', {'text': orderText});
-        sent = (result == true);
-      } catch (_) {}
-      if (!sent && mounted) {
-        await Share.share(orderText);
-      }
+      await _shareTextViaLine(orderText);
     }
 
     if (!mounted) return;
@@ -786,7 +816,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           if (_paymentScreenshot != null) ...[
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.file(_paymentScreenshot!, height: 200, fit: BoxFit.cover),
+              child: platformFileImage(_paymentScreenshot!.path, height: 200, fit: BoxFit.cover),
             ),
             const SizedBox(height: 8),
             TextButton.icon(

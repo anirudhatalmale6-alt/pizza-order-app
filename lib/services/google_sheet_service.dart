@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:csv/csv.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 import '../models/category_config.dart';
@@ -36,8 +37,13 @@ class GoogleSheetService {
     return input;
   }
 
-  static String _gvizUrl(String sheetId, String tabName) =>
-      'https://docs.google.com/spreadsheets/d/$sheetId/gviz/tq?tqx=out:csv&sheet=${Uri.encodeComponent(tabName)}';
+  static String _gvizUrl(String sheetId, String tabName) {
+    final base = 'https://docs.google.com/spreadsheets/d/$sheetId/gviz/tq?tqx=out:csv&sheet=${Uri.encodeComponent(tabName)}';
+    if (kIsWeb) {
+      return 'https://corsproxy.io/?${Uri.encodeComponent(base)}';
+    }
+    return base;
+  }
 
   static String _lastRawPreview = '';
 

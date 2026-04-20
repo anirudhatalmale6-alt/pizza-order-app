@@ -1,10 +1,13 @@
-import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import '../providers/menu_provider.dart';
 import '../providers/profile_provider.dart';
+import '../utils/platform_helper.dart';
+import '../utils/platform_image.dart';
 
 class AdminScreen extends StatelessWidget {
   const AdminScreen({super.key});
@@ -38,6 +41,7 @@ class _SettingsTabState extends State<_SettingsTab> {
   late int _closeHour;
   bool _syncing = false;
   String _logoPath = '';
+  Uint8List? _logoBytes;
 
   static const _allHours = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 
@@ -60,6 +64,9 @@ class _SettingsTabState extends State<_SettingsTab> {
     _openHour = profile.openHour;
     _closeHour = profile.closeHour;
     _logoPath = profile.logoPath;
+    if (kIsWeb && profile.logoBase64.isNotEmpty) {
+      _logoBytes = profile.logoBase64Bytes;
+    }
   }
 
   @override
@@ -155,10 +162,25 @@ class _SettingsTabState extends State<_SettingsTab> {
         // Logo
         const Text('Logo', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
-        if (_logoPath.isNotEmpty && File(_logoPath).existsSync()) ...[
+        if (kIsWeb && _logoBytes != null && _logoBytes!.isNotEmpty) ...[
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.file(File(_logoPath), height: 100, fit: BoxFit.contain),
+            child: Image.memory(_logoBytes!, height: 100, fit: BoxFit.contain),
+          ),
+          const SizedBox(height: 8),
+          TextButton.icon(
+            onPressed: () {
+              setState(() { _logoBytes = null; _logoPath = ''; });
+              context.read<ProfileProvider>().saveLogoBase64('');
+              context.read<ProfileProvider>().saveLogoPath('');
+            },
+            icon: const Icon(Icons.close, color: Colors.red),
+            label: const Text('Remove Logo', style: TextStyle(color: Colors.red)),
+          ),
+        ] else if (!kIsWeb && _logoPath.isNotEmpty) ...[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: platformFileImage(_logoPath, height: 100, fit: BoxFit.contain),
           ),
           const SizedBox(height: 8),
           TextButton.icon(
@@ -180,11 +202,20 @@ class _SettingsTabState extends State<_SettingsTab> {
                   final picker = ImagePicker();
                   final image = await picker.pickImage(source: ImageSource.gallery);
                   if (image != null) {
-                    final appDir = await getApplicationDocumentsDirectory();
-                    final saved = await File(image.path).copy('${appDir.path}/logo.png');
-                    setState(() => _logoPath = saved.path);
-                    if (mounted) {
-                      await context.read<ProfileProvider>().saveLogoPath(saved.path);
+                    if (kIsWeb) {
+                      final bytes = await image.readAsBytes();
+                      final b64 = base64Encode(bytes);
+                      setState(() { _logoBytes = bytes; _logoPath = ''; });
+                      if (mounted) {
+                        await context.read<ProfileProvider>().saveLogoBase64(b64);
+                      }
+                    } else {
+                      final appDir = await getAppDocumentsPath();
+                      final saved = await File(image.path).copy('$appDir/logo.png');
+                      setState(() => _logoPath = saved.path);
+                      if (mounted) {
+                        await context.read<ProfileProvider>().saveLogoPath(saved.path);
+                      }
                     }
                   }
                 },
@@ -199,11 +230,20 @@ class _SettingsTabState extends State<_SettingsTab> {
                   final picker = ImagePicker();
                   final image = await picker.pickImage(source: ImageSource.camera);
                   if (image != null) {
-                    final appDir = await getApplicationDocumentsDirectory();
-                    final saved = await File(image.path).copy('${appDir.path}/logo.png');
-                    setState(() => _logoPath = saved.path);
-                    if (mounted) {
-                      await context.read<ProfileProvider>().saveLogoPath(saved.path);
+                    if (kIsWeb) {
+                      final bytes = await image.readAsBytes();
+                      final b64 = base64Encode(bytes);
+                      setState(() { _logoBytes = bytes; _logoPath = ''; });
+                      if (mounted) {
+                        await context.read<ProfileProvider>().saveLogoBase64(b64);
+                      }
+                    } else {
+                      final appDir = await getAppDocumentsPath();
+                      final saved = await File(image.path).copy('$appDir/logo.png');
+                      setState(() => _logoPath = saved.path);
+                      if (mounted) {
+                        await context.read<ProfileProvider>().saveLogoPath(saved.path);
+                      }
                     }
                   }
                 },

@@ -49,7 +49,7 @@ class PizzaOrderApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Pizza Order',
+      title: 'Bites2Baht',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorSchemeSeed: Colors.deepOrange,

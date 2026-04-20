@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +15,7 @@ class ProfileProvider extends ChangeNotifier {
   int _closeHour = 16;
   String _appName = 'Bites2Baht';
   String _logoPath = '';
+  String _logoBase64 = '';
 
   String get customerName => _currentCustomer?.name ?? '';
   String get businessName => _currentCustomer?.businessName ?? '';
@@ -22,6 +25,8 @@ class ProfileProvider extends ChangeNotifier {
   int get closeHour => _closeHour;
   String get appName => _appName;
   String get logoPath => _logoPath;
+  String get logoBase64 => _logoBase64;
+  Uint8List get logoBase64Bytes => _logoBase64.isNotEmpty ? base64Decode(_logoBase64) : Uint8List(0);
   List<int> get availableHours =>
       List.generate(_closeHour - _openHour + 1, (i) => _openHour + i);
   bool get isCustomerSelected => _currentCustomer != null;
@@ -37,6 +42,7 @@ class ProfileProvider extends ChangeNotifier {
     _closeHour = prefs.getInt('closeHour') ?? 16;
     _appName = prefs.getString('appName') ?? 'Bites2Baht';
     _logoPath = prefs.getString('logoPath') ?? '';
+    _logoBase64 = prefs.getString('logoBase64') ?? '';
     notifyListeners();
   }
 
@@ -117,6 +123,13 @@ class ProfileProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     _logoPath = path;
     await prefs.setString('logoPath', path);
+    notifyListeners();
+  }
+
+  Future<void> saveLogoBase64(String base64Data) async {
+    final prefs = await SharedPreferences.getInstance();
+    _logoBase64 = base64Data;
+    await prefs.setString('logoBase64', base64Data);
     notifyListeners();
   }
 }

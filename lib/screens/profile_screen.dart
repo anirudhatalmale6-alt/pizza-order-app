@@ -1,8 +1,10 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/profile_provider.dart';
+import '../utils/platform_helper.dart';
+import '../utils/platform_image.dart';
 import 'menu_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -186,7 +188,7 @@ class ProfileScreen extends StatelessWidget {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) exit(0);
+        if (!didPop) exitApp();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -197,21 +199,27 @@ class ProfileScreen extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.exit_to_app),
               tooltip: 'Exit / ออก',
-              onPressed: () => exit(0),
+              onPressed: () => exitApp(),
             ),
           ],
         ),
       body: Column(
         children: [
           const SizedBox(height: 16),
-          if (profile.logoPath.isNotEmpty && File(profile.logoPath).existsSync()) ...[
+          if (kIsWeb && profile.logoBase64.isNotEmpty) ...[
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.file(
-                File(profile.logoPath),
+              child: Image.memory(
+                profile.logoBase64Bytes,
                 height: 100,
                 fit: BoxFit.contain,
               ),
+            ),
+            const SizedBox(height: 12),
+          ] else if (!kIsWeb && profile.logoPath.isNotEmpty) ...[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: platformFileImage(profile.logoPath, height: 100, fit: BoxFit.contain),
             ),
             const SizedBox(height: 12),
           ],
