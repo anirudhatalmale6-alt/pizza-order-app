@@ -36,7 +36,6 @@
         }
         .download-btn {
             display: inline-block;
-            background: #2e7d32;
             color: white;
             text-decoration: none;
             padding: 18px 48px;
@@ -45,9 +44,16 @@
             font-weight: 600;
             transition: background 0.2s;
             width: 100%;
+            margin-bottom: 12px;
         }
-        .download-btn:hover {
-            background: #1b5e20;
+        .android-btn { background: #2e7d32; }
+        .android-btn:hover { background: #1b5e20; }
+        .iphone-btn { background: #007AFF; }
+        .iphone-btn:hover { background: #0056CC; }
+        .or-divider {
+            color: #999;
+            font-size: 14px;
+            margin: 8px 0;
         }
         .instructions {
             margin-top: 24px;
@@ -58,6 +64,11 @@
         }
         .instructions ol {
             padding-left: 20px;
+        }
+        .instructions h4 {
+            color: #666;
+            margin-top: 16px;
+            margin-bottom: 4px;
         }
         .version {
             margin-top: 20px;
@@ -70,19 +81,30 @@
     <div class="card">
         <img src="logo.jpg" alt="Bites2Baht" class="logo">
         <p class="tagline">Order management app for staff</p>
-        <a href="https://github.com/anirudhatalmale6-alt/pizza-order-app/releases/latest/download/app-release.apk" class="download-btn">
-            Download App
+        <a href="https://github.com/anirudhatalmale6-alt/pizza-order-app/releases/latest/download/app-release.apk" class="download-btn android-btn">
+            Android Download
+        </a>
+        <p class="or-divider">or</p>
+        <a href="pwa/" class="download-btn iphone-btn">
+            iPhone / Web App
         </a>
         <div class="instructions">
-            <p><strong>How to install:</strong></p>
+            <h4>Android:</h4>
             <ol>
-                <li>Tap "Download App" above</li>
+                <li>Tap "Android Download" above</li>
                 <li>Open the downloaded file</li>
                 <li>If prompted, allow "Install from unknown sources"</li>
                 <li>Tap "Install"</li>
             </ol>
+            <h4>iPhone (Add to Home Screen):</h4>
+            <ol>
+                <li>Tap "iPhone / Web App" above</li>
+                <li>Tap the Share button (square with arrow)</li>
+                <li>Scroll down and tap "Add to Home Screen"</li>
+                <li>Tap "Add"</li>
+            </ol>
         </div>
-        <p class="version">Android only</p>
+        <p class="version">Android + iPhone</p>
     </div>
 </body>
 </html>
