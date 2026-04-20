@@ -256,30 +256,102 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
     if (_paymentScreenshot != null) {
       if (kIsWeb) {
-        // On web: share text via LINE, then share image via Web Share API
-        await _shareTextViaLine(orderText);
-
+        // On web: include note about payment slip in the order text
+        final textWithSlipNote = '$orderText\n(Payment slip attached separately)';
+        await Clipboard.setData(ClipboardData(text: textWithSlipNote));
         if (!mounted) return;
+
+        // Show order text dialog, then payment slip dialog
         await showDialog(
           context: context,
           barrierDismissible: false,
           builder: (ctx) => AlertDialog(
-            title: const Text('Send Payment Slip'),
-            content: const Text(
-              'Order text sent! Now tap below to send the payment slip photo.\n\n'
-              'ส่งข้อความสั่งซื้อแล้ว! กดด้านล่างเพื่อส่งสลิปการชำระเงิน',
+            title: const Text('Step 1: Order Text Copied!'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Paste this text into LINE (Ctrl+V).\nThen come back here to send the payment slip.\n\n'
+                    'วางข้อความนี้ใน LINE (Ctrl+V) แล้วกลับมาส่งสลิป',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      orderText,
+                      style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
+                    ),
+                  ),
+                ],
+              ),
             ),
             actions: [
               TextButton(
+                onPressed: () async {
+                  await Clipboard.setData(ClipboardData(text: textWithSlipNote));
+                },
+                child: const Text('Copy Again'),
+              ),
+              ElevatedButton(
                 onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('Send Payment Slip / ส่งสลิป'),
+                child: const Text('Next: Payment Slip'),
               ),
             ],
           ),
         );
 
         if (!mounted) return;
-        await Share.shareXFiles([_paymentScreenshot!]);
+        // Show payment slip with option to download/share
+        final imageBytes = await _paymentScreenshot!.readAsBytes();
+        if (!mounted) return;
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Step 2: Send Payment Slip'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Save this image and send it in LINE.\n'
+                    'Long-press the image to save, or use the button below.\n\n'
+                    'บันทึกรูปนี้แล้วส่งใน LINE',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  const SizedBox(height: 12),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.memory(imageBytes, height: 200, fit: BoxFit.cover),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  try {
+                    await Share.shareXFiles([_paymentScreenshot!]);
+                  } catch (_) {
+                    // If share fails, at least the image is visible to screenshot
+                  }
+                },
+                child: const Text('Share Image'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Done / เสร็จ'),
+              ),
+            ],
+          ),
+        );
       } else {
         // On mobile: use native LINE intent
         final cachePath = await getTemporaryCachePath();
