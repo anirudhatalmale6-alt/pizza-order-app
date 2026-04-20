@@ -11,7 +11,7 @@ class ProfileProvider extends ChangeNotifier {
   String _promptPayId = '';
   int _openHour = 11;
   int _closeHour = 16;
-  String _appName = "Jen's Pizzeria";
+  String _appName = 'Bites2Baht';
   String _logoPath = '';
 
   String get customerName => _currentCustomer?.name ?? '';
@@ -35,7 +35,7 @@ class ProfileProvider extends ChangeNotifier {
     _promptPayId = prefs.getString('promptPayId') ?? '356 030 025 9093';
     _openHour = prefs.getInt('openHour') ?? 11;
     _closeHour = prefs.getInt('closeHour') ?? 16;
-    _appName = prefs.getString('appName') ?? "Jen's Pizzeria";
+    _appName = prefs.getString('appName') ?? 'Bites2Baht';
     _logoPath = prefs.getString('logoPath') ?? '';
     notifyListeners();
   }
