@@ -375,18 +375,28 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Order Summary / สรุปออเดอร์'),
+        title: const Text('Order Summary'),
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
-        actions: [
-          TextButton.icon(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            label: const Text('Return to Order\nกลับไปสั่ง',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white, fontSize: 11)),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          child: SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton.icon(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.arrow_back),
+              label: const Text('Return to Order / กลับไปสั่ง',
+                  style: TextStyle(fontSize: 16)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+              ),
+            ),
           ),
-        ],
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
