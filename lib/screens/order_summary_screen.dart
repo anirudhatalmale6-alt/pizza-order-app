@@ -391,12 +391,13 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
           child: SizedBox(
             width: double.infinity,
-            height: 48,
+            height: 56,
             child: ElevatedButton.icon(
               onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.menu_book),
-              label: const Text('Return to Menu / กลับไปเมนู',
-                  style: TextStyle(fontSize: 16)),
+              label: const Text('Return to Menu\nกลับไปเมนู',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
