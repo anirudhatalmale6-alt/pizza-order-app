@@ -389,8 +389,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             height: 48,
             child: ElevatedButton.icon(
               onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.arrow_back),
-              label: const Text('Return to Order / กลับไปสั่ง',
+              icon: const Icon(Icons.menu_book),
+              label: const Text('Main Menu / เมนูหลัก',
                   style: TextStyle(fontSize: 16)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,

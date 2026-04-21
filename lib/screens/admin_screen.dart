@@ -21,6 +21,27 @@ class AdminScreen extends StatelessWidget {
         foregroundColor: Colors.white,
       ),
       body: const _SettingsTab(),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          child: Builder(
+            builder: (ctx) {
+              return ElevatedButton(
+                onPressed: () {
+                  final state = ctx.findAncestorStateOfType<_SettingsTabState>();
+                  state?._saveAll();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepOrange,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: const Text('Save Settings', style: TextStyle(fontSize: 16)),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }
@@ -145,14 +166,14 @@ class _SettingsTabState extends State<_SettingsTab> {
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        // App Name
-        const Text('App Name', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        // Business Name
+        const Text('Business Name', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         TextField(
           controller: _appNameCtrl,
           decoration: const InputDecoration(
-            labelText: 'App Name',
-            hintText: "e.g., Jen's Pizzeria",
+            labelText: 'Business Name',
+            hintText: "e.g., Shady Rest Guesthouse",
             border: OutlineInputBorder(),
           ),
         ),
@@ -391,31 +412,24 @@ class _SettingsTabState extends State<_SettingsTab> {
           ),
         ),
 
-        const SizedBox(height: 24),
-        ElevatedButton(
-          onPressed: () async {
-            final profile = context.read<ProfileProvider>();
-            final menu = context.read<MenuProvider>();
-            await profile.saveAppName(_appNameCtrl.text.trim());
-            await profile.saveLogoPath(_logoPath);
-            await profile.saveLineConfig(_lineCtrl.text.trim());
-            await profile.savePromptPayId(_promptPayCtrl.text.trim());
-            await profile.saveOpeningHours(_openHour, _closeHour);
-            await menu.saveSheetId(_sheetIdCtrl.text.trim());
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Settings saved!')),
-              );
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.deepOrange,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-          ),
-          child: const Text('Save Settings'),
-        ),
+        const SizedBox(height: 80),
       ],
     );
+  }
+
+  Future<void> _saveAll() async {
+    final profile = context.read<ProfileProvider>();
+    final menu = context.read<MenuProvider>();
+    await profile.saveAppName(_appNameCtrl.text.trim());
+    await profile.saveLogoPath(_logoPath);
+    await profile.saveLineConfig(_lineCtrl.text.trim());
+    await profile.savePromptPayId(_promptPayCtrl.text.trim());
+    await profile.saveOpeningHours(_openHour, _closeHour);
+    await menu.saveSheetId(_sheetIdCtrl.text.trim());
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Settings saved!')),
+      );
+    }
   }
 }

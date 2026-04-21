@@ -18,8 +18,9 @@ class ProfileScreen extends StatelessWidget {
   }
 
   void _showNewCustomerDialog(BuildContext context) {
+    final profile = context.read<ProfileProvider>();
     final nameCtrl = TextEditingController();
-    final businessCtrl = TextEditingController();
+    final businessCtrl = TextEditingController(text: profile.appName);
 
     showDialog(
       context: context,
