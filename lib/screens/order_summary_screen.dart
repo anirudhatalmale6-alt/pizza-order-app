@@ -26,7 +26,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   XFile? _paymentScreenshot;
   String _orderType = 'pickup'; // 'pickup' or 'delivery'
   int? _selectedHour; // 11-16
-  bool _orderConfirmed = false;
   final _guestNameCtrl = TextEditingController();
 
   @override
@@ -177,10 +176,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
   static const _shareChannel = MethodChannel('com.pizzaorder/share');
 
-  Future<void> _sendConfirmation() async {
-    setState(() => _orderConfirmed = true);
-  }
-
   Future<void> _shareTextViaLine(String text) async {
     if (kIsWeb) {
       await Clipboard.setData(ClipboardData(text: text));
@@ -255,11 +250,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         await Share.share(text);
       }
     }
-  }
-
-  Future<void> _doShareConfirmation() async {
-    final confirmText = _buildConfirmText();
-    await _shareTextViaLine(confirmText);
   }
 
   Future<void> _sendToLine() async {
@@ -384,9 +374,19 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Order Summary / สรุปออเดอร์'),
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
+        actions: [
+          TextButton.icon(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            label: const Text('Return to Order\nกลับไปสั่ง',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white, fontSize: 11)),
+          ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -719,36 +719,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           const SizedBox(height: 24),
 
-          // Step 1: Confirm Order button
-          if (!_orderConfirmed) ...[
+          // Send to LINE button
             SizedBox(
               height: 56,
               child: ElevatedButton.icon(
-                onPressed: cart.isEmpty ? null : _sendConfirmation,
-                icon: const Icon(Icons.check_circle, size: 24),
-                label: const Text('Order Complete / สั่งซื้อเสร็จสิ้น',
-                    style: TextStyle(fontSize: 18)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Sends order details to the shop via LINE\nส่งรายละเอียดไปยังร้านทาง LINE',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-            const SizedBox(height: 16),
-          ],
-
-          // Send button + Warning banner (visible after confirm tapped)
-          if (_orderConfirmed) ...[
-            SizedBox(
-              height: 56,
-              child: ElevatedButton.icon(
-                onPressed: cart.isEmpty ? null : _doShareConfirmation,
+                onPressed: cart.isEmpty ? null : _sendToLine,
                 icon: const Icon(Icons.send, size: 24),
                 label: const Text('Send to shop on LINE / ส่งไปร้านทาง LINE',
                     style: TextStyle(fontSize: 18)),
@@ -793,11 +768,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               ),
             ),
             const SizedBox(height: 16),
-          ],
 
-          // Step 2: Payment (only visible after confirmation)
-          if (_orderConfirmed) ...[
-          // Payment QR
+          // Payment
           const Text('Payment / การชำระเงิน',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
@@ -948,7 +920,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           ),
 
           const SizedBox(height: 16),
-          ], // end if (_orderConfirmed)
         ],
       ),
     );

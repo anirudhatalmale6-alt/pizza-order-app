@@ -359,7 +359,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 context,
                 MaterialPageRoute(builder: (_) => const OrderSummaryScreen()),
               ),
-              backgroundColor: Colors.deepOrange,
+              backgroundColor: Colors.green,
               foregroundColor: Colors.white,
               icon: const Icon(Icons.receipt_long),
               label: Text(
@@ -491,37 +491,17 @@ class CategoryItemsScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 height: 48,
-                child: OutlinedButton.icon(
+                child: ElevatedButton.icon(
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(Icons.menu_book),
                   label: const Text('Main Menu / เมนูหลัก',
                       style: TextStyle(fontSize: 16)),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: color,
-                    side: BorderSide(color: color, width: 2),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
                   ),
                 ),
               ),
-              if (!cart.isEmpty) ...[
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton.icon(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const OrderSummaryScreen()),
-                    ),
-                    icon: const Icon(Icons.receipt_long),
-                    label: Text('View Order (${cart.items.length}) / ดูออเดอร์',
-                        style: const TextStyle(fontSize: 16)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepOrange,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
             ],
           ),
         ),
