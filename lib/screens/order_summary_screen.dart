@@ -130,7 +130,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final menu = context.read<MenuProvider>();
 
     final sb = StringBuffer();
-    sb.writeln('ORDER COMPLETE / สั่งซื้อเสร็จสิ้น');
+    sb.writeln('NEW ORDER / ออเดอร์ใหม่');
     sb.writeln('================================');
     if (_guestNameCtrl.text.trim().isNotEmpty) {
       sb.writeln('Guest / ชื่อผู้สั่ง: ${_guestNameCtrl.text.trim()}');
@@ -255,9 +255,9 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   }
 
   Future<void> _sendConfirmation() async {
-    final orderText = _buildOrderText();
+    final confirmText = _buildConfirmText();
     if (!mounted) return;
-    await _shareTextViaLine(orderText);
+    await _shareTextViaLine(confirmText);
   }
 
   Future<void> _sendPayment() async {
