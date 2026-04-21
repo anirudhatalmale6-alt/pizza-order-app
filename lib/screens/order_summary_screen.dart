@@ -12,6 +12,8 @@ import '../models/category_config.dart';
 import '../providers/cart_provider.dart';
 import '../providers/menu_provider.dart';
 import '../providers/profile_provider.dart';
+import '../models/cart_item.dart';
+import '../widgets/topping_dialog.dart';
 import 'menu_screen.dart';
 import 'profile_screen.dart';
 
@@ -633,24 +635,36 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       children: [
                         if (hasToppings)
                           TextButton.icon(
-                            icon: const Icon(Icons.copy, size: 18),
-                            label: const Text('Copy / คัดลอก'),
-                            onPressed: () => cart.duplicateItem(index),
+                            icon: const Icon(Icons.edit, size: 18),
+                            label: const Text('Edit / แก้ไข'),
+                            onPressed: () async {
+                              final toppings = menu.toppingsForCategory(item.productType);
+                              final selected = await showDialog<List<SelectedTopping>>(
+                                context: context,
+                                builder: (_) => ToppingDialog(
+                                  availableToppings: toppings,
+                                  categoryLabel: item.productName,
+                                  initialSelection: item.toppings,
+                                  isEditing: true,
+                                ),
+                              );
+                              if (selected != null) {
+                                cart.replaceItem(index, item.copyWith(toppings: selected));
+                              }
+                            },
                           ),
-                        if (!hasToppings) ...[
-                          IconButton(
-                            icon: const Icon(Icons.remove_circle_outline),
-                            onPressed: () =>
-                                cart.updateQuantity(index, item.quantity - 1),
-                          ),
-                          Text('${item.quantity}',
-                              style: const TextStyle(fontSize: 16)),
-                          IconButton(
-                            icon: const Icon(Icons.add_circle_outline),
-                            onPressed: () =>
-                                cart.updateQuantity(index, item.quantity + 1),
-                          ),
-                        ],
+                        IconButton(
+                          icon: const Icon(Icons.remove_circle_outline),
+                          onPressed: () =>
+                              cart.updateQuantity(index, item.quantity - 1),
+                        ),
+                        Text('${item.quantity}',
+                            style: const TextStyle(fontSize: 16)),
+                        IconButton(
+                          icon: const Icon(Icons.add_circle_outline),
+                          onPressed: () =>
+                              cart.updateQuantity(index, item.quantity + 1),
+                        ),
                         const SizedBox(width: 8),
                         IconButton(
                           icon: const Icon(Icons.delete,

@@ -71,6 +71,20 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateItemToppings(int index, List<CartItem> Function(CartItem) updater) {
+    final original = _items[index];
+    final updated = updater(original);
+    if (updated.isNotEmpty) {
+      _items[index] = updated.first;
+    }
+    notifyListeners();
+  }
+
+  void replaceItem(int index, CartItem newItem) {
+    _items[index] = newItem;
+    notifyListeners();
+  }
+
   void duplicateItem(int index) {
     final original = _items[index];
     _items.add(original.copyWith());

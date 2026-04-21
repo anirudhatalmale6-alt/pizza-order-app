@@ -5,7 +5,9 @@ import '../models/menu_item.dart';
 class ToppingDialog extends StatefulWidget {
   final List<ToppingItem> availableToppings;
   final String categoryLabel;
-  const ToppingDialog({super.key, required this.availableToppings, this.categoryLabel = 'Pizza'});
+  final List<SelectedTopping>? initialSelection;
+  final bool isEditing;
+  const ToppingDialog({super.key, required this.availableToppings, this.categoryLabel = 'Pizza', this.initialSelection, this.isEditing = false});
 
   @override
   State<ToppingDialog> createState() => _ToppingDialogState();
@@ -13,6 +15,17 @@ class ToppingDialog extends StatefulWidget {
 
 class _ToppingDialogState extends State<ToppingDialog> {
   final Set<int> _selectedIndices = {};
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialSelection != null) {
+      for (final sel in widget.initialSelection!) {
+        final idx = widget.availableToppings.indexWhere((t) => t.name == sel.name);
+        if (idx >= 0) _selectedIndices.add(idx);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +132,7 @@ class _ToppingDialogState extends State<ToppingDialog> {
                       backgroundColor: Colors.deepOrange,
                       foregroundColor: Colors.white,
                     ),
-                    child: Text('Add ${widget.categoryLabel} / เพิ่ม'),
+                    child: Text(widget.isEditing ? 'Update / อัปเดต' : 'Add ${widget.categoryLabel} / เพิ่ม'),
                   ),
                 ],
               ),
