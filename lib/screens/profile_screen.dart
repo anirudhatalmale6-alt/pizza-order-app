@@ -135,8 +135,10 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Wrap(
+                  alignment: WrapAlignment.end,
+                  spacing: 8,
+                  runSpacing: 4,
                   children: [
                     TextButton(
                       onPressed: () async {
@@ -148,28 +150,23 @@ class ProfileScreen extends StatelessWidget {
                       child: const Text('Delete / ลบ',
                           style: TextStyle(color: Colors.red)),
                     ),
-                    Row(
-                      children: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx),
-                          child: const Text('Cancel / ยกเลิก'),
-                        ),
-                        const SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: () async {
-                            final newName = nameCtrl.text.trim();
-                            if (newName.isEmpty) return;
-                            await context.read<ProfileProvider>().updateCustomer(
-                                index, newName, businessCtrl.text.trim());
-                            if (ctx.mounted) Navigator.pop(ctx);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepOrange,
-                            foregroundColor: Colors.white,
-                          ),
-                          child: const Text('Save / บันทึก'),
-                        ),
-                      ],
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: const Text('Cancel / ยกเลิก'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final newName = nameCtrl.text.trim();
+                        if (newName.isEmpty) return;
+                        await context.read<ProfileProvider>().updateCustomer(
+                            index, newName, businessCtrl.text.trim());
+                        if (ctx.mounted) Navigator.pop(ctx);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text('Save / บันทึก'),
                     ),
                   ],
                 ),
@@ -312,19 +309,21 @@ class ProfileScreen extends StatelessWidget {
                     },
                   ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton.icon(
-                onPressed: () => _showNewCustomerDialog(context),
-                icon: const Icon(Icons.person_add),
-                label: const Text('New Staff Member / พนักงานใหม่',
-                    style: TextStyle(fontSize: 16)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepOrange,
-                  foregroundColor: Colors.white,
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton.icon(
+                  onPressed: () => _showNewCustomerDialog(context),
+                  icon: const Icon(Icons.person_add),
+                  label: const Text('New Staff Member / พนักงานใหม่',
+                      style: TextStyle(fontSize: 16)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepOrange,
+                    foregroundColor: Colors.white,
+                  ),
                 ),
               ),
             ),
