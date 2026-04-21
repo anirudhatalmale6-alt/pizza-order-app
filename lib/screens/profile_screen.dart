@@ -1,10 +1,8 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/profile_provider.dart';
 import '../utils/platform_helper.dart';
-import '../utils/platform_image.dart';
 import 'menu_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -204,23 +202,11 @@ class ProfileScreen extends StatelessWidget {
       body: Column(
         children: [
           const SizedBox(height: 16),
-          if (kIsWeb && profile.logoBase64.isNotEmpty) ...[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.memory(
-                profile.logoBase64Bytes,
-                height: 100,
-                fit: BoxFit.contain,
-              ),
-            ),
-            const SizedBox(height: 12),
-          ] else if (!kIsWeb && profile.logoPath.isNotEmpty) ...[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: platformFileImage(profile.logoPath, height: 100, fit: BoxFit.contain),
-            ),
-            const SizedBox(height: 12),
-          ],
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset('assets/logo.jpg', height: 100, fit: BoxFit.contain),
+          ),
+          const SizedBox(height: 12),
           const Text(
             'Staff Member / พนักงาน',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
