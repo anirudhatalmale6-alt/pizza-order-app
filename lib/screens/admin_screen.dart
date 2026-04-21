@@ -27,9 +27,10 @@ class AdminScreen extends StatelessWidget {
           child: Builder(
             builder: (ctx) {
               return ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   final state = ctx.findAncestorStateOfType<_SettingsTabState>();
-                  state?._saveAll();
+                  await state?._saveAll();
+                  if (context.mounted) Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepOrange,
@@ -426,8 +427,5 @@ class _SettingsTabState extends State<_SettingsTab> {
     await profile.savePromptPayId(_promptPayCtrl.text.trim());
     await profile.saveOpeningHours(_openHour, _closeHour);
     await menu.saveSheetId(_sheetIdCtrl.text.trim());
-    if (mounted) {
-      Navigator.pop(context);
-    }
   }
 }
