@@ -36,7 +36,7 @@ class AdminScreen extends StatelessWidget {
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text('Save Settings', style: TextStyle(fontSize: 16)),
+                child: const Text('Save and Exit Settings', style: TextStyle(fontSize: 16)),
               );
             },
           ),
@@ -427,9 +427,7 @@ class _SettingsTabState extends State<_SettingsTab> {
     await profile.saveOpeningHours(_openHour, _closeHour);
     await menu.saveSheetId(_sheetIdCtrl.text.trim());
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Settings saved!')),
-      );
+      Navigator.pop(context);
     }
   }
 }
