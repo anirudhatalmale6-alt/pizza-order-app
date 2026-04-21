@@ -254,7 +254,13 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
   }
 
-  Future<void> _sendToLine() async {
+  Future<void> _sendConfirmation() async {
+    final orderText = _buildOrderText();
+    if (!mounted) return;
+    await _shareTextViaLine(orderText);
+  }
+
+  Future<void> _sendPayment() async {
     final orderText = _buildOrderText();
 
     if (!mounted) return;
@@ -267,7 +273,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
         if (!mounted) return;
         // Step 2: Share payment slip image
-        // Try native share (works on mobile browsers)
         bool imageShared = false;
         try {
           await Share.shareXFiles(
@@ -747,7 +752,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             SizedBox(
               height: 64,
               child: ElevatedButton.icon(
-                onPressed: cart.isEmpty ? null : _sendToLine,
+                onPressed: cart.isEmpty ? null : _sendConfirmation,
                 icon: const Icon(Icons.send, size: 22),
                 label: const Text('Send to shop for confirmation\nส่งไปร้านเพื่อยืนยัน',
                     textAlign: TextAlign.center,
@@ -933,7 +938,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           SizedBox(
             height: 64,
             child: ElevatedButton.icon(
-              onPressed: cart.isEmpty ? null : _sendToLine,
+              onPressed: cart.isEmpty ? null : _sendPayment,
               icon: const Icon(Icons.send, size: 22),
               label: const Text('Send to shop with payment copy\nส่งไปร้านพร้อมสลิป',
                   textAlign: TextAlign.center,
