@@ -320,7 +320,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   children: [
                     Expanded(
                       child: SizedBox(
-                        height: 56,
+                        height: 64,
                         child: ElevatedButton.icon(
                           onPressed: () async {
                             final confirm = await showDialog<bool>(
@@ -370,7 +370,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: SizedBox(
-                        height: 56,
+                        height: 64,
                         child: ElevatedButton.icon(
                           onPressed: () => Navigator.push(
                             context,
