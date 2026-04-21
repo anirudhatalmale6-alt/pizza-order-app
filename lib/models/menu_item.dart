@@ -19,16 +19,12 @@ class MenuItem extends HiveObject {
   @HiveField(4)
   bool isActive;
 
-  @HiveField(5)
-  String optionGroup; // e.g. 'pizza', 'waffle_options'; empty = no options
-
   MenuItem({
     required this.name,
     required this.nameThai,
     required this.price,
     required this.type,
     this.isActive = true,
-    this.optionGroup = '',
   });
 }
 

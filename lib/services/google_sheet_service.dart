@@ -279,7 +279,6 @@ class GoogleSheetService {
       price: _num(map['price']),
       type: _str(map['category'], 'drink'),
       isActive: _bool(map['isactive'], true),
-      optionGroup: _str(map['options']),
     );
   }
 

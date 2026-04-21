@@ -19,14 +19,13 @@ class MenuItemAdapter extends TypeAdapter<MenuItem> {
       price: fields[2] as double,
       type: fields[3] as String,
       isActive: fields[4] as bool,
-      optionGroup: fields[5] as String? ?? '',
     );
   }
 
   @override
   void write(BinaryWriter writer, MenuItem obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -36,9 +35,7 @@ class MenuItemAdapter extends TypeAdapter<MenuItem> {
       ..writeByte(3)
       ..write(obj.type)
       ..writeByte(4)
-      ..write(obj.isActive)
-      ..writeByte(5)
-      ..write(obj.optionGroup);
+      ..write(obj.isActive);
   }
 
   @override

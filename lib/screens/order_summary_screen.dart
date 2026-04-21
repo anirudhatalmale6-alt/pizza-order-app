@@ -634,12 +634,12 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        if (item.optionGroup.isNotEmpty)
+                        if (menu.toppingsForItem(item.productName, item.productType).isNotEmpty)
                           TextButton.icon(
                             icon: const Icon(Icons.edit, size: 18),
                             label: const Text('Edit / แก้ไข'),
                             onPressed: () async {
-                              final toppings = menu.toppingsForGroup(item.optionGroup);
+                              final toppings = menu.toppingsForItem(item.productName, item.productType);
                               final selected = await showDialog<List<SelectedTopping>>(
                                 context: context,
                                 builder: (_) => ToppingDialog(

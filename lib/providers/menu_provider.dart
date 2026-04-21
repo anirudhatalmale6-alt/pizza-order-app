@@ -36,9 +36,11 @@ class MenuProvider extends ChangeNotifier {
       _toppingBox.values.where((t) =>
           t.isActive && (t.category == categoryKey || t.category == 'all')).toList();
 
-  List<ToppingItem> toppingsForGroup(String group) =>
+  List<ToppingItem> toppingsForItem(String itemName, String categoryKey) =>
       _toppingBox.values.where((t) =>
-          t.isActive && (t.category == group || t.category == 'all')).toList();
+          t.isActive && (t.category.toLowerCase() == itemName.toLowerCase()
+              || t.category.toLowerCase() == categoryKey.toLowerCase()
+              || t.category == 'all')).toList();
 
   List<ToppingItem> get allToppings => _toppingBox.values.toList();
 
