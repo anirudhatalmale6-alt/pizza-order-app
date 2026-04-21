@@ -745,13 +745,13 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           // Send order for confirmation
             SizedBox(
-              height: 56,
+              height: 64,
               child: ElevatedButton.icon(
                 onPressed: cart.isEmpty ? null : _sendToLine,
-                icon: const Icon(Icons.send, size: 24),
+                icon: const Icon(Icons.send, size: 22),
                 label: const Text('Send to shop for confirmation\nส่งไปร้านเพื่อยืนยัน',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 15)),
+                    style: TextStyle(fontSize: 13)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF06C755),
                   foregroundColor: Colors.white,
@@ -931,13 +931,13 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           // Send payment to shop
           SizedBox(
-            height: 56,
+            height: 64,
             child: ElevatedButton.icon(
               onPressed: cart.isEmpty ? null : _sendToLine,
-              icon: const Icon(Icons.send, size: 24),
+              icon: const Icon(Icons.send, size: 22),
               label: const Text('Send to shop with payment copy\nส่งไปร้านพร้อมสลิป',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15)),
+                  style: TextStyle(fontSize: 13)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF06C755), // LINE green
                 foregroundColor: Colors.white,
