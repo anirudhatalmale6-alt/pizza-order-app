@@ -15,6 +15,7 @@ class CartItem {
   final String productNameThai;
   final String productType; // 'pizza' or 'drink'
   final double basePrice;
+  final String optionGroup; // links to toppings/options group
   int quantity;
   final List<SelectedTopping> toppings;
 
@@ -23,6 +24,7 @@ class CartItem {
     required this.productNameThai,
     required this.productType,
     required this.basePrice,
+    this.optionGroup = '',
     this.quantity = 1,
     List<SelectedTopping>? toppings,
   }) : toppings = toppings ?? [];
@@ -36,6 +38,7 @@ class CartItem {
       productNameThai: productNameThai,
       productType: productType,
       basePrice: basePrice,
+      optionGroup: optionGroup,
       quantity: quantity,
       toppings: toppings ?? List.from(this.toppings.map((t) =>
         SelectedTopping(name: t.name, nameThai: t.nameThai, price: t.price))),

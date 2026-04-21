@@ -36,6 +36,10 @@ class MenuProvider extends ChangeNotifier {
       _toppingBox.values.where((t) =>
           t.isActive && (t.category == categoryKey || t.category == 'all')).toList();
 
+  List<ToppingItem> toppingsForGroup(String group) =>
+      _toppingBox.values.where((t) =>
+          t.isActive && (t.category == group || t.category == 'all')).toList();
+
   List<ToppingItem> get allToppings => _toppingBox.values.toList();
 
   Future<void> init() async {

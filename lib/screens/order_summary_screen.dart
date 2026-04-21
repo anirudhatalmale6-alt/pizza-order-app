@@ -89,9 +89,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     sb.writeln('Items / รายการ:');
 
     for (final item in cart.items) {
-      final cat = menu.categoryFor(item.productType);
-      final hasToppings = cat?.hasToppings ?? false;
-      if (hasToppings && item.toppings.isNotEmpty) {
+      if (item.toppings.isNotEmpty) {
         final toppingsStr =
             ' (${item.toppings.map((t) => '${t.nameThai} +${t.price.toInt()} / ${t.name} +${t.price.toInt()}').join(', ')})';
         sb.writeln(
@@ -154,9 +152,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
     sb.writeln('Items / รายการ:');
     for (final item in cart.items) {
-      final cat = menu.categoryFor(item.productType);
-      final hasToppings = cat?.hasToppings ?? false;
-      if (hasToppings && item.toppings.isNotEmpty) {
+      if (item.toppings.isNotEmpty) {
         final toppingsStr = ' + ${item.toppings.map((t) => t.name).join(', ')}';
         sb.writeln('- ${item.productName}$toppingsStr x${item.quantity} = ${item.itemTotal.toInt()} THB');
       } else {
@@ -591,7 +587,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           ...List.generate(cart.items.length, (index) {
             final item = cart.items[index];
             final cat = menu.categoryFor(item.productType);
-            final hasToppings = cat?.hasToppings ?? false;
             final itemIcon = cat != null ? iconFromString(cat.icon) : Icons.restaurant;
             final itemColor = cat != null ? colorFromString(cat.color) : Colors.deepOrange;
 
@@ -639,12 +634,12 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        if (hasToppings)
+                        if (item.optionGroup.isNotEmpty)
                           TextButton.icon(
                             icon: const Icon(Icons.edit, size: 18),
                             label: const Text('Edit / แก้ไข'),
                             onPressed: () async {
-                              final toppings = menu.toppingsForCategory(item.productType);
+                              final toppings = menu.toppingsForGroup(item.optionGroup);
                               final selected = await showDialog<List<SelectedTopping>>(
                                 context: context,
                                 builder: (_) => ToppingDialog(

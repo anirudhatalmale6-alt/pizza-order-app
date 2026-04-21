@@ -403,41 +403,44 @@ class CategoryItemsScreen extends StatelessWidget {
 
   void _addItemToCart(BuildContext context, MenuItem item) async {
     final cart = context.read<CartProvider>();
-    if (category.hasToppings) {
-      final toppings = context.read<MenuProvider>().toppingsForCategory(category.key);
-      final selected = await showDialog<List<SelectedTopping>>(
-        context: context,
-        builder: (_) => ToppingDialog(availableToppings: toppings, categoryLabel: item.name),
-      );
-      if (selected != null) {
-        cart.addItem(CartItem(
-          productName: item.name,
-          productNameThai: item.nameThai,
-          productType: category.key,
-          basePrice: item.price,
-          toppings: selected,
-        ));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${item.name} added / เพิ่ม${item.nameThai}แล้ว'),
-            duration: const Duration(seconds: 1),
-          ),
+    if (item.optionGroup.isNotEmpty) {
+      final toppings = context.read<MenuProvider>().toppingsForGroup(item.optionGroup);
+      if (toppings.isNotEmpty) {
+        final selected = await showDialog<List<SelectedTopping>>(
+          context: context,
+          builder: (_) => ToppingDialog(availableToppings: toppings, categoryLabel: item.name),
         );
+        if (selected != null) {
+          cart.addItem(CartItem(
+            productName: item.name,
+            productNameThai: item.nameThai,
+            productType: category.key,
+            basePrice: item.price,
+            optionGroup: item.optionGroup,
+            toppings: selected,
+          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${item.name} added / เพิ่ม${item.nameThai}แล้ว'),
+              duration: const Duration(seconds: 1),
+            ),
+          );
+        }
+        return;
       }
-    } else {
-      cart.addItem(CartItem(
-        productName: item.name,
-        productNameThai: item.nameThai,
-        productType: category.key,
-        basePrice: item.price,
-      ));
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${item.name} added / เพิ่ม${item.nameThai}แล้ว'),
-          duration: const Duration(seconds: 1),
-        ),
-      );
     }
+    cart.addItem(CartItem(
+      productName: item.name,
+      productNameThai: item.nameThai,
+      productType: category.key,
+      basePrice: item.price,
+    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${item.name} added / เพิ่ม${item.nameThai}แล้ว'),
+        duration: const Duration(seconds: 1),
+      ),
+    );
   }
 
   @override

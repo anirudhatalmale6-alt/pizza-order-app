@@ -37,6 +37,7 @@
       "nameThai": "พิซซ่ามาร์การิต้า",
       "price": "159",
       "category": "pizza",
+      "options": "pizza",
       "isActive": "true"
     },
     {
@@ -44,6 +45,7 @@
       "nameThai": "พิซซ่าถั่วเผ็ด",
       "price": "159",
       "category": "pizza",
+      "options": "pizza",
       "isActive": "true"
     },
     {
