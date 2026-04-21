@@ -395,7 +395,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             child: ElevatedButton.icon(
               onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.menu_book),
-              label: const Text('Main Menu / เมนูหลัก',
+              label: const Text('Return to Menu / กลับไปเมนู',
                   style: TextStyle(fontSize: 16)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
