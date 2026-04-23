@@ -30,6 +30,17 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   int? _selectedHour; // 11-16
   final _guestNameCtrl = TextEditingController();
 
+  double _calcFinalTotal() {
+    final cart = context.read<CartProvider>();
+    final profile = context.read<ProfileProvider>();
+    final subtotal = cart.subtotal;
+    final discountPct = profile.discountPercent;
+    if (discountPct > 0) {
+      return subtotal - (subtotal * discountPct / 100);
+    }
+    return subtotal;
+  }
+
   @override
   void dispose() {
     _guestNameCtrl.dispose();
@@ -76,17 +87,19 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     if (profile.businessName.isNotEmpty) {
       sb.writeln('Business / ธุรกิจ: ${profile.businessName}');
     }
-    final typeText = _orderType == 'pickup'
-        ? 'Pickup / รับเอง'
-        : 'Delivery / จัดส่ง';
-    sb.writeln('Type / ประเภท: $typeText');
+    if (profile.offersDelivery) {
+      final typeText = _orderType == 'pickup'
+          ? 'Pickup / รับเอง'
+          : 'Delivery / จัดส่ง';
+      sb.writeln('Type / ประเภท: $typeText');
+    }
     if (_selectedHour != null) {
       final period = _selectedHour! < 12 ? 'AM' : 'PM';
       final display12 = _selectedHour! > 12 ? _selectedHour! - 12 : _selectedHour!;
       sb.writeln('Time / เวลา: ${display12}:00 $period ($_selectedHour:00)');
     }
     sb.writeln();
-    sb.writeln('Items / รายการ:');
+    sb.writeln('Your Order / รายการ:');
 
     for (final item in cart.items) {
       if (item.toppings.isNotEmpty) {
@@ -101,20 +114,17 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
 
     sb.writeln();
-    sb.writeln('ยอดรวมก่อนส่วนลด / Subtotal: ${cart.subtotal.toInt()} THB');
-    sb.writeln();
-    sb.writeln('ส่วนลด / Discount:');
-    for (final cat in _categoriesWithItems()) {
-      final count = cart.countForCategory(cat.key);
-      final discount = cart.categoryDiscounts[cat.key] ?? 0;
-      final total = cart.discountForCategory(cat.key);
-      if (discount > 0) {
-        sb.writeln(
-            '- ${cat.labelThai} ${count} × ${discount.toInt()} / ${count} ${cat.label.toLowerCase()} × ${discount.toInt()} = -${total.toInt()} THB');
-      }
+    final subtotal = cart.subtotal;
+    final discountPct = profile.discountPercent;
+    if (discountPct > 0) {
+      final discountAmt = (subtotal * discountPct / 100);
+      final finalTotal = subtotal - discountAmt;
+      sb.writeln('Subtotal / ยอดรวม: ${subtotal.toInt()} THB');
+      sb.writeln('Discount / ส่วนลด: ${discountPct.toStringAsFixed(0)}% = -${discountAmt.toInt()} THB');
+      sb.writeln('Final Total / ยอดสุทธิ: ${finalTotal.toInt()} THB');
+    } else {
+      sb.writeln('Total / ยอดรวม: ${subtotal.toInt()} THB');
     }
-    sb.writeln();
-    sb.writeln('ยอดรวมสุดท้าย / Final total: ${cart.finalTotal.toInt()} THB');
     sb.writeln();
     sb.writeln('ชำระโดย / Payment via PromptPay');
     sb.writeln('เวลา / Time: $now');
@@ -139,10 +149,12 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
     sb.writeln();
 
-    final typeText = _orderType == 'pickup'
-        ? 'Pickup / รับเอง'
-        : 'Delivery / จัดส่ง';
-    sb.writeln('Type / ประเภท: $typeText');
+    if (profile.offersDelivery) {
+      final typeText = _orderType == 'pickup'
+          ? 'Pickup / รับเอง'
+          : 'Delivery / จัดส่ง';
+      sb.writeln('Type / ประเภท: $typeText');
+    }
     if (_selectedHour != null) {
       final period = _selectedHour! < 12 ? 'AM' : 'PM';
       final display12 = _selectedHour! > 12 ? _selectedHour! - 12 : _selectedHour!;
@@ -150,7 +162,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
     sb.writeln();
 
-    sb.writeln('Items / รายการ:');
+    sb.writeln('Your Order / รายการ:');
     for (final item in cart.items) {
       if (item.toppings.isNotEmpty) {
         final toppingsStr = ' + ${item.toppings.map((t) => t.name).join(', ')}';
@@ -160,11 +172,17 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       }
     }
     sb.writeln();
-    sb.writeln('Subtotal / ยอดรวม: ${cart.subtotal.toInt()} THB');
-    if (cart.totalDiscount > 0) {
-      sb.writeln('Discount / ส่วนลด: -${cart.totalDiscount.toInt()} THB');
+    final subtotal = cart.subtotal;
+    final discountPct = profile.discountPercent;
+    if (discountPct > 0) {
+      final discountAmt = (subtotal * discountPct / 100);
+      final finalTotal = subtotal - discountAmt;
+      sb.writeln('Subtotal / ยอดรวม: ${subtotal.toInt()} THB');
+      sb.writeln('Discount / ส่วนลด: ${discountPct.toStringAsFixed(0)}% = -${discountAmt.toInt()} THB');
+      sb.writeln('Total / รวม: ${finalTotal.toInt()} THB');
+    } else {
+      sb.writeln('Total / รวม: ${subtotal.toInt()} THB');
     }
-    sb.writeln('Total / รวม: ${cart.finalTotal.toInt()} THB');
     sb.writeln('================================');
     sb.writeln('Please confirm this order is OK');
     sb.writeln('กรุณายืนยันว่าออเดอร์ถูกต้อง');
@@ -437,7 +455,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           const SizedBox(height: 12),
 
-          // Pickup or Delivery + Time
+          // Pickup/Delivery + Time
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -448,83 +466,85 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Pickup or Delivery? / รับเองหรือจัดส่ง?',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => setState(() => _orderType = 'pickup'),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: _orderType == 'pickup'
-                                ? Colors.deepOrange
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.deepOrange),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.store,
-                                  color: _orderType == 'pickup'
-                                      ? Colors.white
-                                      : Colors.deepOrange,
-                                  size: 20),
-                              const SizedBox(width: 6),
-                              Text('Pickup\nรับเอง',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: _orderType == 'pickup'
-                                          ? Colors.white
-                                          : Colors.deepOrange,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 13)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => setState(() => _orderType = 'delivery'),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: _orderType == 'delivery'
-                                ? Colors.deepOrange
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.deepOrange),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.delivery_dining,
-                                  color: _orderType == 'delivery'
-                                      ? Colors.white
-                                      : Colors.deepOrange,
-                                  size: 20),
-                              const SizedBox(width: 6),
-                              Text('Delivery\nจัดส่ง',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: _orderType == 'delivery'
-                                          ? Colors.white
-                                          : Colors.deepOrange,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 13)),
-                            ],
+                if (profile.offersDelivery) ...[
+                  const Text('Pickup or Delivery? / รับเองหรือจัดส่ง?',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => _orderType = 'pickup'),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: _orderType == 'pickup'
+                                  ? Colors.deepOrange
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.deepOrange),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.store,
+                                    color: _orderType == 'pickup'
+                                        ? Colors.white
+                                        : Colors.deepOrange,
+                                    size: 20),
+                                const SizedBox(width: 6),
+                                Text('Pickup\nรับเอง',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: _orderType == 'pickup'
+                                            ? Colors.white
+                                            : Colors.deepOrange,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13)),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => _orderType = 'delivery'),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: _orderType == 'delivery'
+                                  ? Colors.deepOrange
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.deepOrange),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.delivery_dining,
+                                    color: _orderType == 'delivery'
+                                        ? Colors.white
+                                        : Colors.deepOrange,
+                                    size: 20),
+                                const SizedBox(width: 6),
+                                Text('Delivery\nจัดส่ง',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: _orderType == 'delivery'
+                                            ? Colors.white
+                                            : Colors.deepOrange,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 const Text('What time? / เวลาไหน?',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
@@ -581,7 +601,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           const SizedBox(height: 16),
 
           // Items
-          const Text('Items / รายการอาหาร',
+          const Text('Your Order / รายการอาหาร',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           ...List.generate(cart.items.length, (index) {
@@ -682,65 +702,60 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           const Divider(height: 32),
 
-          // Discount - dynamic per category
-          const Text('Discount / ส่วนลด',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          for (final cat in categories) ...[
-            if (cart.countForCategory(cat.key) > 0 && (cart.categoryDiscounts[cat.key] ?? 0) > 0)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text(
-                    '${cat.labelThai} ${cart.countForCategory(cat.key)} × ${(cart.categoryDiscounts[cat.key] ?? 0).toInt()} = -${cart.discountForCategory(cat.key).toInt()} THB\n'
-                    '${cat.label}: ${cart.countForCategory(cat.key)} × ${(cart.categoryDiscounts[cat.key] ?? 0).toInt()} THB'),
-              ),
-          ],
-
           const Divider(height: 32),
 
           // Total
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.deepOrange.shade50,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Flexible(child: Text('Guest Pays / แขกจ่าย')),
-                    Text('${cart.subtotal.toInt()} THB'),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Flexible(child: Text('Discount / ลด')),
-                    Text('-${cart.totalDiscount.toInt()} THB',
-                        style: const TextStyle(color: Colors.green)),
-                  ],
-                ),
-                const Divider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Flexible(
-                      child: Text('You Pay / คุณจ่าย',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold)),
+          Builder(builder: (context) {
+            final subtotal = cart.subtotal;
+            final discountPct = profile.discountPercent;
+            final discountAmt = discountPct > 0 ? (subtotal * discountPct / 100) : 0.0;
+            final finalTotal = subtotal - discountAmt;
+            return Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.deepOrange.shade50,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Flexible(child: Text('Subtotal / ยอดรวม')),
+                      Text('${subtotal.toInt()} THB'),
+                    ],
+                  ),
+                  if (discountPct > 0) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(child: Text('Discount / ส่วนลด (${discountPct.toStringAsFixed(0)}%)')),
+                        Text('-${discountAmt.toInt()} THB',
+                            style: const TextStyle(color: Colors.green)),
+                      ],
                     ),
-                    Text('${cart.finalTotal.toInt()} THB',
-                        style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.deepOrange)),
                   ],
-                ),
-              ],
-            ),
-          ),
+                  const Divider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Flexible(
+                        child: Text('Total / ยอดสุทธิ',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                      ),
+                      Text('${finalTotal.toInt()} THB',
+                          style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepOrange)),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }),
 
           const SizedBox(height: 24),
 
@@ -800,7 +815,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
 
-          if (profile.promptPayId.isNotEmpty && cart.finalTotal > 0) ...[
+          if (profile.promptPayId.isNotEmpty && _calcFinalTotal() > 0) ...[
             // Option 1: Pay from this phone (copy details to banking app)
             Container(
               padding: const EdgeInsets.all(16),
@@ -828,7 +843,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Amount / จำนวน: ${cart.finalTotal.toInt()} THB',
+                    'Amount / จำนวน: ${_calcFinalTotal().toInt()} THB',
                     style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -860,7 +875,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                           label: const Text('Copy Amt'),
                           onPressed: () {
                             Clipboard.setData(ClipboardData(
-                                text: cart.finalTotal.toInt().toString()));
+                                text: _calcFinalTotal().toInt().toString()));
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),

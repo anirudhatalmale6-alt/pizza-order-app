@@ -47,19 +47,24 @@ IconData iconFromString(String name) {
   }
 }
 
-// Map color name strings to Color
 Color colorFromString(String name) {
-  switch (name.toLowerCase()) {
+  switch (name.toLowerCase().replaceAll(' ', '')) {
     case 'deeporange':
       return Colors.deepOrange;
     case 'blue':
       return Colors.blue;
+    case 'lightblue':
+      return Colors.lightBlue;
     case 'green':
       return Colors.green;
+    case 'lightgreen':
+      return Colors.lightGreen;
     case 'red':
       return Colors.red;
     case 'purple':
       return Colors.purple;
+    case 'deeppurple':
+      return Colors.deepPurple;
     case 'teal':
       return Colors.teal;
     case 'amber':
@@ -74,7 +79,21 @@ Color colorFromString(String name) {
       return Colors.orange;
     case 'cyan':
       return Colors.cyan;
+    case 'yellow':
+      return Colors.yellow.shade700;
+    case 'lime':
+      return Colors.lime.shade700;
+    case 'grey':
+    case 'gray':
+      return Colors.grey;
+    case 'bluegrey':
+    case 'bluegray':
+      return Colors.blueGrey;
     default:
+      if (name.startsWith('#') && name.length == 7) {
+        final hex = int.tryParse(name.substring(1), radix: 16);
+        if (hex != null) return Color(0xFF000000 | hex);
+      }
       return Colors.deepOrange;
   }
 }
@@ -251,9 +270,6 @@ class _MenuScreenState extends State<MenuScreen> {
                   ],
                 ),
               ),
-            const SizedBox(height: 8),
-            const Text('Choose a category / เลือกหมวดหมู่',
-                style: TextStyle(fontSize: 16, color: Colors.black54)),
             const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(

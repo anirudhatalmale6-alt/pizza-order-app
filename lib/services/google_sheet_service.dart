@@ -261,7 +261,7 @@ class GoogleSheetService {
 
   static CategoryConfig _buildCategory(Map<String, dynamic> map) {
     return CategoryConfig(
-      key: _str(map['key']),
+      key: _str(map['category'] ?? map['key']),
       label: _str(map['label']),
       labelThai: _str(map['labelthai']),
       icon: _strOrFallback(map['icon'], 'restaurant'),

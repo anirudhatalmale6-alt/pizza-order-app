@@ -56,6 +56,8 @@ class _SettingsTabState extends State<_SettingsTab> {
   late int _openHour;
   late int _closeHour;
   bool _syncing = false;
+  bool _offersDelivery = false;
+  late TextEditingController _discountCtrl;
 
   static const _allHours = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 
@@ -77,6 +79,10 @@ class _SettingsTabState extends State<_SettingsTab> {
     _appNameCtrl = TextEditingController(text: profile.appName);
     _openHour = profile.openHour;
     _closeHour = profile.closeHour;
+    _offersDelivery = profile.offersDelivery;
+    _discountCtrl = TextEditingController(
+      text: profile.discountPercent > 0 ? profile.discountPercent.toString() : '',
+    );
   }
 
   @override
@@ -85,6 +91,7 @@ class _SettingsTabState extends State<_SettingsTab> {
     _promptPayCtrl.dispose();
     _sheetIdCtrl.dispose();
     _appNameCtrl.dispose();
+    _discountCtrl.dispose();
     super.dispose();
   }
 
@@ -278,6 +285,40 @@ class _SettingsTabState extends State<_SettingsTab> {
           style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
         ),
 
+        const SizedBox(height: 32),
+
+        // Delivery toggle
+        const Text('Delivery', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        SwitchListTile(
+          title: const Text('Do you deliver?'),
+          subtitle: const Text('Show pickup/delivery options to staff'),
+          value: _offersDelivery,
+          onChanged: (v) => setState(() => _offersDelivery = v),
+          contentPadding: EdgeInsets.zero,
+        ),
+
+        const SizedBox(height: 24),
+
+        // Discount
+        const Text('Discount %', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _discountCtrl,
+          decoration: const InputDecoration(
+            labelText: 'Discount Percentage',
+            hintText: 'e.g., 10 for 10% off',
+            border: OutlineInputBorder(),
+            suffixText: '%',
+          ),
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        ),
+        const SizedBox(height: 4),
+        const Text(
+          'Applied to the entire order total. Set to 0 for no discount.',
+          style: TextStyle(color: Colors.grey, fontSize: 12),
+        ),
+
         const SizedBox(height: 24),
         const Text('PromptPay Configuration', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
@@ -320,6 +361,9 @@ class _SettingsTabState extends State<_SettingsTab> {
     await profile.saveLineConfig(_lineCtrl.text.trim());
     await profile.savePromptPayId(_promptPayCtrl.text.trim());
     await profile.saveOpeningHours(_openHour, _closeHour);
+    await profile.saveOffersDelivery(_offersDelivery);
+    final discountVal = double.tryParse(_discountCtrl.text.trim()) ?? 0;
+    await profile.saveDiscountPercent(discountVal.clamp(0, 100));
     await menu.saveSheetId(_sheetIdCtrl.text.trim());
   }
 }
