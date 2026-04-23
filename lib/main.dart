@@ -43,8 +43,32 @@ void main() async {
   );
 }
 
-class PizzaOrderApp extends StatelessWidget {
+class PizzaOrderApp extends StatefulWidget {
   const PizzaOrderApp({super.key});
+
+  @override
+  State<PizzaOrderApp> createState() => _PizzaOrderAppState();
+}
+
+class _PizzaOrderAppState extends State<PizzaOrderApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      context.read<MenuProvider>().syncFromSheet();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
