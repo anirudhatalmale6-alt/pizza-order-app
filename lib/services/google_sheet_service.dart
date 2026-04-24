@@ -41,7 +41,7 @@ class GoogleSheetService {
       'https://docs.google.com/spreadsheets/d/$sheetId/gviz/tq?tqx=out:csv&sheet=${Uri.encodeComponent(tabName)}';
 
   static List<String> _corsProxiedUrls(String baseUrl) => [
-    'https://api.codetabs.com/v1/proxy?quest=$baseUrl',
+    'https://api.codetabs.com/v1/proxy?quest=${Uri.encodeComponent(baseUrl)}',
     'https://corsproxy.io/?${Uri.encodeComponent(baseUrl)}',
   ];
 
