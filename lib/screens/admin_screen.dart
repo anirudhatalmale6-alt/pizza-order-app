@@ -3,8 +3,15 @@ import 'package:provider/provider.dart';
 import '../providers/menu_provider.dart';
 import '../providers/profile_provider.dart';
 
-class AdminScreen extends StatelessWidget {
+class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
+
+  @override
+  State<AdminScreen> createState() => _AdminScreenState();
+}
+
+class _AdminScreenState extends State<AdminScreen> {
+  final _settingsKey = GlobalKey<_SettingsTabState>();
 
   @override
   Widget build(BuildContext context) {
@@ -14,26 +21,21 @@ class AdminScreen extends StatelessWidget {
         backgroundColor: Colors.grey.shade800,
         foregroundColor: Colors.white,
       ),
-      body: const _SettingsTab(),
+      body: _SettingsTab(key: _settingsKey),
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-          child: Builder(
-            builder: (ctx) {
-              return ElevatedButton(
-                onPressed: () async {
-                  final state = ctx.findAncestorStateOfType<_SettingsTabState>();
-                  await state?._saveAll();
-                  if (context.mounted) Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepOrange,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text('Save and Exit Settings', style: TextStyle(fontSize: 16)),
-              );
+          child: ElevatedButton(
+            onPressed: () async {
+              await _settingsKey.currentState?._saveAll();
+              if (context.mounted) Navigator.of(context).pop();
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.deepOrange,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+            ),
+            child: const Text('Save and Exit Settings', style: TextStyle(fontSize: 16)),
           ),
         ),
       ),
@@ -42,7 +44,7 @@ class AdminScreen extends StatelessWidget {
 }
 
 class _SettingsTab extends StatefulWidget {
-  const _SettingsTab();
+  const _SettingsTab({super.key});
 
   @override
   State<_SettingsTab> createState() => _SettingsTabState();
