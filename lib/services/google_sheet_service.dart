@@ -37,28 +37,45 @@ class GoogleSheetService {
     return input;
   }
 
-  static String _gvizUrl(String sheetId, String tabName) {
-    final base = 'https://docs.google.com/spreadsheets/d/$sheetId/gviz/tq?tqx=out:csv&sheet=${Uri.encodeComponent(tabName)}';
-    if (kIsWeb) {
-      return 'https://corsproxy.io/?${Uri.encodeComponent(base)}';
-    }
-    return base;
-  }
+  static String _gvizBaseUrl(String sheetId, String tabName) =>
+      'https://docs.google.com/spreadsheets/d/$sheetId/gviz/tq?tqx=out:csv&sheet=${Uri.encodeComponent(tabName)}';
+
+  static List<String> _corsProxiedUrls(String baseUrl) => [
+    'https://api.codetabs.com/v1/proxy?quest=$baseUrl',
+    'https://corsproxy.io/?${Uri.encodeComponent(baseUrl)}',
+  ];
 
   static String _lastRawPreview = '';
 
   static Future<List<List<dynamic>>> _fetchCsvTab(
       String sheetId, String tabName) async {
-    final url = _gvizUrl(sheetId, tabName);
+    final baseUrl = _gvizBaseUrl(sheetId, tabName);
+
+    if (!kIsWeb) {
+      return _fetchCsvFromUrl(baseUrl, tabName);
+    }
+
+    final urls = _corsProxiedUrls(baseUrl);
+    Exception? lastErr;
+    for (final url in urls) {
+      try {
+        return await _fetchCsvFromUrl(url, tabName);
+      } catch (e) {
+        lastErr = e is Exception ? e : Exception(e.toString());
+      }
+    }
+    throw lastErr ?? Exception('All CORS proxies failed for $tabName');
+  }
+
+  static Future<List<List<dynamic>>> _fetchCsvFromUrl(
+      String url, String tabName) async {
     final response = await http.get(Uri.parse(url), headers: {
       'Accept': 'text/csv',
-      'User-Agent': 'JensPizzeria/3.0',
     }).timeout(_timeout);
     if (response.statusCode != 200) {
       throw Exception('HTTP ${response.statusCode} for $tabName');
     }
     final body = response.body.trim();
-    // Save preview of raw response for debugging
     final preview = body.length > 150 ? body.substring(0, 150) : body;
     _lastRawPreview = '[$tabName] ${body.length} chars: $preview';
 
