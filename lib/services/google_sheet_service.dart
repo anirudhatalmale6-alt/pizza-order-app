@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart' show rootBundle;
@@ -75,7 +76,7 @@ class GoogleSheetService {
     if (response.statusCode != 200) {
       throw Exception('HTTP ${response.statusCode} for $tabName');
     }
-    final body = response.body.trim();
+    final body = utf8.decode(response.bodyBytes).trim();
     final preview = body.length > 150 ? body.substring(0, 150) : body;
     _lastRawPreview = '[$tabName] ${body.length} chars: $preview';
 
