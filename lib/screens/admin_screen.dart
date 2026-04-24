@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../providers/menu_provider.dart';
 import '../providers/profile_provider.dart';
 
@@ -201,17 +202,46 @@ class _SettingsTabState extends State<_SettingsTab> {
           style: const TextStyle(fontSize: 13),
         ),
         const SizedBox(height: 12),
-        ElevatedButton.icon(
-          onPressed: _syncing ? null : _syncSheet,
-          icon: _syncing
-              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-              : const Icon(Icons.sync),
-          label: Text(_syncing ? 'Syncing...' : 'Sync Now'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 14),
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: _syncing ? null : _syncSheet,
+                icon: _syncing
+                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                    : const Icon(Icons.sync),
+                label: Text(_syncing ? 'Syncing...' : 'Sync Now'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  final id = _sheetIdCtrl.text.trim();
+                  if (id.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('No Sheet ID entered')),
+                    );
+                    return;
+                  }
+                  final sheetId = id.startsWith('http') ? id : 'https://docs.google.com/spreadsheets/d/$id';
+                  launchUrl(Uri.parse(sheetId), mode: LaunchMode.externalApplication);
+                },
+                icon: const Icon(Icons.open_in_new),
+                label: const Text('Open Sheet'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+          ],
         ),
 
         const SizedBox(height: 32),
