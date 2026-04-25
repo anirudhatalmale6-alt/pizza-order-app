@@ -62,12 +62,9 @@ class _RenewalScreenState extends State<RenewalScreen> {
     final text = _buildRenewalText();
     await Clipboard.setData(ClipboardData(text: text));
 
+    // Send text details first
     try {
-      if (_paymentScreenshot != null) {
-        await Share.shareXFiles([_paymentScreenshot!], text: text);
-      } else {
-        await Share.share(text);
-      }
+      await Share.share(text);
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -78,6 +75,18 @@ class _RenewalScreenState extends State<RenewalScreen> {
         );
       }
     }
+
+    // Then send payment screenshot separately
+    if (_paymentScreenshot != null && mounted) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      try {
+        await Share.shareXFiles(
+          [_paymentScreenshot!],
+          text: 'Payment slip / สลิปการชำระเงิน',
+        );
+      } catch (_) {}
+    }
+
     if (mounted) setState(() => _receiptSent = true);
   }
 
@@ -345,32 +354,6 @@ class _RenewalScreenState extends State<RenewalScreen> {
                 foregroundColor: Colors.white,
               ),
             ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Sync/check button
-          SizedBox(
-            height: 48,
-            child: OutlinedButton.icon(
-              onPressed: _syncing ? null : _syncAndCheck,
-              icon: _syncing
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.sync),
-              label: Text(_syncing
-                  ? 'Checking... / กำลังตรวจ...'
-                  : 'Check Status / ตรวจสอบสถานะ'),
-            ),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'After payment, ask the administrator to update your expiry date, then tap Check Status.\nหลังชำระเงิน ให้ผู้ดูแลอัปเดตวันหมดอายุ แล้วกดตรวจสอบสถานะ',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12, color: Colors.grey),
           ),
 
           const SizedBox(height: 32),
