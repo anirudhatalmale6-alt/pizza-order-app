@@ -21,6 +21,7 @@ class RenewalScreen extends StatefulWidget {
 class _RenewalScreenState extends State<RenewalScreen> {
   XFile? _paymentScreenshot;
   bool _syncing = false;
+  bool _receiptSent = false;
 
   Future<void> _pickScreenshot() async {
     final picker = ImagePicker();
@@ -77,6 +78,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
         );
       }
     }
+    if (mounted) setState(() => _receiptSent = true);
   }
 
   Future<void> _syncAndCheck() async {
@@ -125,7 +127,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
         foregroundColor: Colors.white,
         automaticallyImplyLeading: widget.canContinue,
       ),
-      bottomNavigationBar: widget.canContinue
+      bottomNavigationBar: (widget.canContinue && _receiptSent)
           ? SafeArea(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
