@@ -306,7 +306,7 @@ class GoogleSheetService {
       nameThai: _str(map['namethai']),
       price: _num(map['price']),
       isActive: _bool(map['isactive'], true),
-      category: _strOrFallback(map['category'], 'all'),
+      category: _strOrFallback(map['menuitem'] ?? map['menu item'] ?? map['category'], 'all'),
     );
   }
 
