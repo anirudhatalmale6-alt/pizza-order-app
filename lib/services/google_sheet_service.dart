@@ -364,19 +364,42 @@ class GoogleSheetService {
 
   // ======= Settings parser =======
 
+  static const _expiryKeys = {'expires', 'expiry', 'expiry_date', 'expires_date', 'expiration'};
+  static const _priceKeys = {'renewal_price', 'renewal', 'renewal price'};
+
   static Map<String, dynamic> _parseSettings(List<List<dynamic>> rows) {
     final result = <String, dynamic>{};
-    for (int i = 0; i < rows.length; i++) {
-      final row = rows[i];
-      if (row.length < 2) continue;
-      final key = row[0].toString().trim().toLowerCase();
-      final value = row[1].toString().trim();
-      if ({'expires', 'expiry', 'expiry_date', 'expires_date', 'expiration'}.contains(key)) {
-        result['expires'] = _parseDate(value);
-      } else if ({'renewal_price', 'renewal', 'renewal price'}.contains(key)) {
-        result['renewal_price'] = double.tryParse(value.replaceAll(',', '')) ?? 0.0;
+
+    // Try horizontal layout: setting names as column headers, values in row 2
+    if (rows.length >= 2) {
+      final headers = rows[0].map((e) => e.toString().trim().toLowerCase()).toList();
+      final values = rows[1].map((e) => e.toString().trim()).toList();
+      for (int i = 0; i < headers.length && i < values.length; i++) {
+        final key = headers[i];
+        final value = values[i];
+        if (_expiryKeys.contains(key)) {
+          result['expires'] = _parseDate(value);
+        } else if (_priceKeys.contains(key)) {
+          result['renewal_price'] = double.tryParse(value.replaceAll(',', '')) ?? 0.0;
+        }
       }
     }
+
+    // If horizontal didn't find anything, try vertical layout (key in col A, value in col B)
+    if (result.isEmpty) {
+      for (int i = 0; i < rows.length; i++) {
+        final row = rows[i];
+        if (row.length < 2) continue;
+        final key = row[0].toString().trim().toLowerCase();
+        final value = row[1].toString().trim();
+        if (_expiryKeys.contains(key)) {
+          result['expires'] = _parseDate(value);
+        } else if (_priceKeys.contains(key)) {
+          result['renewal_price'] = double.tryParse(value.replaceAll(',', '')) ?? 0.0;
+        }
+      }
+    }
+
     return result;
   }
 
