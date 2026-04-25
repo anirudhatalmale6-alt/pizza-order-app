@@ -162,6 +162,8 @@ class MenuProvider extends ChangeNotifier {
           '${data.menuItems.length} menu items\n'
           '${data.categories.length} categories\n'
           '${data.toppings.length} toppings\n'
+          'Expires: ${_expiresDate?.toIso8601String() ?? "not set"}\n'
+          'Renewal price: ${_renewalPrice > 0 ? "${_renewalPrice.toInt()} THB" : "not set"}\n'
           '\nDebug:\n${GoogleSheetService.debugInfo}';
       notifyListeners();
       return true;
