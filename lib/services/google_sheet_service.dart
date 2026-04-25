@@ -297,6 +297,7 @@ class GoogleSheetService {
       price: _num(map['price']),
       type: _str(map['category'], 'drink'),
       isActive: _bool(map['isactive'], true),
+      imageUrl: _str(map['image']),
     );
   }
 

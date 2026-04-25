@@ -19,12 +19,16 @@ class MenuItem extends HiveObject {
   @HiveField(4)
   bool isActive;
 
+  @HiveField(5)
+  String imageUrl;
+
   MenuItem({
     required this.name,
     required this.nameThai,
     required this.price,
     required this.type,
     this.isActive = true,
+    this.imageUrl = '',
   });
 }
 

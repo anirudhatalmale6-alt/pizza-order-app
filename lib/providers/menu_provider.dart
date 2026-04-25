@@ -7,7 +7,7 @@ import '../models/category_config.dart';
 import '../services/google_sheet_service.dart';
 
 class MenuProvider extends ChangeNotifier {
-  static const _appDataVersion = 4; // Bump this to force clear old data
+  static const _appDataVersion = 5; // Bump this to force clear old data
 
   late Box<MenuItem> _menuBox;
   late Box<ToppingItem> _toppingBox;

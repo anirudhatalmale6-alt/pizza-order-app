@@ -566,50 +566,81 @@ class _MenuItemCard extends StatelessWidget {
     final color = colorFromString(category.color);
     final icon = iconFromString(category.icon);
 
+    final hasImage = item.imageUrl.isNotEmpty;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        child: Column(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 2),
-                  child: Icon(icon, color: color, size: 22),
+            if (hasImage)
+              Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    item.imageUrl,
+                    width: 70,
+                    height: 70,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      width: 70,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        color: color.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(icon, color: color, size: 28),
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
+              ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(item.nameThai,
-                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
-                      Text(item.name,
-                          style: TextStyle(fontSize: 14, color: Colors.grey.shade700)),
+                      if (!hasImage)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2, right: 8),
+                          child: Icon(icon, color: color, size: 22),
+                        ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(item.nameThai,
+                                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                            Text(item.name,
+                                style: TextStyle(fontSize: 14, color: Colors.grey.shade700)),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('   ${item.price.toInt()} THB',
-                    style: const TextStyle(fontSize: 15, color: Colors.black87)),
-                ElevatedButton(
-                  onPressed: onAdd,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: color,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('${item.price.toInt()} THB',
+                          style: const TextStyle(fontSize: 15, color: Colors.black87)),
+                      ElevatedButton(
+                        onPressed: onAdd,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: color,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                        ),
+                        child: const Text('+ Add / เพิ่ม'),
+                      ),
+                    ],
                   ),
-                  child: const Text('+ Add / เพิ่ม'),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
