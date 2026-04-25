@@ -110,7 +110,34 @@ class _RenewalScreenState extends State<RenewalScreen> {
       );
     }
 
-    if (mounted) setState(() => _receiptSent = true);
+    if (mounted) {
+      setState(() => _receiptSent = true);
+      final menu = context.read<MenuProvider>();
+      if (menu.isExpired) {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.green.shade600, size: 28),
+                const SizedBox(width: 8),
+                const Expanded(child: Text('Thank You!\nขอบคุณ!')),
+              ],
+            ),
+            content: const Text(
+              'Your payment has been sent. The app will be restored within 12 hours.\n\n'
+              'ส่งการชำระเงินแล้ว แอปจะกลับมาใช้งานได้ภายใน 12 ชั่วโมง',
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _syncAndCheck() async {
