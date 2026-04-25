@@ -185,7 +185,7 @@ class _SettingsTabState extends State<_SettingsTab> {
         const Text('Google Sheet Sync', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         const Text(
-          'Enter your Google Sheet ID to sync menu, toppings, categories and discounts.\n'
+          'Enter your Google Sheet ID to sync menu, options, categories and discounts.\n'
           'The sheet must be shared as "Anyone with the link can view".',
           style: TextStyle(color: Colors.grey, fontSize: 12),
         ),

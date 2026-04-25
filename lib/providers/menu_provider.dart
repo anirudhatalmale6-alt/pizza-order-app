@@ -103,12 +103,7 @@ class MenuProvider extends ChangeNotifier {
       _categories = list.map((e) => CategoryConfig.fromJson(e)).toList();
     }
 
-    // Try to sync
-    if (_sheetId.isNotEmpty) {
-      await syncFromSheet();
-    }
-
-    // Fallback to defaults only if nothing loaded
+    // Fallback to defaults only if nothing loaded from cache
     if (_categories.isEmpty) {
       _categories = _defaultCategories();
     }
@@ -117,6 +112,11 @@ class MenuProvider extends ChangeNotifier {
     }
 
     notifyListeners();
+
+    // Sync in background so app loads instantly with cached data
+    if (_sheetId.isNotEmpty) {
+      syncFromSheet();
+    }
   }
 
   Future<bool> syncFromSheet() async {

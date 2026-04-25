@@ -40,10 +40,10 @@ class _ToppingDialogState extends State<ToppingDialog> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Customize ${widget.categoryLabel} / เลือกท็อปปิ้ง',
+              Text('Customize ${widget.categoryLabel} / เลือกตัวเลือก',
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              Text('${widget.availableToppings.length} toppings available',
+              Text('${widget.availableToppings.length} options available',
                   style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
               const SizedBox(height: 8),
               Expanded(
