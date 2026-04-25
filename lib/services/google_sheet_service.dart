@@ -297,7 +297,7 @@ class GoogleSheetService {
       price: _num(map['price']),
       type: _str(map['category'], 'drink'),
       isActive: _bool(map['isactive'], true),
-      imageUrl: _str(map['image']),
+      imageUrl: _normalizeImageUrl(_str(map['image'])),
     );
   }
 
@@ -312,6 +312,15 @@ class GoogleSheetService {
   }
 
   // ======= Helpers =======
+
+  static String _normalizeImageUrl(String url) {
+    if (url.isEmpty) return '';
+    final driveMatch = RegExp(r'drive\.google\.com/file/d/([a-zA-Z0-9_-]+)').firstMatch(url);
+    if (driveMatch != null) {
+      return 'https://drive.google.com/uc?export=view&id=${driveMatch.group(1)}';
+    }
+    return url;
+  }
 
   static String _str(dynamic val, [String fallback = '']) =>
       val?.toString().trim() ?? fallback;
