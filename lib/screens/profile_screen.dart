@@ -1,12 +1,82 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import '../providers/menu_provider.dart';
 import '../providers/profile_provider.dart';
 import '../utils/platform_helper.dart';
 import 'menu_screen.dart';
+import 'renewal_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool _renewalDialogShown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkRenewalWindow();
+    });
+  }
+
+  void _checkRenewalWindow() {
+    final menu = context.read<MenuProvider>();
+    if (!menu.isExpired && menu.isInRenewalWindow && !_renewalDialogShown) {
+      _renewalDialogShown = true;
+      _showRenewalDialog();
+    }
+  }
+
+  void _showRenewalDialog() {
+    final menu = context.read<MenuProvider>();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: Colors.orange.shade700, size: 28),
+            const SizedBox(width: 8),
+            const Expanded(child: Text('Subscription Expiring\nใกล้หมดอายุ')),
+          ],
+        ),
+        content: Text(
+          'Your subscription expires in ${menu.daysUntilExpiry} day(s).\n'
+          'Please renew to avoid interruption.\n\n'
+          'สมัครสมาชิกของคุณจะหมดอายุในอีก ${menu.daysUntilExpiry} วัน\n'
+          'กรุณาต่ออายุก่อนหมด',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Later / ภายหลัง'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const RenewalScreen(canContinue: true),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.deepOrange,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Renew Now / ต่ออายุ'),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _goToMenu(BuildContext context, String customerName) {
     Navigator.pushReplacement(
@@ -179,7 +249,12 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profile = context.watch<ProfileProvider>();
+    final menu = context.watch<MenuProvider>();
     final customers = profile.customers;
+
+    if (menu.isExpired) {
+      return const RenewalScreen(canContinue: false);
+    }
 
     return PopScope(
       canPop: false,

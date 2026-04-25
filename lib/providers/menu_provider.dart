@@ -15,11 +15,31 @@ class MenuProvider extends ChangeNotifier {
   String _sheetId = '';
   String _lastSyncResult = '';
   bool _syncedFromSheet = false;
+  DateTime? _expiresDate;
+  double _renewalPrice = 0;
 
   List<CategoryConfig> get categories => List.unmodifiable(_categories);
   String get sheetId => _sheetId;
   String get lastSyncError => _lastSyncResult;
   bool get syncedFromSheet => _syncedFromSheet;
+  DateTime? get expiresDate => _expiresDate;
+  double get renewalPrice => _renewalPrice;
+
+  bool get isExpired =>
+      _expiresDate != null && DateTime.now().isAfter(_expiresDate!);
+
+  int get daysUntilExpiry {
+    if (_expiresDate == null) return 999;
+    return _expiresDate!.difference(DateTime.now()).inDays;
+  }
+
+  bool get isInRenewalWindow {
+    if (_expiresDate == null) return false;
+    final days = daysUntilExpiry;
+    return days >= 0 && days <= 7;
+  }
+
+  bool get showRenewalPrompt => isExpired || isInRenewalWindow;
 
   List<MenuItem> itemsForCategory(String key) =>
       _menuBox.values.where((i) => i.type == key && i.isActive).toList();
@@ -69,6 +89,13 @@ class MenuProvider extends ChangeNotifier {
       await prefs.setString('googleSheetId', _sheetId);
     }
 
+    // Load cached expiry date
+    final cachedExpiry = prefs.getString('expiresDate');
+    if (cachedExpiry != null) {
+      _expiresDate = DateTime.tryParse(cachedExpiry);
+    }
+    _renewalPrice = prefs.getDouble('renewalPrice') ?? 0;
+
     // Load cached categories
     final cachedCats = prefs.getString('cachedCategories');
     if (cachedCats != null) {
@@ -116,6 +143,18 @@ class MenuProvider extends ChangeNotifier {
       await _toppingBox.clear();
       for (final item in data.toppings) {
         await _toppingBox.add(item);
+      }
+
+      // Update expiry date (only from Google source)
+      if (data.source == 'google') {
+        _expiresDate = data.expiresDate;
+        _renewalPrice = data.renewalPrice;
+        if (data.expiresDate != null) {
+          await prefs.setString('expiresDate', data.expiresDate!.toIso8601String());
+        } else {
+          await prefs.remove('expiresDate');
+        }
+        await prefs.setDouble('renewalPrice', data.renewalPrice);
       }
 
       _syncedFromSheet = true;

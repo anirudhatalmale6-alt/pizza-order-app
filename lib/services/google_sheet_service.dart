@@ -12,12 +12,16 @@ class SheetData {
   final List<MenuItem> menuItems;
   final List<ToppingItem> toppings;
   final String source; // 'google', 'github', or 'bundled'
+  final DateTime? expiresDate;
+  final double renewalPrice;
 
   SheetData({
     required this.categories,
     required this.menuItems,
     required this.toppings,
     this.source = 'unknown',
+    this.expiresDate,
+    this.renewalPrice = 0,
   });
 }
 
@@ -112,6 +116,15 @@ class GoogleSheetService {
         final items = _parseMenu(menuRows);
         final tops = _parseToppings(toppingRows);
 
+        DateTime? expiresDate;
+        double renewalPrice = 0;
+        try {
+          final settingsRows = await _fetchCsvTab(sheetId, 'settings');
+          final settings = _parseSettings(settingsRows);
+          expiresDate = settings['expires'] as DateTime?;
+          renewalPrice = (settings['renewal_price'] as double?) ?? 0;
+        } catch (_) {}
+
         debugInfo = 'Sheet ID: ${sheetId.substring(0, 8)}...\n'
             'Menu CSV: ${menuRows.length} rows (hdr: ${menuRows.isNotEmpty ? menuRows[0].length : 0} cols)\n'
             'Categories CSV: ${categoryRows.length} rows\n'
@@ -125,6 +138,8 @@ class GoogleSheetService {
           menuItems: items,
           toppings: tops,
           source: 'google',
+          expiresDate: expiresDate,
+          renewalPrice: renewalPrice,
         );
       } catch (e) {
         lastError = 'Google: $e';
@@ -345,5 +360,38 @@ class GoogleSheetService {
     if (s == 'true' || s == 'yes' || s == '1') return true;
     if (s == 'false' || s == 'no' || s == '0') return false;
     return fallback;
+  }
+
+  // ======= Settings parser =======
+
+  static Map<String, dynamic> _parseSettings(List<List<dynamic>> rows) {
+    final result = <String, dynamic>{};
+    for (int i = 0; i < rows.length; i++) {
+      final row = rows[i];
+      if (row.length < 2) continue;
+      final key = row[0].toString().trim().toLowerCase();
+      final value = row[1].toString().trim();
+      if ({'expires', 'expiry', 'expiry_date', 'expires_date', 'expiration'}.contains(key)) {
+        result['expires'] = _parseDate(value);
+      } else if ({'renewal_price', 'renewal', 'renewal price'}.contains(key)) {
+        result['renewal_price'] = double.tryParse(value.replaceAll(',', '')) ?? 0.0;
+      }
+    }
+    return result;
+  }
+
+  static DateTime? _parseDate(String value) {
+    if (value.isEmpty) return null;
+    final iso = DateTime.tryParse(value);
+    if (iso != null) return iso;
+    final match = RegExp(r'^(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{4})$').firstMatch(value);
+    if (match != null) {
+      final a = int.parse(match.group(1)!);
+      final b = int.parse(match.group(2)!);
+      final y = int.parse(match.group(3)!);
+      if (a <= 12) return DateTime(y, a, b);
+      if (b <= 12) return DateTime(y, b, a);
+    }
+    return null;
   }
 }
