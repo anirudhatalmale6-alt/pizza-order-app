@@ -317,7 +317,11 @@ class GoogleSheetService {
     if (url.isEmpty) return '';
     final driveMatch = RegExp(r'drive\.google\.com/file/d/([a-zA-Z0-9_-]+)').firstMatch(url);
     if (driveMatch != null) {
-      return 'https://drive.google.com/uc?export=view&id=${driveMatch.group(1)}';
+      return 'https://lh3.googleusercontent.com/d/${driveMatch.group(1)}';
+    }
+    final ucMatch = RegExp(r'drive\.google\.com/uc\?.*id=([a-zA-Z0-9_-]+)').firstMatch(url);
+    if (ucMatch != null) {
+      return 'https://lh3.googleusercontent.com/d/${ucMatch.group(1)}';
     }
     return url;
   }
