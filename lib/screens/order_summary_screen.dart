@@ -513,7 +513,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Flexible(child: Text('Subtotal / ยอดรวม')),
+                      const Flexible(child: Text('Customer to Pay / ลูกค้าจ่าย')),
                       Text('${subtotal.toInt()} THB'),
                     ],
                   ),
@@ -522,7 +522,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Flexible(child: Text('Discount / ส่วนลด')),
+                        const Flexible(child: Text('You Earned / คุณได้รับ')),
                         Text('-${discountAmt.toInt()} THB',
                             style: const TextStyle(color: Colors.green)),
                       ],
@@ -533,7 +533,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Flexible(
-                        child: Text('Total / ยอดสุทธิ',
+                        child: Text('You Pay / คุณจ่าย',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
                       ),
