@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../utils/platform_helper.dart';
 import '../utils/platform_image.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -195,69 +194,60 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
   static const _shareChannel = MethodChannel('com.pizzaorder/share');
 
-  Future<void> _shareTextViaLine(String text) async {
+  Future<void> _shareTextViaLine(String text, {String? extraInstruction}) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    if (!mounted) return;
+
     if (kIsWeb) {
-      await Clipboard.setData(ClipboardData(text: text));
-      if (!mounted) return;
-      // Try native share sheet first (works on mobile browsers)
-      bool shared = false;
-      try {
-        await Share.share(text);
-        shared = true;
-      } catch (_) {}
-      // If share API failed (e.g. desktop browser), show copy dialog
-      if (!shared && mounted) {
-        await showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (ctx) => AlertDialog(
-            title: const Text('Order Text Copied!'),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'The order text has been copied to your clipboard.\n'
-                    'Open LINE and paste it into your chat.\n\n'
-                    'ข้อความถูกคัดลอกแล้ว เปิด LINE แล้ววางในแชท',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      text,
-                      style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () async {
-                  await Clipboard.setData(ClipboardData(text: text));
-                  if (ctx.mounted) {
-                    ScaffoldMessenger.of(ctx).showSnackBar(
-                      const SnackBar(content: Text('Copied again!'), duration: Duration(seconds: 1)),
-                    );
-                  }
+      final profile = context.read<ProfileProvider>();
+      final hasLine = profile.lineDeepLink.isNotEmpty;
+      final extra = extraInstruction ?? '';
+
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Copied!\nคัดลอกแล้ว!'),
+          content: Text(
+            'Order text copied to clipboard.\n'
+            'Open LINE and paste it in the chat.\n\n'
+            'คัดลอกข้อความแล้ว เปิด LINE แล้ววางในแชท'
+            '$extra',
+          ),
+          actions: [
+            if (hasLine)
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  launchUrl(Uri.parse(profile.lineDeepLink),
+                      mode: LaunchMode.externalApplication);
                 },
-                child: const Text('Copy Again'),
+                icon: const Icon(Icons.chat_bubble, size: 18),
+                label: const Text('Open LINE'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF06C755),
+                  foregroundColor: Colors.white,
+                ),
               ),
+            TextButton(
+              onPressed: () async {
+                await Clipboard.setData(ClipboardData(text: text));
+                if (ctx.mounted) {
+                  ScaffoldMessenger.of(ctx).showSnackBar(
+                    const SnackBar(content: Text('Copied! / คัดลอกแล้ว!'), duration: Duration(seconds: 1)),
+                  );
+                }
+              },
+              child: const Text('Copy Again / คัดลอกอีกครั้ง'),
+            ),
+            if (!hasLine)
               ElevatedButton(
                 onPressed: () => Navigator.of(ctx).pop(),
                 child: const Text('Done / เสร็จ'),
               ),
-            ],
-          ),
-        );
-      }
+          ],
+        ),
+      );
     } else {
       bool sent = false;
       try {
@@ -279,85 +269,14 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
   Future<void> _sendPayment() async {
     final orderText = _buildOrderText();
-
     if (!mounted) return;
-    await Clipboard.setData(ClipboardData(text: orderText));
 
-    if (_paymentScreenshot != null) {
-      if (kIsWeb) {
-        // Step 1: Share or copy order text
-        await _shareTextViaLine(orderText);
+    final slipExtra = _paymentScreenshot != null
+        ? '\n\nAlso send the payment slip photo from your gallery.\n'
+          'ส่งรูปสลิปจากแกลเลอรีของคุณด้วย'
+        : '';
 
-        if (!mounted) return;
-        // Step 2: Tell user to send slip from gallery
-        await showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (ctx) => AlertDialog(
-            title: const Text('Order Sent!\nส่งออเดอร์แล้ว!'),
-            content: const Text(
-              'Order details sent to LINE!\n\n'
-              'Now open LINE and send the payment slip photo from your gallery.\n\n'
-              'ส่งรายละเอียดไปทาง LINE แล้ว!\n\n'
-              'เปิด LINE แล้วส่งรูปสลิปจากแกลเลอรีของคุณ',
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF06C755),
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text('Done / เสร็จ'),
-              ),
-            ],
-          ),
-        );
-      } else {
-        // On mobile: use native LINE intent
-        final cachePath = await getTemporaryCachePath();
-        final cachedImage = File('$cachePath/payment_${DateTime.now().millisecondsSinceEpoch}.jpg');
-        await File(_paymentScreenshot!.path).copy(cachedImage.path);
-
-        try {
-          await _shareChannel.invokeMethod('shareToLine', {'text': orderText});
-        } catch (_) {}
-
-        if (!mounted) return;
-        await showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (ctx) => AlertDialog(
-            title: const Text('Send Payment Slip'),
-            content: const Text(
-              'Order text sent! Now tap below to send the payment slip photo.\n\n'
-              'ส่งข้อความสั่งซื้อแล้ว! กดด้านล่างเพื่อส่งสลิปการชำระเงิน',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('Send Payment Slip / ส่งสลิป'),
-              ),
-            ],
-          ),
-        );
-
-        if (!mounted) return;
-        bool sent = false;
-        try {
-          final result = await _shareChannel.invokeMethod('shareToLine', {
-            'text': '',
-            'imagePath': cachedImage.path,
-          });
-          sent = (result == true);
-        } catch (_) {}
-        if (!sent && mounted) {
-          await Share.shareXFiles([XFile(cachedImage.path)]);
-        }
-      }
-    } else {
-      await _shareTextViaLine(orderText);
-    }
+    await _shareTextViaLine(orderText, extraInstruction: slipExtra);
 
     if (!mounted) return;
     context.read<CartProvider>().clear();
