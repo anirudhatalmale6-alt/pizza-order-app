@@ -1,11 +1,9 @@
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import '../models/category_config.dart';
 import '../providers/cart_provider.dart';
 import '../providers/menu_provider.dart';
@@ -200,75 +198,29 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     return sb.toString();
   }
 
-  static const _shareChannel = MethodChannel('com.pizzaorder/share');
-
-  Future<void> _shareTextViaLine(String text) async {
-    await Clipboard.setData(ClipboardData(text: text));
-    if (!mounted) return;
-
-    if (kIsWeb) {
-      try {
-        await Share.share(text);
-      } catch (_) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Order copied to clipboard! Paste in LINE.\nคัดลอกแล้ว! วางใน LINE'),
-              duration: Duration(seconds: 3),
-            ),
-          );
-        }
-      }
-    } else {
-      bool sent = false;
-      try {
-        final result = await _shareChannel.invokeMethod('shareToLine', {'text': text});
-        sent = (result == true);
-      } catch (_) {}
-      if (!sent && mounted) {
-        await Share.share(text);
-      }
-    }
+  void _copyConfirmation() {
+    final text = _buildConfirmText();
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Order copied! Paste in LINE.\nคัดลอกแล้ว! วางใน LINE'),
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
-  Future<void> _sendConfirmation() async {
-    final confirmText = _buildConfirmText();
-    if (!mounted) return;
-    await _shareTextViaLine(confirmText);
+  void _copyAndSend() {
+    final text = _buildOrderText();
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Order copied! Paste in LINE.\nคัดลอกแล้ว! วางใน LINE'),
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
-  Future<void> _sendPayment() async {
-    final orderText = _buildOrderText();
-    if (!mounted) return;
-
-    await _shareTextViaLine(orderText);
-
-    if (!mounted) return;
-    if (_hasScreenshot) {
-      await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Order Sent!\nส่งออเดอร์แล้ว!'),
-          content: const Text(
-            'Now open LINE and send the payment slip photo from your gallery.\n\n'
-            'เปิด LINE แล้วส่งรูปสลิปจากแกลเลอรีของคุณ',
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF06C755),
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Done / เสร็จ'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (!mounted) return;
+  void _completeOrder() {
     context.read<CartProvider>().clear();
     context.read<ProfileProvider>().clearSelection();
     Navigator.of(context).pushAndRemoveUntil(
@@ -629,56 +581,59 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           const SizedBox(height: 24),
 
-          // Send order for confirmation
-            SizedBox(
-              height: 64,
-              child: ElevatedButton.icon(
-                onPressed: cart.isEmpty ? null : _sendConfirmation,
-                icon: const Icon(Icons.send, size: 22),
-                label: const Text('Send to shop for confirmation\nส่งไปร้านเพื่อยืนยัน',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 13)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF06C755),
-                  foregroundColor: Colors.white,
-                ),
-              ),
+          // Step 1: Confirm order via LINE
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.blue.shade200),
             ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.red.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.red.shade300, width: 2),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.warning_amber_rounded, color: Colors.red.shade700, size: 32),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          'IMPORTANT',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red.shade700,
-                          ),
-                        ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 28, height: 28,
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade700,
+                        shape: BoxShape.circle,
                       ),
-                    ],
+                      child: const Center(child: Text('1', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+                    ),
+                    const SizedBox(width: 10),
+                    const Expanded(
+                      child: Text('Confirm Order / ยืนยันออเดอร์',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Copy the order, open LINE, paste and send to the shop.\nWait for reply before taking payment.\n\n'
+                  'คัดลอกออเดอร์ เปิด LINE วางแล้วส่งไปร้าน\nรอตอบกลับก่อนเก็บเงิน',
+                  style: TextStyle(fontSize: 13),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton.icon(
+                    onPressed: cart.isEmpty ? null : _copyConfirmation,
+                    icon: const Icon(Icons.copy, size: 20),
+                    label: const Text('Copy Order / คัดลอกออเดอร์',
+                        style: TextStyle(fontSize: 14)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.shade700,
+                      foregroundColor: Colors.white,
+                    ),
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Wait for reply on LINE before you take payment!\n\nรอตอบกลับทาง LINE ก่อนเก็บเงิน!',
-                    style: TextStyle(fontSize: 16, color: Colors.red.shade700, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
+          ),
+          const SizedBox(height: 16),
 
           // Payment
           const Text('Payment / การชำระเงิน',
@@ -822,19 +777,76 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               ],
             ),
 
+          const SizedBox(height: 16),
+
+          // Step 2: Send payment receipt
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.green.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.green.shade200),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 28, height: 28,
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade700,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Center(child: Text('2', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+                    ),
+                    const SizedBox(width: 10),
+                    const Expanded(
+                      child: Text('Send Payment / ส่งการชำระเงิน',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Copy the payment receipt, open LINE, paste and send.\n'
+                  'Also send the payment slip photo from your gallery.\n\n'
+                  'คัดลอกใบเสร็จ เปิด LINE วางแล้วส่ง\n'
+                  'ส่งรูปสลิปจากแกลเลอรีด้วย',
+                  style: TextStyle(fontSize: 13),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton.icon(
+                    onPressed: cart.isEmpty ? null : _copyAndSend,
+                    icon: const Icon(Icons.copy, size: 20),
+                    label: const Text('Copy Payment Receipt / คัดลอกใบเสร็จ',
+                        style: TextStyle(fontSize: 14)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF06C755),
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           const SizedBox(height: 24),
 
-          // Send to shop button
+          // Complete order
           SizedBox(
             height: 56,
             child: ElevatedButton.icon(
-              onPressed: cart.isEmpty ? null : _sendPayment,
-              icon: const Icon(Icons.send, size: 22),
-              label: const Text('Send to shop with payment copy\nส่งไปร้านพร้อมสลิป',
+              onPressed: _completeOrder,
+              icon: const Icon(Icons.check_circle, size: 22),
+              label: const Text('Order Complete / เสร็จสิ้น',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13)),
+                  style: TextStyle(fontSize: 14)),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF06C755),
+                backgroundColor: Colors.deepOrange,
                 foregroundColor: Colors.white,
               ),
             ),
