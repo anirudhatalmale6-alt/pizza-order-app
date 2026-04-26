@@ -530,20 +530,45 @@ class CategoryItemsScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton.icon(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.menu_book),
-                  label: const Text('Return to Menu\nกลับไปเมนู',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 56,
+                      child: ElevatedButton.icon(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.menu_book),
+                        label: const Text('Return to Menu\nกลับไปเมนู',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 13)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey.shade600,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  if (!cart.isEmpty) ...[
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 56,
+                        child: ElevatedButton.icon(
+                          onPressed: () => Navigator.push(context,
+                              MaterialPageRoute(builder: (_) => const OrderSummaryScreen())),
+                          icon: const Icon(Icons.receipt_long),
+                          label: Text('View Order (${cart.items.length})\nดูออเดอร์',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 13)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ],
           ),

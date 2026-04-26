@@ -176,16 +176,31 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final text = _buildConfirmText();
     await Clipboard.setData(ClipboardData(text: text));
     if (!mounted) return;
-    try {
-      await Share.share(text);
-    } catch (_) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Order copied to clipboard! Paste in LINE.\nคัดลอกแล้ว! วางใน LINE'),
-            duration: Duration(seconds: 3),
-          ),
-        );
+
+    final menu = context.read<MenuProvider>();
+    final profile = context.read<ProfileProvider>();
+    final lineLink = menu.lineLink.isNotEmpty ? menu.lineLink : profile.lineDeepLink;
+
+    if (lineLink.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Order copied! Paste it in LINE.\nคัดลอกแล้ว! วางใน LINE'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+      await launchUrl(Uri.parse(lineLink), mode: LaunchMode.externalApplication);
+    } else {
+      try {
+        await Share.share(text);
+      } catch (_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Order copied to clipboard! Paste in LINE.\nคัดลอกแล้ว! วางใน LINE'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
       }
     }
   }
