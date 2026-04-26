@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../models/category_config.dart';
 import '../providers/cart_provider.dart';
 import '../providers/menu_provider.dart';
@@ -170,26 +171,22 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     return sb.toString();
   }
 
-  void _copyConfirmation() {
+  Future<void> _sendConfirmation() async {
     final text = _buildConfirmText();
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Order copied! Paste in LINE.\nคัดลอกแล้ว! วางใน LINE'),
-        duration: Duration(seconds: 3),
-      ),
-    );
-  }
-
-  void _copyAndSend() {
-    final text = _buildOrderText();
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Order copied! Paste in LINE.\nคัดลอกแล้ว! วางใน LINE'),
-        duration: Duration(seconds: 3),
-      ),
-    );
+    await Clipboard.setData(ClipboardData(text: text));
+    if (!mounted) return;
+    try {
+      await Share.share(text);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Order copied to clipboard! Paste in LINE.\nคัดลอกแล้ว! วางใน LINE'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 
   void _completeOrder() {
@@ -553,54 +550,51 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           const SizedBox(height: 24),
 
-          // Step 1: Confirm order via LINE
+          // Send order for confirmation
+          SizedBox(
+            height: 64,
+            child: ElevatedButton.icon(
+              onPressed: cart.isEmpty ? null : _sendConfirmation,
+              icon: const Icon(Icons.send, size: 22),
+              label: const Text('Send to shop for confirmation\nส่งไปร้านเพื่อยืนยัน',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 13)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF06C755),
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.blue.shade50,
+              color: Colors.red.shade50,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue.shade200),
+              border: Border.all(color: Colors.red.shade300, width: 2),
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Container(
-                      width: 28, height: 28,
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade700,
-                        shape: BoxShape.circle,
+                    Icon(Icons.warning_amber_rounded, color: Colors.red.shade700, size: 32),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'IMPORTANT',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red.shade700,
+                        ),
                       ),
-                      child: const Center(child: Text('1', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
-                    ),
-                    const SizedBox(width: 10),
-                    const Expanded(
-                      child: Text('Confirm Order / ยืนยันออเดอร์',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Copy the order, open LINE, paste and send to the shop.\nWait for reply before taking payment.\n\n'
-                  'คัดลอกออเดอร์ เปิด LINE วางแล้วส่งไปร้าน\nรอตอบกลับก่อนเก็บเงิน',
-                  style: TextStyle(fontSize: 13),
-                ),
                 const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton.icon(
-                    onPressed: cart.isEmpty ? null : _copyConfirmation,
-                    icon: const Icon(Icons.copy, size: 20),
-                    label: const Text('Copy Order / คัดลอกออเดอร์',
-                        style: TextStyle(fontSize: 14)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade700,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
+                Text(
+                  'Wait for reply on LINE before you take payment!\n\nรอตอบกลับทาง LINE ก่อนเก็บเงิน!',
+                  style: TextStyle(fontSize: 16, color: Colors.red.shade700, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -704,7 +698,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           const SizedBox(height: 16),
 
-          // Step 2: Send payment receipt via LINE
+          // Send payment slip instructions
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -715,44 +709,13 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 28, height: 28,
-                      decoration: BoxDecoration(
-                        color: Colors.green.shade700,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Center(child: Text('2', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
-                    ),
-                    const SizedBox(width: 10),
-                    const Expanded(
-                      child: Text('Send Payment / ส่งการชำระเงิน',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton.icon(
-                    onPressed: cart.isEmpty ? null : _copyAndSend,
-                    icon: const Icon(Icons.copy, size: 20),
-                    label: const Text('Copy Payment Receipt / คัดลอกใบเสร็จ',
-                        style: TextStyle(fontSize: 14)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF06C755),
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ),
+                const Text('Send Payment Slip / ส่งสลิปการชำระ',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
                 Text(
                   '1. Open LINE / เปิด LINE\n'
-                  '2. Go to ${profile.appName} chat / ไปที่แชท ${profile.appName}\n'
-                  '3. Paste the receipt / วางใบเสร็จ\n'
-                  '4. Attach payment slip from Gallery or take a photo with Camera and send\n'
+                  '2. Go to ${profile.appName} / ไปที่ ${profile.appName}\n'
+                  '3. Attach the payment slip from Gallery or take a photo with Camera and send\n'
                   '   แนบสลิปจากแกลเลอรี หรือถ่ายรูปด้วยกล้อง แล้วส่ง',
                   style: const TextStyle(fontSize: 13, height: 1.5),
                 ),
