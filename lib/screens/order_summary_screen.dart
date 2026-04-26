@@ -289,51 +289,38 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         await _shareTextViaLine(orderText);
 
         if (!mounted) return;
-        // Step 2: Share payment slip image
-        bool imageShared = false;
-        try {
-          await Share.shareXFiles(
-            [_paymentScreenshot!],
-            text: 'Payment slip / สลิปการชำระเงิน',
-          );
-          imageShared = true;
-        } catch (_) {}
-
-        // If share failed (desktop browser), show image in dialog
-        if (!imageShared && mounted) {
-          final imageBytes = await _paymentScreenshot!.readAsBytes();
-          if (!mounted) return;
-          await showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (ctx) => AlertDialog(
-              title: const Text('Send Payment Slip'),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'Save this image and send it in LINE.\n\n'
-                      'บันทึกรูปนี้แล้วส่งใน LINE',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    const SizedBox(height: 12),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.memory(imageBytes, height: 250, fit: BoxFit.contain),
-                    ),
-                  ],
+        // Step 2: Prompt user to send payment slip
+        final screenshot = _paymentScreenshot!;
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Send Payment Slip\nส่งสลิปการชำระเงิน'),
+            content: const Text(
+              'Order details sent! Now tap below to send the payment slip photo.\n\n'
+              'ส่งรายละเอียดแล้ว! กดด้านล่างเพื่อส่งรูปสลิป',
+            ),
+            actions: [
+              ElevatedButton.icon(
+                onPressed: () async {
+                  try {
+                    await Share.shareXFiles(
+                      [screenshot],
+                      text: 'Payment slip / สลิปการชำระเงิน',
+                    );
+                  } catch (_) {}
+                  if (ctx.mounted) Navigator.of(ctx).pop();
+                },
+                icon: const Icon(Icons.image),
+                label: const Text('Send Slip / ส่งสลิป'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF06C755),
+                  foregroundColor: Colors.white,
                 ),
               ),
-              actions: [
-                ElevatedButton(
-                  onPressed: () => Navigator.of(ctx).pop(),
-                  child: const Text('Done / เสร็จ'),
-                ),
-              ],
-            ),
-          );
-        }
+            ],
+          ),
+        );
       } else {
         // On mobile: use native LINE intent
         final cachePath = await getTemporaryCachePath();
