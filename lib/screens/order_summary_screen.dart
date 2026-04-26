@@ -1,8 +1,8 @@
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import '../utils/platform_image.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -23,9 +23,10 @@ class OrderSummaryScreen extends StatefulWidget {
 }
 
 class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
-  XFile? _paymentScreenshot;
-  String _orderType = 'pickup'; // 'pickup' or 'delivery'
-  int? _selectedHour; // 11-16
+  Uint8List? _screenshotBytes;
+  bool _hasScreenshot = false;
+  String _orderType = 'pickup';
+  int? _selectedHour;
   final _guestNameCtrl = TextEditingController();
 
   double _calcTotalDiscount() {
@@ -54,7 +55,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final picker = ImagePicker();
     final image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      setState(() => _paymentScreenshot = image);
+      final bytes = await image.readAsBytes();
+      setState(() {
+        _screenshotBytes = bytes;
+        _hasScreenshot = true;
+      });
     }
   }
 
@@ -62,7 +67,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final picker = ImagePicker();
     final image = await picker.pickImage(source: ImageSource.camera);
     if (image != null) {
-      setState(() => _paymentScreenshot = image);
+      final bytes = await image.readAsBytes();
+      setState(() {
+        _screenshotBytes = bytes;
+        _hasScreenshot = true;
+      });
     }
   }
 
@@ -235,7 +244,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     await _shareTextViaLine(orderText);
 
     if (!mounted) return;
-    if (_paymentScreenshot != null) {
+    if (_hasScreenshot) {
       await showDialog(
         context: context,
         barrierDismissible: false,
@@ -281,26 +290,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         title: const Text('Order Summary'),
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-          child: SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton.icon(
-              onPressed: cart.isEmpty ? null : _sendPayment,
-              icon: const Icon(Icons.send, size: 22),
-              label: const Text('Send to shop with payment copy\nส่งไปร้านพร้อมสลิป',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF06C755),
-                foregroundColor: Colors.white,
-              ),
-            ),
-          ),
-        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -791,15 +780,24 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           // Payment Screenshot
           const Text('Payment Confirmation / ยืนยันการชำระเงิน',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          const Text(
+            'Load payment slip from gallery or take a photo with camera.\n'
+            'โหลดสลิปจากแกลเลอรีหรือถ่ายรูปด้วยกล้อง',
+            style: TextStyle(color: Colors.grey, fontSize: 12),
+          ),
           const SizedBox(height: 8),
-          if (_paymentScreenshot != null) ...[
+          if (_hasScreenshot && _screenshotBytes != null) ...[
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: platformFileImage(_paymentScreenshot!.path, height: 200, fit: BoxFit.cover),
+              child: Image.memory(_screenshotBytes!, height: 200, fit: BoxFit.cover),
             ),
             const SizedBox(height: 8),
             TextButton.icon(
-              onPressed: () => setState(() => _paymentScreenshot = null),
+              onPressed: () => setState(() {
+                _screenshotBytes = null;
+                _hasScreenshot = false;
+              }),
               icon: const Icon(Icons.close, color: Colors.red),
               label: const Text('Remove / ลบ', style: TextStyle(color: Colors.red)),
             ),
@@ -825,6 +823,24 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             ),
 
           const SizedBox(height: 24),
+
+          // Send to shop button
+          SizedBox(
+            height: 56,
+            child: ElevatedButton.icon(
+              onPressed: cart.isEmpty ? null : _sendPayment,
+              icon: const Icon(Icons.send, size: 22),
+              label: const Text('Send to shop with payment copy\nส่งไปร้านพร้อมสลิป',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 13)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF06C755),
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 12),
 
           // Return to menu
           SizedBox(

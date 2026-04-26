@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -6,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../providers/menu_provider.dart';
 import '../providers/profile_provider.dart';
-import '../utils/platform_image.dart';
 
 class RenewalScreen extends StatefulWidget {
   final bool canContinue;
@@ -18,20 +18,33 @@ class RenewalScreen extends StatefulWidget {
 }
 
 class _RenewalScreenState extends State<RenewalScreen> {
-  XFile? _paymentScreenshot;
+  Uint8List? _screenshotBytes;
+  bool _hasScreenshot = false;
   bool _syncing = false;
   bool _receiptSent = false;
 
   Future<void> _pickScreenshot() async {
     final picker = ImagePicker();
     final image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) setState(() => _paymentScreenshot = image);
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      setState(() {
+        _screenshotBytes = bytes;
+        _hasScreenshot = true;
+      });
+    }
   }
 
   Future<void> _takeScreenshot() async {
     final picker = ImagePicker();
     final image = await picker.pickImage(source: ImageSource.camera);
-    if (image != null) setState(() => _paymentScreenshot = image);
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      setState(() {
+        _screenshotBytes = bytes;
+        _hasScreenshot = true;
+      });
+    }
   }
 
   String _buildRenewalText() {
@@ -74,7 +87,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
       }
     }
 
-    if (_paymentScreenshot != null && mounted) {
+    if (_hasScreenshot && mounted) {
       await showDialog(
         context: context,
         barrierDismissible: false,
@@ -339,16 +352,25 @@ class _RenewalScreenState extends State<RenewalScreen> {
           // Payment screenshot
           const Text('Payment Screenshot / สลิปการชำระ',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          const Text(
+            'Load payment slip from gallery or take a photo with camera.\n'
+            'โหลดสลิปจากแกลเลอรีหรือถ่ายรูปด้วยกล้อง',
+            style: TextStyle(color: Colors.grey, fontSize: 12),
+          ),
           const SizedBox(height: 8),
-          if (_paymentScreenshot != null) ...[
+          if (_hasScreenshot && _screenshotBytes != null) ...[
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: platformFileImage(_paymentScreenshot!.path,
+              child: Image.memory(_screenshotBytes!,
                   height: 200, fit: BoxFit.cover),
             ),
             const SizedBox(height: 8),
             TextButton.icon(
-              onPressed: () => setState(() => _paymentScreenshot = null),
+              onPressed: () => setState(() {
+                _screenshotBytes = null;
+                _hasScreenshot = false;
+              }),
               icon: const Icon(Icons.close, color: Colors.red),
               label: const Text('Remove / ลบ',
                   style: TextStyle(color: Colors.red)),
