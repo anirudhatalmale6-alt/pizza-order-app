@@ -24,6 +24,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   String _orderType = 'pickup';
   int? _selectedHour;
   final _guestNameCtrl = TextEditingController();
+  bool _confirmationSent = false;
 
   double _calcTotalDiscount() {
     final cart = context.read<CartProvider>();
@@ -177,27 +178,27 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     await Clipboard.setData(ClipboardData(text: text));
     if (!mounted) return;
 
+    setState(() => _confirmationSent = true);
+
     final menu = context.read<MenuProvider>();
     final profile = context.read<ProfileProvider>();
     final lineLink = menu.lineLink.isNotEmpty ? menu.lineLink : profile.lineDeepLink;
-
-    // Clear cart and complete order before leaving the app
-    context.read<CartProvider>().clear();
-    context.read<ProfileProvider>().clearSelection();
 
     if (lineLink.isNotEmpty) {
       await launchUrl(Uri.parse(lineLink), mode: LaunchMode.externalApplication);
     } else {
       try {
         await Share.share(text);
-      } catch (_) {}
-    }
-
-    if (mounted) {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const ProfileScreen()),
-        (route) => false,
-      );
+      } catch (_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Order copied to clipboard! Paste in LINE.\nคัดลอกแล้ว! วางใน LINE'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -566,13 +567,15 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           SizedBox(
             height: 64,
             child: ElevatedButton.icon(
-              onPressed: cart.isEmpty ? null : _sendConfirmation,
-              icon: const Icon(Icons.send, size: 22),
-              label: const Text('Send to shop for confirmation\nส่งไปร้านเพื่อยืนยัน',
+              onPressed: (cart.isEmpty || _confirmationSent) ? null : _sendConfirmation,
+              icon: Icon(_confirmationSent ? Icons.check : Icons.send, size: 22),
+              label: Text(_confirmationSent
+                  ? 'Sent! / ส่งแล้ว!'
+                  : 'Send to shop for confirmation\nส่งไปร้านเพื่อยืนยัน',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13)),
+                  style: const TextStyle(fontSize: 13)),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF06C755),
+                backgroundColor: _confirmationSent ? Colors.grey : const Color(0xFF06C755),
                 foregroundColor: Colors.white,
               ),
             ),
@@ -709,6 +712,24 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             ),
 
           const SizedBox(height: 24),
+
+          // Done - new order
+          SizedBox(
+            height: 56,
+            child: ElevatedButton.icon(
+              onPressed: _completeOrder,
+              icon: const Icon(Icons.check_circle, size: 22),
+              label: const Text('Done - New Order / เสร็จ - ออเดอร์ใหม่',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepOrange,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 12),
 
           // Return to menu
           SizedBox(
