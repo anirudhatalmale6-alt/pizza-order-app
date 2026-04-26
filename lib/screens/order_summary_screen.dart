@@ -778,7 +778,12 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           SizedBox(
             height: 52,
             child: OutlinedButton.icon(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const MenuScreen()),
+                  (route) => route.isFirst,
+                );
+              },
               icon: const Icon(Icons.menu_book),
               label: const Text('Return to Menu / กลับไปเมนู',
                   style: TextStyle(fontSize: 14)),
