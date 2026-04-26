@@ -410,13 +410,13 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             width: double.infinity,
             height: 56,
             child: ElevatedButton.icon(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.menu_book),
-              label: const Text('Return to Menu\nกลับไปเมนู',
+              onPressed: cart.isEmpty ? null : _sendPayment,
+              icon: const Icon(Icons.send, size: 22),
+              label: const Text('Send to shop with payment copy\nส่งไปร้านพร้อมสลิป',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14)),
+                  style: TextStyle(fontSize: 13)),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: const Color(0xFF06C755),
                 foregroundColor: Colors.white,
               ),
             ),
@@ -947,19 +947,14 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           const SizedBox(height: 24),
 
-          // Send payment to shop
+          // Return to menu
           SizedBox(
-            height: 64,
-            child: ElevatedButton.icon(
-              onPressed: cart.isEmpty ? null : _sendPayment,
-              icon: const Icon(Icons.send, size: 22),
-              label: const Text('Send to shop with payment copy\nส่งไปร้านพร้อมสลิป',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF06C755), // LINE green
-                foregroundColor: Colors.white,
-              ),
+            height: 52,
+            child: OutlinedButton.icon(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.menu_book),
+              label: const Text('Return to Menu / กลับไปเมนู',
+                  style: TextStyle(fontSize: 14)),
             ),
           ),
 
