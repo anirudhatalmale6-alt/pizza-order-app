@@ -743,9 +743,17 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       width: double.infinity,
                       height: 48,
                       child: ElevatedButton.icon(
-                        onPressed: () {
-                          launchUrl(Uri.parse(effectiveLineLink),
+                        onPressed: () async {
+                          context.read<CartProvider>().clear();
+                          context.read<ProfileProvider>().clearSelection();
+                          await launchUrl(Uri.parse(effectiveLineLink),
                               mode: LaunchMode.externalApplication);
+                          if (context.mounted) {
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                              (route) => false,
+                            );
+                          }
                         },
                         icon: const Icon(Icons.chat_bubble, size: 20),
                         label: Text('Open ${profile.appName} on LINE',
@@ -763,24 +771,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           ),
 
           const SizedBox(height: 24),
-
-          // Done - new order
-          SizedBox(
-            height: 56,
-            child: ElevatedButton.icon(
-              onPressed: _completeOrder,
-              icon: const Icon(Icons.check_circle, size: 22),
-              label: const Text('Done - New Order / เสร็จ - ออเดอร์ใหม่',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
-                foregroundColor: Colors.white,
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 12),
 
           // Return to menu
           SizedBox(
