@@ -30,15 +30,20 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   int? _selectedHour; // 11-16
   final _guestNameCtrl = TextEditingController();
 
-  double _calcFinalTotal() {
+  double _calcTotalDiscount() {
     final cart = context.read<CartProvider>();
     final profile = context.read<ProfileProvider>();
-    final subtotal = cart.subtotal;
-    final discountPct = profile.discountPercent;
-    if (discountPct > 0) {
-      return subtotal - (subtotal * discountPct / 100);
+    double discount = cart.totalDiscount;
+    final afterCat = cart.subtotal - discount;
+    if (profile.discountPercent > 0 && afterCat > 0) {
+      discount += afterCat * profile.discountPercent / 100;
     }
-    return subtotal;
+    return discount;
+  }
+
+  double _calcFinalTotal() {
+    final cart = context.read<CartProvider>();
+    return (cart.subtotal - _calcTotalDiscount()).clamp(0, double.infinity);
   }
 
   @override
@@ -115,12 +120,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
     sb.writeln();
     final subtotal = cart.subtotal;
-    final discountPct = profile.discountPercent;
-    if (discountPct > 0) {
-      final discountAmt = (subtotal * discountPct / 100);
-      final finalTotal = subtotal - discountAmt;
+    final discountAmt = _calcTotalDiscount();
+    if (discountAmt > 0) {
+      final finalTotal = _calcFinalTotal();
       sb.writeln('Subtotal / ยอดรวม: ${subtotal.toInt()} THB');
-      sb.writeln('Discount / ส่วนลด: ${discountPct.toStringAsFixed(0)}% = -${discountAmt.toInt()} THB');
+      sb.writeln('Discount / ส่วนลด: -${discountAmt.toInt()} THB');
       sb.writeln('Final Total / ยอดสุทธิ: ${finalTotal.toInt()} THB');
     } else {
       sb.writeln('Total / ยอดรวม: ${subtotal.toInt()} THB');
@@ -173,12 +177,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
     sb.writeln();
     final subtotal = cart.subtotal;
-    final discountPct = profile.discountPercent;
-    if (discountPct > 0) {
-      final discountAmt = (subtotal * discountPct / 100);
-      final finalTotal = subtotal - discountAmt;
+    final discountAmt2 = _calcTotalDiscount();
+    if (discountAmt2 > 0) {
+      final finalTotal = _calcFinalTotal();
       sb.writeln('Subtotal / ยอดรวม: ${subtotal.toInt()} THB');
-      sb.writeln('Discount / ส่วนลด: ${discountPct.toStringAsFixed(0)}% = -${discountAmt.toInt()} THB');
+      sb.writeln('Discount / ส่วนลด: -${discountAmt2.toInt()} THB');
       sb.writeln('Total / รวม: ${finalTotal.toInt()} THB');
     } else {
       sb.writeln('Total / รวม: ${subtotal.toInt()} THB');
@@ -707,9 +710,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           // Total
           Builder(builder: (context) {
             final subtotal = cart.subtotal;
-            final discountPct = profile.discountPercent;
-            final discountAmt = discountPct > 0 ? (subtotal * discountPct / 100) : 0.0;
-            final finalTotal = subtotal - discountAmt;
+            final discountAmt = _calcTotalDiscount();
+            final finalTotal = _calcFinalTotal();
             return Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -725,12 +727,12 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       Text('${subtotal.toInt()} THB'),
                     ],
                   ),
-                  if (discountPct > 0) ...[
+                  if (discountAmt > 0) ...[
                     const SizedBox(height: 4),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Flexible(child: Text('Discount / ส่วนลด (${discountPct.toStringAsFixed(0)}%)')),
+                        const Flexible(child: Text('Discount / ส่วนลด')),
                         Text('-${discountAmt.toInt()} THB',
                             style: const TextStyle(color: Colors.green)),
                       ],
