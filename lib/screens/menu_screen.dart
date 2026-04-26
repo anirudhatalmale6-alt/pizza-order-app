@@ -426,13 +426,23 @@ class CategoryItemsScreen extends StatelessWidget {
         builder: (_) => ToppingDialog(availableToppings: toppings, categoryLabel: item.name),
       );
       if (selected != null) {
-        cart.addItem(CartItem(
+        final cartItem = CartItem(
           productName: item.name,
           productNameThai: item.nameThai,
           productType: category.key,
           basePrice: item.price,
           toppings: selected,
-        ));
+        );
+        if (cartItem.itemTotal <= 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('No option selected / ยังไม่ได้เลือกตัวเลือก'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+          return;
+        }
+        cart.addItem(cartItem);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${item.name} added / เพิ่ม${item.nameThai}แล้ว'),
@@ -440,6 +450,15 @@ class CategoryItemsScreen extends StatelessWidget {
           ),
         );
       }
+      return;
+    }
+    if (item.price <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No option selected / ยังไม่ได้เลือกตัวเลือก'),
+          duration: Duration(seconds: 2),
+        ),
+      );
       return;
     }
     cart.addItem(CartItem(
