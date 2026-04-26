@@ -52,7 +52,6 @@ class _SettingsTab extends StatefulWidget {
 }
 
 class _SettingsTabState extends State<_SettingsTab> {
-  late TextEditingController _lineCtrl;
   late TextEditingController _promptPayCtrl;
   late TextEditingController _sheetIdCtrl;
   late TextEditingController _appNameCtrl;
@@ -76,7 +75,6 @@ class _SettingsTabState extends State<_SettingsTab> {
     super.initState();
     final profile = context.read<ProfileProvider>();
     final menu = context.read<MenuProvider>();
-    _lineCtrl = TextEditingController(text: profile.lineDeepLink);
     _promptPayCtrl = TextEditingController(text: profile.promptPayId);
     _sheetIdCtrl = TextEditingController(text: menu.sheetId);
     _appNameCtrl = TextEditingController(text: profile.appName);
@@ -90,7 +88,6 @@ class _SettingsTabState extends State<_SettingsTab> {
 
   @override
   void dispose() {
-    _lineCtrl.dispose();
     _promptPayCtrl.dispose();
     _sheetIdCtrl.dispose();
     _appNameCtrl.dispose();
@@ -369,18 +366,6 @@ class _SettingsTabState extends State<_SettingsTab> {
           style: TextStyle(color: Colors.grey, fontSize: 12),
         ),
 
-        const SizedBox(height: 24),
-        const Text('LINE Configuration', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 16),
-        TextField(
-          controller: _lineCtrl,
-          decoration: const InputDecoration(
-            labelText: 'LINE Deep Link / URL',
-            hintText: 'e.g., https://line.me/R/ti/p/@yourlineID',
-            border: OutlineInputBorder(),
-          ),
-        ),
-
         const SizedBox(height: 80),
       ],
     );
@@ -390,7 +375,6 @@ class _SettingsTabState extends State<_SettingsTab> {
     final profile = context.read<ProfileProvider>();
     final menu = context.read<MenuProvider>();
     await profile.saveAppName(_appNameCtrl.text.trim());
-    await profile.saveLineConfig(_lineCtrl.text.trim());
     await profile.savePromptPayId(_promptPayCtrl.text.trim());
     await profile.saveOpeningHours(_openHour, _closeHour);
     await profile.saveOffersDelivery(_offersDelivery);
