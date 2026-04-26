@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../utils/platform_image.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -194,60 +193,23 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
   static const _shareChannel = MethodChannel('com.pizzaorder/share');
 
-  Future<void> _shareTextViaLine(String text, {String? extraInstruction}) async {
+  Future<void> _shareTextViaLine(String text) async {
     await Clipboard.setData(ClipboardData(text: text));
     if (!mounted) return;
 
     if (kIsWeb) {
-      final profile = context.read<ProfileProvider>();
-      final hasLine = profile.lineDeepLink.isNotEmpty;
-      final extra = extraInstruction ?? '';
-
-      await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Copied!\nคัดลอกแล้ว!'),
-          content: Text(
-            'Order text copied to clipboard.\n'
-            'Open LINE and paste it in the chat.\n\n'
-            'คัดลอกข้อความแล้ว เปิด LINE แล้ววางในแชท'
-            '$extra',
-          ),
-          actions: [
-            if (hasLine)
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                  launchUrl(Uri.parse(profile.lineDeepLink),
-                      mode: LaunchMode.externalApplication);
-                },
-                icon: const Icon(Icons.chat_bubble, size: 18),
-                label: const Text('Open LINE'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF06C755),
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            TextButton(
-              onPressed: () async {
-                await Clipboard.setData(ClipboardData(text: text));
-                if (ctx.mounted) {
-                  ScaffoldMessenger.of(ctx).showSnackBar(
-                    const SnackBar(content: Text('Copied! / คัดลอกแล้ว!'), duration: Duration(seconds: 1)),
-                  );
-                }
-              },
-              child: const Text('Copy Again / คัดลอกอีกครั้ง'),
+      try {
+        await Share.share(text);
+      } catch (_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Order copied to clipboard! Paste in LINE.\nคัดลอกแล้ว! วางใน LINE'),
+              duration: Duration(seconds: 3),
             ),
-            if (!hasLine)
-              ElevatedButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('Done / เสร็จ'),
-              ),
-          ],
-        ),
-      );
+          );
+        }
+      }
     } else {
       bool sent = false;
       try {
@@ -255,7 +217,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         sent = (result == true);
       } catch (_) {}
       if (!sent && mounted) {
-        await Clipboard.setData(ClipboardData(text: text));
         await Share.share(text);
       }
     }
@@ -271,12 +232,32 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final orderText = _buildOrderText();
     if (!mounted) return;
 
-    final slipExtra = _paymentScreenshot != null
-        ? '\n\nAlso send the payment slip photo from your gallery.\n'
-          'ส่งรูปสลิปจากแกลเลอรีของคุณด้วย'
-        : '';
+    await _shareTextViaLine(orderText);
 
-    await _shareTextViaLine(orderText, extraInstruction: slipExtra);
+    if (!mounted) return;
+    if (_paymentScreenshot != null) {
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Order Sent!\nส่งออเดอร์แล้ว!'),
+          content: const Text(
+            'Now open LINE and send the payment slip photo from your gallery.\n\n'
+            'เปิด LINE แล้วส่งรูปสลิปจากแกลเลอรีของคุณ',
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF06C755),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Done / เสร็จ'),
+            ),
+          ],
+        ),
+      );
+    }
 
     if (!mounted) return;
     context.read<CartProvider>().clear();

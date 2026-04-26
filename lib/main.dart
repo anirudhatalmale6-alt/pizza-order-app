@@ -22,8 +22,8 @@ void main() async {
   final profileProvider = ProfileProvider();
   await profileProvider.init();
 
-  // Create cart with category discounts from menu
   final cartProvider = CartProvider();
+  await cartProvider.restoreCart();
   cartProvider.setCategoryDiscounts(menuProvider.categoryDiscounts);
 
   // Listen for menu changes to update cart discounts

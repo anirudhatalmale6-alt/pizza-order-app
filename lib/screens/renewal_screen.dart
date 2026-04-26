@@ -1,10 +1,9 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 import '../providers/menu_provider.dart';
 import '../providers/profile_provider.dart';
 import '../utils/platform_image.dart';
@@ -61,60 +60,43 @@ class _RenewalScreenState extends State<RenewalScreen> {
   Future<void> _sendReceipt() async {
     final text = _buildRenewalText();
     await Clipboard.setData(ClipboardData(text: text));
-    if (!mounted) return;
 
-    final profile = context.read<ProfileProvider>();
-    final hasLine = profile.lineDeepLink.isNotEmpty;
-    final slipExtra = _paymentScreenshot != null
-        ? '\n\nAlso send the payment slip photo from your gallery.\n'
-          'ส่งรูปสลิปจากแกลเลอรีของคุณด้วย'
-        : '';
+    try {
+      await Share.share(text);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Receipt copied to clipboard! Paste in LINE.\nคัดลอกใบเสร็จแล้ว! วางใน LINE'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
 
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Copied!\nคัดลอกแล้ว!'),
-        content: Text(
-          'Renewal receipt copied to clipboard.\n'
-          'Open LINE and paste it in the chat.\n\n'
-          'คัดลอกใบเสร็จแล้ว เปิด LINE แล้ววางในแชท'
-          '$slipExtra',
-        ),
-        actions: [
-          if (hasLine)
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.of(ctx).pop();
-                launchUrl(Uri.parse(profile.lineDeepLink),
-                    mode: LaunchMode.externalApplication);
-              },
-              icon: const Icon(Icons.chat_bubble, size: 18),
-              label: const Text('Open LINE'),
+    if (_paymentScreenshot != null && mounted) {
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Details Sent!\nส่งรายละเอียดแล้ว!'),
+          content: const Text(
+            'Now open LINE and send the payment slip photo from your gallery.\n\n'
+            'เปิด LINE แล้วส่งรูปสลิปจากแกลเลอรีของคุณ',
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.of(ctx).pop(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF06C755),
                 foregroundColor: Colors.white,
               ),
-            ),
-          TextButton(
-            onPressed: () async {
-              await Clipboard.setData(ClipboardData(text: text));
-              if (ctx.mounted) {
-                ScaffoldMessenger.of(ctx).showSnackBar(
-                  const SnackBar(content: Text('Copied! / คัดลอกแล้ว!'), duration: Duration(seconds: 1)),
-                );
-              }
-            },
-            child: const Text('Copy Again / คัดลอกอีกครั้ง'),
-          ),
-          if (!hasLine)
-            ElevatedButton(
-              onPressed: () => Navigator.of(ctx).pop(),
               child: const Text('Done / เสร็จ'),
             ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    }
 
     if (mounted) {
       setState(() => _receiptSent = true);
