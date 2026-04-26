@@ -1,7 +1,5 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../models/category_config.dart';
@@ -21,8 +19,6 @@ class OrderSummaryScreen extends StatefulWidget {
 }
 
 class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
-  Uint8List? _screenshotBytes;
-  bool _hasScreenshot = false;
   String _orderType = 'pickup';
   int? _selectedHour;
   final _guestNameCtrl = TextEditingController();
@@ -47,30 +43,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   void dispose() {
     _guestNameCtrl.dispose();
     super.dispose();
-  }
-
-  Future<void> _pickScreenshot() async {
-    final picker = ImagePicker();
-    final image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      final bytes = await image.readAsBytes();
-      setState(() {
-        _screenshotBytes = bytes;
-        _hasScreenshot = true;
-      });
-    }
-  }
-
-  Future<void> _takeScreenshot() async {
-    final picker = ImagePicker();
-    final image = await picker.pickImage(source: ImageSource.camera);
-    if (image != null) {
-      final bytes = await image.readAsBytes();
-      setState(() {
-        _screenshotBytes = bytes;
-        _hasScreenshot = true;
-      });
-    }
   }
 
   List<CategoryConfig> _categoriesWithItems() {
@@ -730,56 +702,9 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               ),
             ),
 
-          const SizedBox(height: 24),
-
-          // Payment Screenshot
-          const Text('Payment Confirmation / ยืนยันการชำระเงิน',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 4),
-          const Text(
-            'Load payment slip from gallery or take a photo with camera.\n'
-            'โหลดสลิปจากแกลเลอรีหรือถ่ายรูปด้วยกล้อง',
-            style: TextStyle(color: Colors.grey, fontSize: 12),
-          ),
-          const SizedBox(height: 8),
-          if (_hasScreenshot && _screenshotBytes != null) ...[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.memory(_screenshotBytes!, height: 200, fit: BoxFit.cover),
-            ),
-            const SizedBox(height: 8),
-            TextButton.icon(
-              onPressed: () => setState(() {
-                _screenshotBytes = null;
-                _hasScreenshot = false;
-              }),
-              icon: const Icon(Icons.close, color: Colors.red),
-              label: const Text('Remove / ลบ', style: TextStyle(color: Colors.red)),
-            ),
-          ] else
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: _pickScreenshot,
-                    icon: const Icon(Icons.photo_library),
-                    label: const Text('Gallery / แกลเลอรี'),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: _takeScreenshot,
-                    icon: const Icon(Icons.camera_alt),
-                    label: const Text('Camera / กล้อง'),
-                  ),
-                ),
-              ],
-            ),
-
           const SizedBox(height: 16),
 
-          // Step 2: Send payment receipt
+          // Step 2: Send payment receipt via LINE
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -807,14 +732,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Copy the payment receipt, open LINE, paste and send.\n'
-                  'Also send the payment slip photo from your gallery.\n\n'
-                  'คัดลอกใบเสร็จ เปิด LINE วางแล้วส่ง\n'
-                  'ส่งรูปสลิปจากแกลเลอรีด้วย',
-                  style: TextStyle(fontSize: 13),
-                ),
                 const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
@@ -829,6 +746,15 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       foregroundColor: Colors.white,
                     ),
                   ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  '1. Open LINE / เปิด LINE\n'
+                  '2. Go to ${profile.appName} chat / ไปที่แชท ${profile.appName}\n'
+                  '3. Paste the receipt / วางใบเสร็จ\n'
+                  '4. Attach payment slip from Gallery or take a photo with Camera and send\n'
+                  '   แนบสลิปจากแกลเลอรี หรือถ่ายรูปด้วยกล้อง แล้วส่ง',
+                  style: const TextStyle(fontSize: 13, height: 1.5),
                 ),
               ],
             ),
