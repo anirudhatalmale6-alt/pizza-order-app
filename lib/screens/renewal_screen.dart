@@ -76,34 +76,27 @@ class _RenewalScreenState extends State<RenewalScreen> {
       }
     }
 
-    // Then prompt user to send payment screenshot
+    // Tell user to send slip from gallery
     if (_paymentScreenshot != null && mounted) {
       await showDialog(
         context: context,
         barrierDismissible: false,
         builder: (ctx) => AlertDialog(
-          title: const Text('Send Payment Slip\nส่งสลิปการชำระเงิน'),
+          title: const Text('Details Sent!\nส่งรายละเอียดแล้ว!'),
           content: const Text(
-            'Details sent! Now tap below to send the payment slip photo.\n\n'
-            'ส่งรายละเอียดแล้ว! กดด้านล่างเพื่อส่งรูปสลิป',
+            'Renewal details sent to LINE!\n\n'
+            'Now open LINE and send the payment slip photo from your gallery.\n\n'
+            'ส่งรายละเอียดไปทาง LINE แล้ว!\n\n'
+            'เปิด LINE แล้วส่งรูปสลิปจากแกลเลอรีของคุณ',
           ),
           actions: [
-            ElevatedButton.icon(
-              onPressed: () async {
-                try {
-                  await Share.shareXFiles(
-                    [_paymentScreenshot!],
-                    text: 'Payment slip / สลิปการชำระเงิน',
-                  );
-                } catch (_) {}
-                if (ctx.mounted) Navigator.of(ctx).pop();
-              },
-              icon: const Icon(Icons.image),
-              label: const Text('Send Slip / ส่งสลิป'),
+            ElevatedButton(
+              onPressed: () => Navigator.of(ctx).pop(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF06C755),
                 foregroundColor: Colors.white,
               ),
+              child: const Text('Done / เสร็จ'),
             ),
           ],
         ),

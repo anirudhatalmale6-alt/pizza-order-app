@@ -289,34 +289,26 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         await _shareTextViaLine(orderText);
 
         if (!mounted) return;
-        // Step 2: Prompt user to send payment slip
-        final screenshot = _paymentScreenshot!;
+        // Step 2: Tell user to send slip from gallery
         await showDialog(
           context: context,
           barrierDismissible: false,
           builder: (ctx) => AlertDialog(
-            title: const Text('Send Payment Slip\nส่งสลิปการชำระเงิน'),
+            title: const Text('Order Sent!\nส่งออเดอร์แล้ว!'),
             content: const Text(
-              'Order details sent! Now tap below to send the payment slip photo.\n\n'
-              'ส่งรายละเอียดแล้ว! กดด้านล่างเพื่อส่งรูปสลิป',
+              'Order details sent to LINE!\n\n'
+              'Now open LINE and send the payment slip photo from your gallery.\n\n'
+              'ส่งรายละเอียดไปทาง LINE แล้ว!\n\n'
+              'เปิด LINE แล้วส่งรูปสลิปจากแกลเลอรีของคุณ',
             ),
             actions: [
-              ElevatedButton.icon(
-                onPressed: () async {
-                  try {
-                    await Share.shareXFiles(
-                      [screenshot],
-                      text: 'Payment slip / สลิปการชำระเงิน',
-                    );
-                  } catch (_) {}
-                  if (ctx.mounted) Navigator.of(ctx).pop();
-                },
-                icon: const Icon(Icons.image),
-                label: const Text('Send Slip / ส่งสลิป'),
+              ElevatedButton(
+                onPressed: () => Navigator.of(ctx).pop(),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF06C755),
                   foregroundColor: Colors.white,
                 ),
+                child: const Text('Done / เสร็จ'),
               ),
             ],
           ),
