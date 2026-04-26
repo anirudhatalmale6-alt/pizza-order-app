@@ -26,6 +26,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   final _guestNameCtrl = TextEditingController();
   bool _confirmationSent = false;
 
+  static String _fmt(double v) => v == v.roundToDouble() ? v.toInt().toString() : v.toStringAsFixed(2);
+
   double _calcTotalDiscount() {
     final cart = context.read<CartProvider>();
     final profile = context.read<ProfileProvider>();
@@ -91,10 +93,10 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         final toppingsStr =
             ' (${item.toppings.map((t) => '${t.nameThai} +${t.price.toInt()} / ${t.name} +${t.price.toInt()}').join(', ')})';
         sb.writeln(
-            '- ${item.productNameThai} / ${item.productName}$toppingsStr x${item.quantity} → ${item.basePrice.toInt()} +${item.toppingsTotal.toInt()} = ${item.itemTotal.toInt()} THB');
+            '- ${item.productNameThai} / ${item.productName}$toppingsStr x${item.quantity} → ${_fmt(item.basePrice)} +${_fmt(item.toppingsTotal)} = ${_fmt(item.itemTotal)} THB');
       } else {
         sb.writeln(
-            '- ${item.productNameThai} / ${item.productName} x${item.quantity} → ${item.itemTotal.toInt()} THB');
+            '- ${item.productNameThai} / ${item.productName} x${item.quantity} → ${_fmt(item.itemTotal)} THB');
       }
     }
 
@@ -103,11 +105,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final discountAmt = _calcTotalDiscount();
     if (discountAmt > 0) {
       final finalTotal = _calcFinalTotal();
-      sb.writeln('Subtotal / ยอดรวม: ${subtotal.toInt()} THB');
-      sb.writeln('Discount / ส่วนลด: -${discountAmt.toInt()} THB');
-      sb.writeln('Final Total / ยอดสุทธิ: ${finalTotal.toInt()} THB');
+      sb.writeln('Subtotal / ยอดรวม: ${_fmt(subtotal)} THB');
+      sb.writeln('Discount / ส่วนลด: -${_fmt(discountAmt)} THB');
+      sb.writeln('Final Total / ยอดสุทธิ: ${_fmt(finalTotal)} THB');
     } else {
-      sb.writeln('Total / ยอดรวม: ${subtotal.toInt()} THB');
+      sb.writeln('Total / ยอดรวม: ${_fmt(subtotal)} THB');
     }
     sb.writeln();
     sb.writeln('ชำระโดย / Payment via PromptPay');
@@ -150,9 +152,9 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     for (final item in cart.items) {
       if (item.toppings.isNotEmpty) {
         final toppingsStr = ' + ${item.toppings.map((t) => t.name).join(', ')}';
-        sb.writeln('- ${item.productName}$toppingsStr x${item.quantity} = ${item.itemTotal.toInt()} THB');
+        sb.writeln('- ${item.productName}$toppingsStr x${item.quantity} = ${_fmt(item.itemTotal)} THB');
       } else {
-        sb.writeln('- ${item.productName} x${item.quantity} = ${item.itemTotal.toInt()} THB');
+        sb.writeln('- ${item.productName} x${item.quantity} = ${_fmt(item.itemTotal)} THB');
       }
     }
     sb.writeln();
@@ -160,11 +162,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final discountAmt2 = _calcTotalDiscount();
     if (discountAmt2 > 0) {
       final finalTotal = _calcFinalTotal();
-      sb.writeln('Subtotal / ยอดรวม: ${subtotal.toInt()} THB');
-      sb.writeln('Discount / ส่วนลด: -${discountAmt2.toInt()} THB');
-      sb.writeln('Total / รวม: ${finalTotal.toInt()} THB');
+      sb.writeln('Subtotal / ยอดรวม: ${_fmt(subtotal)} THB');
+      sb.writeln('Discount / ส่วนลด: -${_fmt(discountAmt2)} THB');
+      sb.writeln('Total / รวม: ${_fmt(finalTotal)} THB');
     } else {
-      sb.writeln('Total / รวม: ${subtotal.toInt()} THB');
+      sb.writeln('Total / รวม: ${_fmt(subtotal)} THB');
     }
     sb.writeln('================================');
     sb.writeln('Please confirm this order is OK');
@@ -450,7 +452,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     Padding(
                       padding: const EdgeInsets.only(left: 32, top: 4),
                       child: Text(
-                        'x${item.quantity} = ${item.itemTotal.toInt()} THB',
+                        'x${item.quantity} = ${_fmt(item.itemTotal)} THB',
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 15),
                       ),
@@ -526,7 +528,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Flexible(child: Text('Customer to Pay / ลูกค้าจ่าย')),
-                      Text('${subtotal.toInt()} THB'),
+                      Text('${_fmt(subtotal)} THB'),
                     ],
                   ),
                   if (discountAmt > 0) ...[
@@ -535,7 +537,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Flexible(child: Text('You Earned / คุณได้รับ')),
-                        Text('-${discountAmt.toInt()} THB',
+                        Text('-${_fmt(discountAmt)} THB',
                             style: const TextStyle(color: Colors.green)),
                       ],
                     ),
@@ -549,7 +551,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
                       ),
-                      Text('${finalTotal.toInt()} THB',
+                      Text('${_fmt(finalTotal)} THB',
                           style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -649,7 +651,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Amount / จำนวน: ${_calcFinalTotal().toInt()} THB',
+                    'Amount / จำนวน: ${_fmt(_calcFinalTotal())} THB',
                     style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
