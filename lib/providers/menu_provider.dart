@@ -17,6 +17,7 @@ class MenuProvider extends ChangeNotifier {
   bool _syncedFromSheet = false;
   DateTime? _expiresDate;
   double _renewalPrice = 0;
+  String _lineLink = '';
 
   List<CategoryConfig> get categories => List.unmodifiable(_categories);
   String get sheetId => _sheetId;
@@ -24,6 +25,7 @@ class MenuProvider extends ChangeNotifier {
   bool get syncedFromSheet => _syncedFromSheet;
   DateTime? get expiresDate => _expiresDate;
   double get renewalPrice => _renewalPrice;
+  String get lineLink => _lineLink;
 
   bool get isExpired =>
       _expiresDate != null && DateTime.now().isAfter(_expiresDate!);
@@ -95,6 +97,7 @@ class MenuProvider extends ChangeNotifier {
       _expiresDate = DateTime.tryParse(cachedExpiry);
     }
     _renewalPrice = prefs.getDouble('renewalPrice') ?? 0;
+    _lineLink = prefs.getString('lineLink') ?? '';
 
     // Load cached categories
     final cachedCats = prefs.getString('cachedCategories');
@@ -145,16 +148,18 @@ class MenuProvider extends ChangeNotifier {
         await _toppingBox.add(item);
       }
 
-      // Update expiry date (only from Google source)
+      // Update settings (only from Google source)
       if (data.source == 'google') {
         _expiresDate = data.expiresDate;
         _renewalPrice = data.renewalPrice;
+        _lineLink = data.lineLink;
         if (data.expiresDate != null) {
           await prefs.setString('expiresDate', data.expiresDate!.toIso8601String());
         } else {
           await prefs.remove('expiresDate');
         }
         await prefs.setDouble('renewalPrice', data.renewalPrice);
+        await prefs.setString('lineLink', data.lineLink);
       }
 
       _syncedFromSheet = true;
@@ -164,6 +169,7 @@ class MenuProvider extends ChangeNotifier {
           '${data.toppings.length} toppings\n'
           'Expires: ${_expiresDate?.toIso8601String() ?? "not set"}\n'
           'Renewal price: ${_renewalPrice > 0 ? "${_renewalPrice.toInt()} THB" : "not set"}\n'
+          'LINE link: ${_lineLink.isNotEmpty ? _lineLink : "not set"}\n'
           '\nDebug:\n${GoogleSheetService.debugInfo}';
       notifyListeners();
       return true;

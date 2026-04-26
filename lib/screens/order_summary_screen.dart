@@ -718,26 +718,32 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   'แนบสลิปจากแกลเลอรี หรือถ่ายรูปด้วยกล้อง แล้วส่งไปที่ ${profile.appName} บน LINE',
                   style: const TextStyle(fontSize: 13, height: 1.4),
                 ),
-                if (profile.lineDeepLink.isNotEmpty) ...[
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        launchUrl(Uri.parse(profile.lineDeepLink),
-                            mode: LaunchMode.externalApplication);
-                      },
-                      icon: const Icon(Icons.chat_bubble, size: 20),
-                      label: Text('Open ${profile.appName} on LINE',
-                          style: const TextStyle(fontSize: 14)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF06C755),
-                        foregroundColor: Colors.white,
+                Builder(builder: (context) {
+                  final effectiveLineLink = menu.lineLink.isNotEmpty
+                      ? menu.lineLink
+                      : profile.lineDeepLink;
+                  if (effectiveLineLink.isEmpty) return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          launchUrl(Uri.parse(effectiveLineLink),
+                              mode: LaunchMode.externalApplication);
+                        },
+                        icon: const Icon(Icons.chat_bubble, size: 20),
+                        label: Text('Open ${profile.appName} on LINE',
+                            style: const TextStyle(fontSize: 14)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF06C755),
+                          foregroundColor: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  );
+                }),
               ],
             ),
           ),

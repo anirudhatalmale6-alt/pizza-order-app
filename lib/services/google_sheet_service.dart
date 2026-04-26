@@ -14,6 +14,7 @@ class SheetData {
   final String source; // 'google', 'github', or 'bundled'
   final DateTime? expiresDate;
   final double renewalPrice;
+  final String lineLink;
 
   SheetData({
     required this.categories,
@@ -22,6 +23,7 @@ class SheetData {
     this.source = 'unknown',
     this.expiresDate,
     this.renewalPrice = 0,
+    this.lineLink = '',
   });
 }
 
@@ -118,11 +120,13 @@ class GoogleSheetService {
 
         DateTime? expiresDate;
         double renewalPrice = 0;
+        String lineLink = '';
         try {
           final settingsRows = await _fetchCsvTab(sheetId, 'settings');
           final settings = _parseSettings(settingsRows);
           expiresDate = settings['expires'] as DateTime?;
           renewalPrice = (settings['renewal_price'] as double?) ?? 0;
+          lineLink = (settings['line_link'] as String?) ?? '';
         } catch (_) {}
 
         debugInfo = 'Sheet ID: ${sheetId.substring(0, 8)}...\n'
@@ -140,6 +144,7 @@ class GoogleSheetService {
           source: 'google',
           expiresDate: expiresDate,
           renewalPrice: renewalPrice,
+          lineLink: lineLink,
         );
       } catch (e) {
         lastError = 'Google: $e';
@@ -366,6 +371,7 @@ class GoogleSheetService {
 
   static const _expiryKeys = {'expires', 'expiry', 'expiry_date', 'expires_date', 'expiration'};
   static const _priceKeys = {'renewal_price', 'renewal', 'renewal price'};
+  static const _lineKeys = {'line_link', 'line link', 'linelink', 'line_url', 'line url', 'line'};
 
   static Map<String, dynamic> _parseSettings(List<List<dynamic>> rows) {
     final result = <String, dynamic>{};
@@ -381,6 +387,8 @@ class GoogleSheetService {
           result['expires'] = _parseDate(value);
         } else if (_priceKeys.contains(key)) {
           result['renewal_price'] = double.tryParse(value.replaceAll(',', '')) ?? 0.0;
+        } else if (_lineKeys.contains(key)) {
+          result['line_link'] = value;
         }
       }
     }
@@ -396,6 +404,8 @@ class GoogleSheetService {
           result['expires'] = _parseDate(value);
         } else if (_priceKeys.contains(key)) {
           result['renewal_price'] = double.tryParse(value.replaceAll(',', '')) ?? 0.0;
+        } else if (_lineKeys.contains(key)) {
+          result['line_link'] = value;
         }
       }
     }
