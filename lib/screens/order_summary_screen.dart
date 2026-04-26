@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/category_config.dart';
 import '../providers/cart_provider.dart';
 import '../providers/menu_provider.dart';
@@ -713,12 +714,30 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
                 Text(
-                  '1. Open LINE / เปิด LINE\n'
-                  '2. Go to ${profile.appName} / ไปที่ ${profile.appName}\n'
-                  '3. Attach the payment slip from Gallery or take a photo with Camera and send\n'
-                  '   แนบสลิปจากแกลเลอรี หรือถ่ายรูปด้วยกล้อง แล้วส่ง',
-                  style: const TextStyle(fontSize: 13, height: 1.5),
+                  'Attach the payment slip from Gallery or take a photo with Camera and send to ${profile.appName} on LINE.\n\n'
+                  'แนบสลิปจากแกลเลอรี หรือถ่ายรูปด้วยกล้อง แล้วส่งไปที่ ${profile.appName} บน LINE',
+                  style: const TextStyle(fontSize: 13, height: 1.4),
                 ),
+                if (profile.lineDeepLink.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        launchUrl(Uri.parse(profile.lineDeepLink),
+                            mode: LaunchMode.externalApplication);
+                      },
+                      icon: const Icon(Icons.chat_bubble, size: 20),
+                      label: Text('Open ${profile.appName} on LINE',
+                          style: const TextStyle(fontSize: 14)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF06C755),
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
