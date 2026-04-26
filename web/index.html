@@ -21,22 +21,6 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <script>
-  if ('serviceWorker' in navigator && !sessionStorage.getItem('sw_cleaned')) {
-    navigator.serviceWorker.getRegistrations().then(function(regs) {
-      if (regs.length > 0) {
-        regs.forEach(function(r) { r.unregister(); });
-        caches.keys().then(function(names) {
-          names.forEach(function(n) { caches.delete(n); });
-          sessionStorage.setItem('sw_cleaned', '1');
-          location.reload();
-        });
-        return;
-      }
-      sessionStorage.setItem('sw_cleaned', '1');
-    });
-  }
-  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
