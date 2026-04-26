@@ -361,7 +361,7 @@ class _MenuScreenState extends State<MenuScreen> {
                               ),
                             );
                             if (confirm == true) {
-                              cart.clear();
+                              await cart.clear();
                               if (mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(

@@ -122,10 +122,10 @@ class CartProvider extends ChangeNotifier {
     _persist();
   }
 
-  void clear() {
+  Future<void> clear() async {
     _items.clear();
     notifyListeners();
-    _persist();
+    await _persist();
   }
 
   bool get isEmpty => _items.isEmpty;

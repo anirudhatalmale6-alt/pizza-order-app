@@ -204,8 +204,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
   }
 
-  void _completeOrder() {
-    context.read<CartProvider>().clear();
+  Future<void> _completeOrder() async {
+    await context.read<CartProvider>().clear();
     context.read<ProfileProvider>().clearSelection();
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const ProfileScreen()),
@@ -746,7 +746,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       height: 48,
                       child: ElevatedButton.icon(
                         onPressed: () async {
-                          context.read<CartProvider>().clear();
+                          await context.read<CartProvider>().clear();
                           context.read<ProfileProvider>().clearSelection();
                           await launchUrl(Uri.parse(effectiveLineLink),
                               mode: LaunchMode.externalApplication);
