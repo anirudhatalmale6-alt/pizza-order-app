@@ -18,6 +18,7 @@ class MenuProvider extends ChangeNotifier {
   DateTime? _expiresDate;
   double _renewalPrice = 0;
   String _lineLink = '';
+  Map<String, bool> _openDays = {};
 
   List<CategoryConfig> get categories => List.unmodifiable(_categories);
   String get sheetId => _sheetId;
@@ -26,6 +27,14 @@ class MenuProvider extends ChangeNotifier {
   DateTime? get expiresDate => _expiresDate;
   double get renewalPrice => _renewalPrice;
   String get lineLink => _lineLink;
+  Map<String, bool> get openDays => Map.unmodifiable(_openDays);
+
+  bool get isOpenToday {
+    if (_openDays.isEmpty) return true;
+    final dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    final today = dayNames[DateTime.now().weekday - 1];
+    return _openDays[today] ?? true;
+  }
 
   bool get isExpired =>
       _expiresDate != null && DateTime.now().isAfter(_expiresDate!);
@@ -98,6 +107,11 @@ class MenuProvider extends ChangeNotifier {
     }
     _renewalPrice = prefs.getDouble('renewalPrice') ?? 0;
     _lineLink = prefs.getString('lineLink') ?? '';
+    final cachedDays = prefs.getString('openDays');
+    if (cachedDays != null) {
+      final map = jsonDecode(cachedDays) as Map<String, dynamic>;
+      _openDays = map.map((k, v) => MapEntry(k, v as bool));
+    }
 
     // Load cached categories
     final cachedCats = prefs.getString('cachedCategories');
@@ -153,6 +167,7 @@ class MenuProvider extends ChangeNotifier {
         _expiresDate = data.expiresDate;
         _renewalPrice = data.renewalPrice;
         _lineLink = data.lineLink;
+        _openDays = data.openDays;
         if (data.expiresDate != null) {
           await prefs.setString('expiresDate', data.expiresDate!.toIso8601String());
         } else {
@@ -160,6 +175,7 @@ class MenuProvider extends ChangeNotifier {
         }
         await prefs.setDouble('renewalPrice', data.renewalPrice);
         await prefs.setString('lineLink', data.lineLink);
+        await prefs.setString('openDays', jsonEncode(data.openDays));
       }
 
       _syncedFromSheet = true;

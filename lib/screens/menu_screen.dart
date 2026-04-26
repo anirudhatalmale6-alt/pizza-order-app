@@ -245,7 +245,47 @@ class _MenuScreenState extends State<MenuScreen> {
           ),
         ],
       ),
-      body: Padding(
+      body: Builder(builder: (context) {
+        final now = DateTime.now();
+        final currentHour = now.hour;
+        final isClosedDay = !menu.isOpenToday;
+        final isOutsideHours = currentHour < profile.openHour || currentHour >= profile.closeHour;
+        final isClosed = isClosedDay || isOutsideHours;
+
+        if (isClosed) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.store, size: 80, color: Colors.grey.shade400),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Sorry, ${profile.appName} is closed now.\nขออภัย ${profile.appName} ปิดแล้ว',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  if (isClosedDay)
+                    const Text(
+                      'We are not open today.\nวันนี้ไม่เปิดทำการ',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16, color: Colors.black54),
+                    )
+                  else
+                    Text(
+                      'Opening hours: ${profile.openHour}:00 - ${profile.closeHour}:00\nเวลาเปิด: ${profile.openHour}:00 - ${profile.closeHour}:00',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 16, color: Colors.black54),
+                    ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
@@ -326,7 +366,8 @@ class _MenuScreenState extends State<MenuScreen> {
             ),
           ],
         ),
-      ),
+      );
+      }),
       bottomNavigationBar: cart.isEmpty
           ? null
           : SafeArea(

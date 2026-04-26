@@ -15,6 +15,7 @@ class SheetData {
   final DateTime? expiresDate;
   final double renewalPrice;
   final String lineLink;
+  final Map<String, bool> openDays;
 
   SheetData({
     required this.categories,
@@ -24,6 +25,7 @@ class SheetData {
     this.expiresDate,
     this.renewalPrice = 0,
     this.lineLink = '',
+    this.openDays = const {},
   });
 }
 
@@ -129,6 +131,12 @@ class GoogleSheetService {
           lineLink = (settings['line_link'] as String?) ?? '';
         } catch (_) {}
 
+        Map<String, bool> openDays = {};
+        try {
+          final daysRows = await _fetchCsvTab(sheetId, 'days');
+          openDays = _parseDays(daysRows);
+        } catch (_) {}
+
         debugInfo = 'Sheet ID: ${sheetId.substring(0, 8)}...\n'
             'Menu CSV: ${menuRows.length} rows (hdr: ${menuRows.isNotEmpty ? menuRows[0].length : 0} cols)\n'
             'Categories CSV: ${categoryRows.length} rows\n'
@@ -145,6 +153,7 @@ class GoogleSheetService {
           expiresDate: expiresDate,
           renewalPrice: renewalPrice,
           lineLink: lineLink,
+          openDays: openDays,
         );
       } catch (e) {
         lastError = 'Google: $e';
@@ -426,5 +435,24 @@ class GoogleSheetService {
       if (b <= 12) return DateTime(y, b, a);
     }
     return null;
+  }
+
+  static Map<String, bool> _parseDays(List<List<dynamic>> rows) {
+    final result = <String, bool>{};
+    if (rows.length < 2) return result;
+    final header = rows[0].map((e) => e.toString().trim().toLowerCase()).toList();
+    final dayCol = header.indexOf('days') != -1 ? header.indexOf('days') : header.indexOf('day');
+    final openCol = header.indexOf('open');
+    if (dayCol == -1 || openCol == -1) return result;
+    for (int i = 1; i < rows.length; i++) {
+      final row = rows[i];
+      if (row.length <= dayCol || row.length <= openCol) continue;
+      final day = row[dayCol].toString().trim().toLowerCase();
+      final open = row[openCol].toString().trim().toLowerCase();
+      if (day.isNotEmpty) {
+        result[day] = open == 'y' || open == 'yes' || open == 'true' || open == '1';
+      }
+    }
+    return result;
   }
 }
