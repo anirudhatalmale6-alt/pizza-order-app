@@ -181,27 +181,23 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final profile = context.read<ProfileProvider>();
     final lineLink = menu.lineLink.isNotEmpty ? menu.lineLink : profile.lineDeepLink;
 
+    // Clear cart and complete order before leaving the app
+    context.read<CartProvider>().clear();
+    context.read<ProfileProvider>().clearSelection();
+
     if (lineLink.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Order copied! Paste it in LINE.\nคัดลอกแล้ว! วางใน LINE'),
-          duration: Duration(seconds: 3),
-        ),
-      );
       await launchUrl(Uri.parse(lineLink), mode: LaunchMode.externalApplication);
     } else {
       try {
         await Share.share(text);
-      } catch (_) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Order copied to clipboard! Paste in LINE.\nคัดลอกแล้ว! วางใน LINE'),
-              duration: Duration(seconds: 3),
-            ),
-          );
-        }
-      }
+      } catch (_) {}
+    }
+
+    if (mounted) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const ProfileScreen()),
+        (route) => false,
+      );
     }
   }
 
@@ -712,76 +708,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               ),
             ),
 
-          const SizedBox(height: 16),
-
-          // Send payment slip instructions
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.green.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.green.shade200),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Send Payment Slip / ส่งสลิปการชำระ',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 12),
-                Text(
-                  'Attach the payment slip from Gallery or take a photo with Camera and send to ${profile.appName} on LINE.\n\n'
-                  'แนบสลิปจากแกลเลอรี หรือถ่ายรูปด้วยกล้อง แล้วส่งไปที่ ${profile.appName} บน LINE',
-                  style: const TextStyle(fontSize: 13, height: 1.4),
-                ),
-                Builder(builder: (context) {
-                  final effectiveLineLink = menu.lineLink.isNotEmpty
-                      ? menu.lineLink
-                      : profile.lineDeepLink;
-                  if (effectiveLineLink.isEmpty) return const SizedBox.shrink();
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          launchUrl(Uri.parse(effectiveLineLink),
-                              mode: LaunchMode.externalApplication);
-                        },
-                        icon: const Icon(Icons.chat_bubble, size: 20),
-                        label: Text('Open ${profile.appName} on LINE',
-                            style: const TextStyle(fontSize: 14)),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF06C755),
-                          foregroundColor: Colors.white,
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-              ],
-            ),
-          ),
-
           const SizedBox(height: 24),
-
-          // Complete order
-          SizedBox(
-            height: 56,
-            child: ElevatedButton.icon(
-              onPressed: _completeOrder,
-              icon: const Icon(Icons.check_circle, size: 22),
-              label: const Text('Order Complete / เสร็จสิ้น',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
-                foregroundColor: Colors.white,
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 12),
 
           // Return to menu
           SizedBox(
