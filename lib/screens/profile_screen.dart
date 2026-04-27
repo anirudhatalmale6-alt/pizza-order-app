@@ -353,13 +353,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             fontSize: 17,
                                             fontWeight: FontWeight.w600),
                                       ),
-                                      if (customer.businessName.isNotEmpty)
-                                        Text(
-                                          customer.businessName,
-                                          style: TextStyle(
-                                              color: Colors.grey.shade600,
-                                              fontSize: 14),
-                                        ),
                                     ],
                                   ),
                                 ),
