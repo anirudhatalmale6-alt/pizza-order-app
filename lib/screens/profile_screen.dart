@@ -90,6 +90,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _showNameDialog() {
+    _sellerNameCtrl.text = context.read<ProfileProvider>().sellerName;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Seller Name / ชื่อผู้ขาย'),
+        content: TextField(
+          controller: _sellerNameCtrl,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: 'Enter your name / ใส่ชื่อของคุณ',
+            border: OutlineInputBorder(),
+          ),
+          onSubmitted: (val) {
+            if (val.trim().isNotEmpty) {
+              context.read<ProfileProvider>().saveSellerName(val.trim());
+              Navigator.pop(ctx);
+            }
+          },
+        ),
+        actions: [
+          if (context.read<ProfileProvider>().sellerName.isNotEmpty)
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel'),
+            ),
+          ElevatedButton(
+            onPressed: () {
+              final name = _sellerNameCtrl.text.trim();
+              if (name.isNotEmpty) {
+                context.read<ProfileProvider>().saveSellerName(name);
+                Navigator.pop(ctx);
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _openAdmin() {
     final ctrl = TextEditingController();
     showDialog(
@@ -164,6 +206,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              if (profile.sellerName.isNotEmpty) ...[
+                GestureDetector(
+                  onTap: _showNameDialog,
+                  child: Text(
+                    profile.sellerName,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
               if (menu.restaurantName.isNotEmpty) ...[
                 Text(
                   menu.restaurantName,
@@ -194,55 +250,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(12),
                   child: Image.asset('assets/logo.jpg', height: 120, fit: BoxFit.contain),
                 ),
-              const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: Column(
-                  children: [
-                    const Text('Seller Name / ชื่อผู้ขาย',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _sellerNameCtrl,
-                      textAlign: TextAlign.center,
-                      decoration: const InputDecoration(
-                        hintText: 'Enter your name / ใส่ชื่อของคุณ',
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      ),
-                      onChanged: (val) {
-                        profile.saveSellerName(val.trim());
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: ElevatedButton.icon(
-                        onPressed: profile.sellerName.isEmpty
-                            ? null
-                            : () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const MenuScreen()),
-                                );
-                              },
-                        icon: const Icon(Icons.restaurant_menu, size: 28),
-                        label: const Text('New Order / สั่งอาหาร',
-                            style: TextStyle(fontSize: 20)),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepOrange,
-                          foregroundColor: Colors.white,
-                          disabledBackgroundColor: Colors.grey.shade300,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+              const SizedBox(height: 32),
+              if (profile.sellerName.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 60,
+                    child: ElevatedButton.icon(
+                      onPressed: _showNameDialog,
+                      icon: const Icon(Icons.person_add, size: 28),
+                      label: const Text('Please Enter Your Name\nกรุณาใส่ชื่อของคุณ',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
-                  ],
+                  ),
+                )
+              else
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 60,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const MenuScreen()),
+                        );
+                      },
+                      icon: const Icon(Icons.restaurant_menu, size: 28),
+                      label: const Text('New Order / สั่งอาหาร',
+                          style: TextStyle(fontSize: 20)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
             ],
           ),
         ),

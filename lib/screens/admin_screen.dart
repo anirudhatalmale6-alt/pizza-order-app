@@ -55,6 +55,7 @@ class _SettingsTab extends StatefulWidget {
 class _SettingsTabState extends State<_SettingsTab> {
   late TextEditingController _sheetIdCtrl;
   late TextEditingController _appNameCtrl;
+  late TextEditingController _sellerNameCtrl;
   late int _openHour;
   late int _closeHour;
   bool _syncing = false;
@@ -75,6 +76,7 @@ class _SettingsTabState extends State<_SettingsTab> {
     final menu = context.read<MenuProvider>();
     _sheetIdCtrl = TextEditingController(text: menu.sheetId);
     _appNameCtrl = TextEditingController(text: profile.appName);
+    _sellerNameCtrl = TextEditingController(text: profile.sellerName);
     _openHour = profile.openHour;
     _closeHour = profile.closeHour;
   }
@@ -83,6 +85,7 @@ class _SettingsTabState extends State<_SettingsTab> {
   void dispose() {
     _sheetIdCtrl.dispose();
     _appNameCtrl.dispose();
+    _sellerNameCtrl.dispose();
     super.dispose();
   }
 
@@ -154,13 +157,27 @@ class _SettingsTabState extends State<_SettingsTab> {
       padding: const EdgeInsets.all(24),
       children: [
         // Seller Name
-        const Text('Seller Name', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text('Seller Name / ชื่อผู้ขาย', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _sellerNameCtrl,
+          decoration: const InputDecoration(
+            labelText: 'Seller Name',
+            hintText: 'e.g., John, Somchai',
+            border: OutlineInputBorder(),
+          ),
+        ),
+
+        const SizedBox(height: 32),
+
+        // Business Name
+        const Text('Business Name', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         TextField(
           controller: _appNameCtrl,
           decoration: const InputDecoration(
-            labelText: 'Seller Name',
-            hintText: "e.g., Shady Rest Guesthouse",
+            labelText: 'Business Name',
+            hintText: 'e.g., Shady Rest Guesthouse',
             border: OutlineInputBorder(),
           ),
         ),
@@ -311,6 +328,7 @@ class _SettingsTabState extends State<_SettingsTab> {
   Future<void> _saveAll() async {
     final profile = context.read<ProfileProvider>();
     final menu = context.read<MenuProvider>();
+    await profile.saveSellerName(_sellerNameCtrl.text.trim());
     await profile.saveAppName(_appNameCtrl.text.trim());
     await profile.saveOpeningHours(_openHour, _closeHour);
     await menu.saveSheetId(_sheetIdCtrl.text.trim());
