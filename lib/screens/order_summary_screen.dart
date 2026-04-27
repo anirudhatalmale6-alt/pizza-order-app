@@ -591,6 +591,71 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           const SizedBox(height: 24),
 
+          // Return to menu
+          SizedBox(
+            height: 52,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const MenuScreen()),
+                  (route) => route.isFirst,
+                );
+              },
+              icon: const Icon(Icons.menu_book),
+              label: const Text('Return to Menu / กลับไปเมนู',
+                  style: TextStyle(fontSize: 14)),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Cancel order
+          SizedBox(
+            height: 52,
+            child: OutlinedButton.icon(
+              onPressed: () async {
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Cancel Order? / ยกเลิกออเดอร์?'),
+                    content: const Text(
+                      'This will clear your cart and return to the home screen.\n'
+                      'ระบบจะล้างตะกร้าและกลับไปหน้าหลัก',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('No / ไม่'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        child: const Text('Yes / ใช่',
+                            style: TextStyle(color: Colors.red)),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirmed == true && context.mounted) {
+                  await context.read<CartProvider>().clear();
+                  if (context.mounted) {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                      (route) => false,
+                    );
+                  }
+                }
+              },
+              icon: const Icon(Icons.cancel_outlined, color: Colors.red),
+              label: const Text('Cancel Order / ยกเลิกออเดอร์',
+                  style: TextStyle(fontSize: 14, color: Colors.red)),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Colors.red),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
           // Send order for confirmation
           SizedBox(
             height: 64,
@@ -796,71 +861,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   );
                 }),
               ],
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          // Return to menu
-          SizedBox(
-            height: 52,
-            child: OutlinedButton.icon(
-              onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const MenuScreen()),
-                  (route) => route.isFirst,
-                );
-              },
-              icon: const Icon(Icons.menu_book),
-              label: const Text('Return to Menu / กลับไปเมนู',
-                  style: TextStyle(fontSize: 14)),
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // Cancel order
-          SizedBox(
-            height: 52,
-            child: OutlinedButton.icon(
-              onPressed: () async {
-                final confirmed = await showDialog<bool>(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    title: const Text('Cancel Order? / ยกเลิกออเดอร์?'),
-                    content: const Text(
-                      'This will clear your cart and return to the home screen.\n'
-                      'ระบบจะล้างตะกร้าและกลับไปหน้าหลัก',
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text('No / ไม่'),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(ctx, true),
-                        child: const Text('Yes / ใช่',
-                            style: TextStyle(color: Colors.red)),
-                      ),
-                    ],
-                  ),
-                );
-                if (confirmed == true && context.mounted) {
-                  await context.read<CartProvider>().clear();
-                  if (context.mounted) {
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                      (route) => false,
-                    );
-                  }
-                }
-              },
-              icon: const Icon(Icons.cancel_outlined, color: Colors.red),
-              label: const Text('Cancel Order / ยกเลิกออเดอร์',
-                  style: TextStyle(fontSize: 14, color: Colors.red)),
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Colors.red),
-              ),
             ),
           ),
 
