@@ -8,7 +8,6 @@ import '../providers/menu_provider.dart';
 import '../providers/profile_provider.dart';
 import '../widgets/topping_dialog.dart';
 import 'order_summary_screen.dart';
-import 'admin_screen.dart';
 import 'profile_screen.dart';
 
 // Map icon name strings to IconData
@@ -108,57 +107,12 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  static const _adminPassword = 'tg308111';
-
   @override
   void initState() {
     super.initState();
-    // Sync menu from Google Sheet every time a sales person starts an order
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MenuProvider>().syncFromSheet();
     });
-  }
-
-  void _openAdmin() {
-    final ctrl = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Admin Access'),
-        content: TextField(
-          controller: ctrl,
-          obscureText: true,
-          autofocus: true,
-          decoration: const InputDecoration(
-            hintText: 'Enter password',
-            border: OutlineInputBorder(),
-          ),
-          onSubmitted: (val) {
-            if (val == _adminPassword) {
-              Navigator.pop(ctx);
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminScreen()));
-            }
-          },
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              if (ctrl.text == _adminPassword) {
-                Navigator.pop(ctx);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminScreen()));
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Wrong password'), duration: Duration(seconds: 2)),
-                );
-                Navigator.pop(ctx);
-              }
-            },
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -185,11 +139,6 @@ class _MenuScreenState extends State<MenuScreen> {
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
         actions: [
-          IconButton(
-            icon: Icon(Icons.settings, size: 20, color: Colors.white.withOpacity(0.7)),
-            tooltip: 'Admin',
-            onPressed: _openAdmin,
-          ),
           Stack(
             alignment: Alignment.center,
             children: [

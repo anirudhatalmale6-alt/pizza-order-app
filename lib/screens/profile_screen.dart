@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/menu_provider.dart';
 import '../providers/profile_provider.dart';
 import '../utils/platform_helper.dart';
+import 'admin_screen.dart';
 import 'menu_screen.dart';
 import 'renewal_screen.dart';
 
@@ -15,6 +16,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  static const _adminPassword = 'tg308111';
   bool _renewalDialogShown = false;
 
   @override
@@ -78,6 +80,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _openAdmin() {
+    final ctrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Admin Access'),
+        content: TextField(
+          controller: ctrl,
+          obscureText: true,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: 'Enter password',
+            border: OutlineInputBorder(),
+          ),
+          onSubmitted: (val) {
+            if (val == _adminPassword) {
+              Navigator.pop(ctx);
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminScreen()));
+            }
+          },
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              if (ctrl.text == _adminPassword) {
+                Navigator.pop(ctx);
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminScreen()));
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Wrong password'), duration: Duration(seconds: 2)),
+                );
+                Navigator.pop(ctx);
+              }
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final profile = context.watch<ProfileProvider>();
@@ -100,9 +144,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           foregroundColor: Colors.white,
           actions: [
             IconButton(
-              icon: const Icon(Icons.exit_to_app),
-              tooltip: 'Exit / ออก',
-              onPressed: () => exitApp(),
+              icon: const Icon(Icons.settings),
+              tooltip: 'Admin / ตั้งค่า',
+              onPressed: _openAdmin,
             ),
           ],
         ),
