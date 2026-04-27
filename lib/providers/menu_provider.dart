@@ -19,6 +19,7 @@ class MenuProvider extends ChangeNotifier {
   double _renewalPrice = 0;
   String _lineLink = '';
   Map<String, bool> _openDays = {};
+  String _restaurantName = '';
 
   List<CategoryConfig> get categories => List.unmodifiable(_categories);
   String get sheetId => _sheetId;
@@ -28,6 +29,8 @@ class MenuProvider extends ChangeNotifier {
   double get renewalPrice => _renewalPrice;
   String get lineLink => _lineLink;
   Map<String, bool> get openDays => Map.unmodifiable(_openDays);
+
+  String get restaurantName => _restaurantName;
 
   bool get isOpenToday {
     if (_openDays.isEmpty) return true;
@@ -107,6 +110,7 @@ class MenuProvider extends ChangeNotifier {
     }
     _renewalPrice = prefs.getDouble('renewalPrice') ?? 0;
     _lineLink = prefs.getString('lineLink') ?? '';
+    _restaurantName = prefs.getString('restaurantName') ?? '';
     final cachedDays = prefs.getString('openDays');
     if (cachedDays != null) {
       final map = jsonDecode(cachedDays) as Map<String, dynamic>;
@@ -168,6 +172,7 @@ class MenuProvider extends ChangeNotifier {
         _renewalPrice = data.renewalPrice;
         _lineLink = data.lineLink;
         _openDays = data.openDays;
+        _restaurantName = data.restaurantName;
         if (data.expiresDate != null) {
           await prefs.setString('expiresDate', data.expiresDate!.toIso8601String());
         } else {
@@ -176,6 +181,7 @@ class MenuProvider extends ChangeNotifier {
         await prefs.setDouble('renewalPrice', data.renewalPrice);
         await prefs.setString('lineLink', data.lineLink);
         await prefs.setString('openDays', jsonEncode(data.openDays));
+        await prefs.setString('restaurantName', data.restaurantName);
       }
 
       _syncedFromSheet = true;

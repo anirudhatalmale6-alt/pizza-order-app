@@ -16,6 +16,7 @@ class SheetData {
   final double renewalPrice;
   final String lineLink;
   final Map<String, bool> openDays;
+  final String restaurantName;
 
   SheetData({
     required this.categories,
@@ -26,6 +27,7 @@ class SheetData {
     this.renewalPrice = 0,
     this.lineLink = '',
     this.openDays = const {},
+    this.restaurantName = '',
   });
 }
 
@@ -123,12 +125,14 @@ class GoogleSheetService {
         DateTime? expiresDate;
         double renewalPrice = 0;
         String lineLink = '';
+        String restaurantName = '';
         try {
           final settingsRows = await _fetchCsvTab(sheetId, 'settings');
           final settings = _parseSettings(settingsRows);
           expiresDate = settings['expires'] as DateTime?;
           renewalPrice = (settings['renewal_price'] as double?) ?? 0;
           lineLink = (settings['line_link'] as String?) ?? '';
+          restaurantName = (settings['restaurant_name'] as String?) ?? '';
         } catch (_) {}
 
         Map<String, bool> openDays = {};
@@ -154,6 +158,7 @@ class GoogleSheetService {
           renewalPrice: renewalPrice,
           lineLink: lineLink,
           openDays: openDays,
+          restaurantName: restaurantName,
         );
       } catch (e) {
         lastError = 'Google: $e';
@@ -381,6 +386,7 @@ class GoogleSheetService {
   static const _expiryKeys = {'expires', 'expiry', 'expiry_date', 'expires_date', 'expiration'};
   static const _priceKeys = {'renewal_price', 'renewal', 'renewal price'};
   static const _lineKeys = {'line_link', 'line link', 'linelink', 'line_url', 'line url', 'line'};
+  static const _nameKeys = {'name', 'restaurant_name', 'restaurant name', 'restaurant'};
 
   static Map<String, dynamic> _parseSettings(List<List<dynamic>> rows) {
     final result = <String, dynamic>{};
@@ -398,6 +404,8 @@ class GoogleSheetService {
           result['renewal_price'] = double.tryParse(value.replaceAll(',', '')) ?? 0.0;
         } else if (_lineKeys.contains(key)) {
           result['line_link'] = value;
+        } else if (_nameKeys.contains(key)) {
+          result['restaurant_name'] = value;
         }
       }
     }
@@ -415,6 +423,8 @@ class GoogleSheetService {
           result['renewal_price'] = double.tryParse(value.replaceAll(',', '')) ?? 0.0;
         } else if (_lineKeys.contains(key)) {
           result['line_link'] = value;
+        } else if (_nameKeys.contains(key)) {
+          result['restaurant_name'] = value;
         }
       }
     }

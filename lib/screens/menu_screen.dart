@@ -251,6 +251,7 @@ class _MenuScreenState extends State<MenuScreen> {
         final isClosedDay = !menu.isOpenToday;
         final isOutsideHours = currentHour < profile.openHour || currentHour >= profile.closeHour;
         final isClosed = isClosedDay || isOutsideHours;
+        final displayName = menu.restaurantName.isNotEmpty ? menu.restaurantName : profile.appName;
 
         if (isClosed) {
           return Center(
@@ -262,7 +263,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   Icon(Icons.store, size: 80, color: Colors.grey.shade400),
                   const SizedBox(height: 24),
                   Text(
-                    'Sorry, ${profile.appName} is closed now.\nขออภัย ${profile.appName} ปิดแล้ว',
+                    'Sorry, $displayName is closed now.\nขออภัย $displayName ปิดแล้ว',
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),

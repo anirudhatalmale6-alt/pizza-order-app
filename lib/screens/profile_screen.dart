@@ -277,6 +277,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Column(
         children: [
           const SizedBox(height: 16),
+          if (menu.restaurantName.isNotEmpty) ...[
+            Text(
+              menu.restaurantName,
+              style: const TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                color: Colors.deepOrange,
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Image.asset('assets/logo.jpg', height: 100, fit: BoxFit.contain),
