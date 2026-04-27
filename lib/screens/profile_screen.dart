@@ -190,7 +190,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(profile.appName),
+          title: Text(
+            profile.sellerName.isNotEmpty ? profile.sellerName : profile.appName,
+            style: const TextStyle(fontSize: 24),
+          ),
           centerTitle: true,
           backgroundColor: Colors.deepOrange,
           foregroundColor: Colors.white,
@@ -206,20 +209,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (profile.sellerName.isNotEmpty) ...[
-                GestureDetector(
-                  onTap: _showNameDialog,
-                  child: Text(
-                    profile.sellerName,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-              ],
               if (menu.restaurantName.isNotEmpty) ...[
                 Text(
                   menu.restaurantName,
