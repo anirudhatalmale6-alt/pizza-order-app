@@ -14,6 +14,7 @@ class ProfileProvider extends ChangeNotifier {
   int _openHour = 11;
   int _closeHour = 16;
   String _appName = 'Bites2Baht';
+  String _sellerName = '';
   String _logoPath = '';
   String _logoBase64 = '';
   bool _offersDelivery = false;
@@ -26,6 +27,7 @@ class ProfileProvider extends ChangeNotifier {
   int get openHour => _openHour;
   int get closeHour => _closeHour;
   String get appName => _appName;
+  String get sellerName => _sellerName;
   String get logoPath => _logoPath;
   String get logoBase64 => _logoBase64;
   bool get offersDelivery => _offersDelivery;
@@ -45,6 +47,7 @@ class ProfileProvider extends ChangeNotifier {
     _openHour = prefs.getInt('openHour') ?? 11;
     _closeHour = prefs.getInt('closeHour') ?? 16;
     _appName = prefs.getString('appName') ?? 'Bites2Baht';
+    _sellerName = prefs.getString('sellerName') ?? '';
     _logoPath = prefs.getString('logoPath') ?? '';
     _logoBase64 = prefs.getString('logoBase64') ?? '';
     _offersDelivery = prefs.getBool('offersDelivery') ?? false;
@@ -122,6 +125,13 @@ class ProfileProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     _appName = name;
     await prefs.setString('appName', name);
+    notifyListeners();
+  }
+
+  Future<void> saveSellerName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    _sellerName = name;
+    await prefs.setString('sellerName', name);
     notifyListeners();
   }
 

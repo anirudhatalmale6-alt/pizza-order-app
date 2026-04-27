@@ -18,13 +18,23 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   static const _adminPassword = 'tg308111';
   bool _renewalDialogShown = false;
+  late TextEditingController _sellerNameCtrl;
 
   @override
   void initState() {
     super.initState();
+    _sellerNameCtrl = TextEditingController(
+      text: context.read<ProfileProvider>().sellerName,
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkRenewalWindow();
     });
+  }
+
+  @override
+  void dispose() {
+    _sellerNameCtrl.dispose();
+    super.dispose();
   }
 
   void _checkRenewalWindow() {
@@ -184,30 +194,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(12),
                   child: Image.asset('assets/logo.jpg', height: 120, fit: BoxFit.contain),
                 ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const MenuScreen()),
-                      );
-                    },
-                    icon: const Icon(Icons.restaurant_menu, size: 28),
-                    label: const Text('New Order / สั่งอาหาร',
-                        style: TextStyle(fontSize: 20)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepOrange,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                child: Column(
+                  children: [
+                    const Text('Seller Name / ชื่อผู้ขาย',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _sellerNameCtrl,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        hintText: 'Enter your name / ใส่ชื่อของคุณ',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      ),
+                      onChanged: (val) {
+                        profile.saveSellerName(val.trim());
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: ElevatedButton.icon(
+                        onPressed: profile.sellerName.isEmpty
+                            ? null
+                            : () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const MenuScreen()),
+                                );
+                              },
+                        icon: const Icon(Icons.restaurant_menu, size: 28),
+                        label: const Text('New Order / สั่งอาหาร',
+                            style: TextStyle(fontSize: 20)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepOrange,
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: Colors.grey.shade300,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ],

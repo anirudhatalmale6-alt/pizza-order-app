@@ -93,13 +93,13 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final sb = StringBuffer();
     sb.writeln('PAID ORDER / ออเดอร์ที่ชำระแล้ว');
     sb.writeln('================================');
+    if (profile.sellerName.isNotEmpty) {
+      sb.writeln('Seller / ผู้ขาย: ${profile.sellerName}');
+    }
     if (_guestNameCtrl.text.trim().isNotEmpty) {
       sb.writeln('Customer / ชื่อลูกค้า: ${_guestNameCtrl.text.trim()}');
     }
     sb.writeln('From / จาก: ${profile.appName}');
-    if (profile.businessName.isNotEmpty) {
-      sb.writeln('Seller / ผู้ขาย: ${profile.businessName}');
-    }
     if (_effectiveDelivery()) {
       final typeText = _orderType == 'pickup'
           ? 'Pickup / รับเอง'
@@ -152,13 +152,13 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final sb = StringBuffer();
     sb.writeln('NEW ORDER / ออเดอร์ใหม่');
     sb.writeln('================================');
+    if (profile.sellerName.isNotEmpty) {
+      sb.writeln('Seller / ผู้ขาย: ${profile.sellerName}');
+    }
     if (_guestNameCtrl.text.trim().isNotEmpty) {
       sb.writeln('Customer / ชื่อลูกค้า: ${_guestNameCtrl.text.trim()}');
     }
     sb.writeln('From / จาก: ${profile.appName}');
-    if (profile.businessName.isNotEmpty) {
-      sb.writeln('Seller / ผู้ขาย: ${profile.businessName}');
-    }
     sb.writeln();
 
     if (_effectiveDelivery()) {
