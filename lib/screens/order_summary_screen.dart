@@ -701,7 +701,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Wait for reply on LINE before you take payment!\n\nรอตอบกลับทาง LINE ก่อนเก็บเงิน!',
+                  'Wait for a reply from ${menu.restaurantName.isNotEmpty ? menu.restaurantName : profile.appName} on LINE before you take payment.\n\nรอการตอบกลับจาก ${menu.restaurantName.isNotEmpty ? menu.restaurantName : profile.appName} ทาง LINE ก่อนเก็บเงิน',
                   style: TextStyle(fontSize: 16, color: Colors.red.shade700, fontWeight: FontWeight.w500),
                 ),
               ],
