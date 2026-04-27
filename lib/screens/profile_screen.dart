@@ -159,7 +159,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _showEditCustomerDialog(
       BuildContext context, int index, String name, String business) {
     final nameCtrl = TextEditingController(text: name);
-    final businessCtrl = TextEditingController(text: business);
 
     showDialog(
       context: context,
@@ -183,17 +182,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     isDense: true,
                   ),
                 ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: businessCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Business Name / ชื่อธุรกิจ',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
-                ),
                 const SizedBox(height: 14),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton(
                       onPressed: () async {
@@ -205,25 +196,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: const Text('Delete / ลบ',
                           style: TextStyle(color: Colors.red)),
                     ),
-                    const Spacer(),
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: const Text('Cancel / ยกเลิก'),
-                    ),
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final newName = nameCtrl.text.trim();
-                        if (newName.isEmpty) return;
-                        await context.read<ProfileProvider>().updateCustomer(
-                            index, newName, businessCtrl.text.trim());
-                        if (ctx.mounted) Navigator.pop(ctx);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepOrange,
-                        foregroundColor: Colors.white,
-                      ),
-                      child: const Text('Save / บันทึก'),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx),
+                          child: const Text('Cancel / ยกเลิก'),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: () async {
+                            final newName = nameCtrl.text.trim();
+                            if (newName.isEmpty) return;
+                            await context.read<ProfileProvider>().updateCustomer(
+                                index, newName, business);
+                            if (ctx.mounted) Navigator.pop(ctx);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepOrange,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text('Save / บันทึก'),
+                        ),
+                      ],
                     ),
                   ],
                 ),
