@@ -88454,7 +88454,7 @@ if(k.r!=null){f=A.awR("dd MMM yyyy")
 i=k.r
 i.toString
 h=f.qu(i)}else h="Unknown"
-f=""+"RENEWAL PAYMENT / \u0e0a\u0e33\u0e23\u0e30\u0e04\u0e48\u0e32\u0e15\u0e48\u0e2d\u0e2d\u0e32\u0e22\u0e38\n================================\n"+("Seller / \u0e1c\u0e39\u0e49\u0e02\u0e32\u0e22: "+m.w+"\n")+("Expiry Date / \u0e27\u0e31\u0e19\u0e2b\u0e21\u0e14\u0e2d\u0e32\u0e22\u0e38: "+h+"\n")
+f=""+"RENEWAL PAYMENT / \u0e0a\u0e33\u0e23\u0e30\u0e04\u0e48\u0e32\u0e15\u0e48\u0e2d\u0e2d\u0e32\u0e22\u0e38\n================================\n"+("Business / \u0e18\u0e38\u0e23\u0e01\u0e34\u0e08: "+m.w+"\n")+("Expiry Date / \u0e27\u0e31\u0e19\u0e2b\u0e21\u0e14\u0e2d\u0e32\u0e22\u0e38: "+h+"\n")
 i=k.w
 if(i>0)f+="Amount / \u0e08\u0e33\u0e19\u0e27\u0e19: "+B.d.a6(i)+" THB\n"
 f=f+"\n\u0e0a\u0e33\u0e23\u0e30\u0e42\u0e14\u0e22 / Payment via PromptPay\n"+("PromptPay: "+m.e+"\n")+("\u0e40\u0e27\u0e25\u0e32 / Time: "+j+"\n")
