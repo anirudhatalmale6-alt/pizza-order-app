@@ -299,9 +299,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 8),
           const Text(
-            'Select your name to start\nเลือกชื่อเพื่อเริ่ม',
+            'Select your name to start an order\nเลือกชื่อเพื่อเริ่มสั่งอาหาร',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey, fontSize: 14),
+            style: TextStyle(color: Colors.black54, fontSize: 15),
           ),
           const SizedBox(height: 16),
           Expanded(
