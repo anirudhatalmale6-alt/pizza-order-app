@@ -406,8 +406,8 @@ class GoogleSheetService {
   static bool _bool(dynamic val, [bool fallback = false]) {
     if (val is bool) return val;
     final s = val?.toString().trim().toLowerCase() ?? '';
-    if (s == 'true' || s == 'yes' || s == '1') return true;
-    if (s == 'false' || s == 'no' || s == '0') return false;
+    if (s == 'true' || s == 'yes' || s == 'y' || s == '1') return true;
+    if (s == 'false' || s == 'no' || s == 'n' || s == '0') return false;
     return fallback;
   }
 
