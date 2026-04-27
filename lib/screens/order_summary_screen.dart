@@ -94,7 +94,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     sb.writeln('PAID ORDER / ออเดอร์ที่ชำระแล้ว');
     sb.writeln('================================');
     if (_guestNameCtrl.text.trim().isNotEmpty) {
-      sb.writeln('Guest / ชื่อผู้สั่ง: ${_guestNameCtrl.text.trim()}');
+      sb.writeln('Customer / ชื่อลูกค้า: ${_guestNameCtrl.text.trim()}');
     }
     sb.writeln('From / จาก: ${profile.appName}');
     if (profile.businessName.isNotEmpty) {
@@ -153,7 +153,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     sb.writeln('NEW ORDER / ออเดอร์ใหม่');
     sb.writeln('================================');
     if (_guestNameCtrl.text.trim().isNotEmpty) {
-      sb.writeln('Guest / ชื่อผู้สั่ง: ${_guestNameCtrl.text.trim()}');
+      sb.writeln('Customer / ชื่อลูกค้า: ${_guestNameCtrl.text.trim()}');
     }
     sb.writeln('From / จาก: ${profile.appName}');
     if (profile.businessName.isNotEmpty) {
@@ -256,7 +256,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // Guest Name (not saved, one-time use)
+          // Customer Name (not saved, one-time use)
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -267,7 +267,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Guest Name / ชื่อผู้สั่ง',
+                const Text('Customer Name / ชื่อลูกค้า',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 const Text('Name for this order only / ชื่อสำหรับออเดอร์นี้เท่านั้น',
@@ -669,7 +669,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     const Text(
                       'Open banking app and transfer to:\nเปิดแอปธนาคารแล้วโอนเงินไปที่:',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 13, color: Colors.black54),
+                      style: TextStyle(fontSize: 15, color: Colors.black87),
                     ),
                     const SizedBox(height: 12),
                     Text(
@@ -756,10 +756,10 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 const Text('Send Payment Slip / ส่งสลิปการชำระ',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
-                Text(
-                  'Attach the payment slip from Gallery or take a photo with Camera and send to ${profile.appName} on LINE.\n\n'
-                  'แนบสลิปจากแกลเลอรี หรือถ่ายรูปด้วยกล้อง แล้วส่งไปที่ ${profile.appName} บน LINE',
-                  style: const TextStyle(fontSize: 13, height: 1.4),
+                const Text(
+                  'After you have paid, click the GREEN button below and when LINE opens attach the payment slip image from your Gallery and send the message.\n\n'
+                  'หลังจากชำระเงินแล้ว กดปุ่มสีเขียวด้านล่าง เมื่อ LINE เปิดขึ้นมา ให้แนบรูปสลิปจากแกลเลอรีแล้วส่งข้อความ',
+                  style: TextStyle(fontSize: 13, height: 1.4),
                 ),
                 Builder(builder: (context) {
                   final effectiveLineLink = menu.lineLink.isNotEmpty
