@@ -249,7 +249,9 @@ class _MenuScreenState extends State<MenuScreen> {
         final now = DateTime.now();
         final currentHour = now.hour;
         final isClosedDay = !menu.isOpenToday;
-        final isOutsideHours = currentHour < profile.openHour || currentHour >= profile.closeHour;
+        final effectiveOpen = menu.openHour >= 0 ? menu.openHour : profile.openHour;
+        final effectiveClose = menu.closeHour >= 0 ? menu.closeHour : profile.closeHour;
+        final isOutsideHours = currentHour < effectiveOpen || currentHour >= effectiveClose;
         final isClosed = isClosedDay || isOutsideHours;
         final displayName = menu.restaurantName.isNotEmpty ? menu.restaurantName : profile.appName;
 
@@ -276,7 +278,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     )
                   else
                     Text(
-                      'Opening hours: ${profile.openHour}:00 - ${profile.closeHour}:00\nเวลาเปิด: ${profile.openHour}:00 - ${profile.closeHour}:00',
+                      'Opening hours: $effectiveOpen:00 - $effectiveClose:00\nเวลาเปิด: $effectiveOpen:00 - $effectiveClose:00',
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 16, color: Colors.black54),
                     ),

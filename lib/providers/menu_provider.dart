@@ -20,6 +20,12 @@ class MenuProvider extends ChangeNotifier {
   String _lineLink = '';
   Map<String, bool> _openDays = {};
   String _restaurantName = '';
+  String _promptPayId = '';
+  int _openHour = -1;
+  int _closeHour = -1;
+  bool? _offersDelivery;
+  double _discountPercent = -1;
+  String _logoUrl = '';
 
   List<CategoryConfig> get categories => List.unmodifiable(_categories);
   String get sheetId => _sheetId;
@@ -31,6 +37,12 @@ class MenuProvider extends ChangeNotifier {
   Map<String, bool> get openDays => Map.unmodifiable(_openDays);
 
   String get restaurantName => _restaurantName;
+  String get promptPayId => _promptPayId;
+  int get openHour => _openHour;
+  int get closeHour => _closeHour;
+  bool? get offersDelivery => _offersDelivery;
+  double get discountPercent => _discountPercent;
+  String get logoUrl => _logoUrl;
 
   bool get isOpenToday {
     if (_openDays.isEmpty) return true;
@@ -111,6 +123,13 @@ class MenuProvider extends ChangeNotifier {
     _renewalPrice = prefs.getDouble('renewalPrice') ?? 0;
     _lineLink = prefs.getString('lineLink') ?? '';
     _restaurantName = prefs.getString('restaurantName') ?? '';
+    _promptPayId = prefs.getString('sheetPromptPayId') ?? '';
+    _openHour = prefs.getInt('sheetOpenHour') ?? -1;
+    _closeHour = prefs.getInt('sheetCloseHour') ?? -1;
+    final cachedDelivery = prefs.getString('sheetOffersDelivery');
+    _offersDelivery = cachedDelivery != null ? cachedDelivery == 'true' : null;
+    _discountPercent = prefs.getDouble('sheetDiscountPercent') ?? -1;
+    _logoUrl = prefs.getString('sheetLogoUrl') ?? '';
     final cachedDays = prefs.getString('openDays');
     if (cachedDays != null) {
       final map = jsonDecode(cachedDays) as Map<String, dynamic>;
@@ -182,6 +201,22 @@ class MenuProvider extends ChangeNotifier {
         await prefs.setString('lineLink', data.lineLink);
         await prefs.setString('openDays', jsonEncode(data.openDays));
         await prefs.setString('restaurantName', data.restaurantName);
+        _promptPayId = data.promptPayId;
+        _openHour = data.openHour;
+        _closeHour = data.closeHour;
+        _offersDelivery = data.offersDelivery;
+        _discountPercent = data.discountPercent;
+        _logoUrl = data.logoUrl;
+        await prefs.setString('sheetPromptPayId', data.promptPayId);
+        await prefs.setInt('sheetOpenHour', data.openHour);
+        await prefs.setInt('sheetCloseHour', data.closeHour);
+        if (data.offersDelivery != null) {
+          await prefs.setString('sheetOffersDelivery', data.offersDelivery.toString());
+        } else {
+          await prefs.remove('sheetOffersDelivery');
+        }
+        await prefs.setDouble('sheetDiscountPercent', data.discountPercent);
+        await prefs.setString('sheetLogoUrl', data.logoUrl);
       }
 
       _syncedFromSheet = true;

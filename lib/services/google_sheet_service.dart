@@ -17,6 +17,12 @@ class SheetData {
   final String lineLink;
   final Map<String, bool> openDays;
   final String restaurantName;
+  final String promptPayId;
+  final int openHour;
+  final int closeHour;
+  final bool? offersDelivery;
+  final double discountPercent;
+  final String logoUrl;
 
   SheetData({
     required this.categories,
@@ -28,6 +34,12 @@ class SheetData {
     this.lineLink = '',
     this.openDays = const {},
     this.restaurantName = '',
+    this.promptPayId = '',
+    this.openHour = -1,
+    this.closeHour = -1,
+    this.offersDelivery,
+    this.discountPercent = -1,
+    this.logoUrl = '',
   });
 }
 
@@ -126,6 +138,12 @@ class GoogleSheetService {
         double renewalPrice = 0;
         String lineLink = '';
         String restaurantName = '';
+        String promptPayId = '';
+        int openHour = -1;
+        int closeHour = -1;
+        bool? offersDelivery;
+        double discountPercent = -1;
+        String logoUrl = '';
         try {
           final settingsRows = await _fetchCsvTab(sheetId, 'settings');
           final settings = _parseSettings(settingsRows);
@@ -133,6 +151,12 @@ class GoogleSheetService {
           renewalPrice = (settings['renewal_price'] as double?) ?? 0;
           lineLink = (settings['line_link'] as String?) ?? '';
           restaurantName = (settings['restaurant_name'] as String?) ?? '';
+          promptPayId = (settings['promptpay'] as String?) ?? '';
+          openHour = (settings['open_hour'] as int?) ?? -1;
+          closeHour = (settings['close_hour'] as int?) ?? -1;
+          offersDelivery = settings.containsKey('delivery') ? settings['delivery'] as bool : null;
+          discountPercent = (settings['discount'] as double?) ?? -1;
+          logoUrl = (settings['logo'] as String?) ?? '';
         } catch (_) {}
 
         Map<String, bool> openDays = {};
@@ -159,6 +183,12 @@ class GoogleSheetService {
           lineLink: lineLink,
           openDays: openDays,
           restaurantName: restaurantName,
+          promptPayId: promptPayId,
+          openHour: openHour,
+          closeHour: closeHour,
+          offersDelivery: offersDelivery,
+          discountPercent: discountPercent,
+          logoUrl: logoUrl,
         );
       } catch (e) {
         lastError = 'Google: $e';
@@ -387,6 +417,36 @@ class GoogleSheetService {
   static const _priceKeys = {'renewal_price', 'renewal', 'renewal price'};
   static const _lineKeys = {'line_link', 'line link', 'linelink', 'line_url', 'line url', 'line'};
   static const _nameKeys = {'name', 'restaurant_name', 'restaurant name', 'restaurant'};
+  static const _promptPayKeys = {'promptpay', 'promptpay_id', 'prompt_pay', 'promptpayid', 'prompt pay'};
+  static const _openHourKeys = {'open_hour', 'open hour', 'openhour', 'opening'};
+  static const _closeHourKeys = {'close_hour', 'close hour', 'closehour', 'closing'};
+  static const _deliveryKeys = {'delivery', 'offers_delivery', 'offersdelivery', 'deliver'};
+  static const _discountKeys = {'discount', 'discount_percent', 'discountpercent', 'discount%'};
+  static const _logoKeys = {'logo', 'logo_url', 'logourl', 'logo_image', 'logoimage'};
+
+  static void _applySetting(Map<String, dynamic> result, String key, String value) {
+    if (_expiryKeys.contains(key)) {
+      result['expires'] = _parseDate(value);
+    } else if (_priceKeys.contains(key)) {
+      result['renewal_price'] = double.tryParse(value.replaceAll(',', '')) ?? 0.0;
+    } else if (_lineKeys.contains(key)) {
+      result['line_link'] = value;
+    } else if (_nameKeys.contains(key)) {
+      result['restaurant_name'] = value;
+    } else if (_promptPayKeys.contains(key)) {
+      result['promptpay'] = value;
+    } else if (_openHourKeys.contains(key)) {
+      result['open_hour'] = int.tryParse(value) ?? -1;
+    } else if (_closeHourKeys.contains(key)) {
+      result['close_hour'] = int.tryParse(value) ?? -1;
+    } else if (_deliveryKeys.contains(key)) {
+      result['delivery'] = _bool(value);
+    } else if (_discountKeys.contains(key)) {
+      result['discount'] = double.tryParse(value.replaceAll('%', '').replaceAll(',', '')) ?? -1.0;
+    } else if (_logoKeys.contains(key)) {
+      result['logo'] = _normalizeImageUrl(value);
+    }
+  }
 
   static Map<String, dynamic> _parseSettings(List<List<dynamic>> rows) {
     final result = <String, dynamic>{};
@@ -396,17 +456,7 @@ class GoogleSheetService {
       final headers = rows[0].map((e) => e.toString().trim().toLowerCase()).toList();
       final values = rows[1].map((e) => e.toString().trim()).toList();
       for (int i = 0; i < headers.length && i < values.length; i++) {
-        final key = headers[i];
-        final value = values[i];
-        if (_expiryKeys.contains(key)) {
-          result['expires'] = _parseDate(value);
-        } else if (_priceKeys.contains(key)) {
-          result['renewal_price'] = double.tryParse(value.replaceAll(',', '')) ?? 0.0;
-        } else if (_lineKeys.contains(key)) {
-          result['line_link'] = value;
-        } else if (_nameKeys.contains(key)) {
-          result['restaurant_name'] = value;
-        }
+        _applySetting(result, headers[i], values[i]);
       }
     }
 
@@ -417,15 +467,7 @@ class GoogleSheetService {
         if (row.length < 2) continue;
         final key = row[0].toString().trim().toLowerCase();
         final value = row[1].toString().trim();
-        if (_expiryKeys.contains(key)) {
-          result['expires'] = _parseDate(value);
-        } else if (_priceKeys.contains(key)) {
-          result['renewal_price'] = double.tryParse(value.replaceAll(',', '')) ?? 0.0;
-        } else if (_lineKeys.contains(key)) {
-          result['line_link'] = value;
-        } else if (_nameKeys.contains(key)) {
-          result['restaurant_name'] = value;
-        }
+        _applySetting(result, key, value);
       }
     }
 

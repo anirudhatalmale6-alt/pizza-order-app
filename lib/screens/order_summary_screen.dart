@@ -28,13 +28,39 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
   static String _fmt(double v) => v == v.roundToDouble() ? v.toInt().toString() : v.toStringAsFixed(2);
 
+  double _effectiveDiscount() {
+    final menu = context.read<MenuProvider>();
+    final profile = context.read<ProfileProvider>();
+    return menu.discountPercent >= 0 ? menu.discountPercent : profile.discountPercent;
+  }
+
+  String _effectivePromptPay() {
+    final menu = context.read<MenuProvider>();
+    final profile = context.read<ProfileProvider>();
+    return menu.promptPayId.isNotEmpty ? menu.promptPayId : profile.promptPayId;
+  }
+
+  bool _effectiveDelivery() {
+    final menu = context.read<MenuProvider>();
+    final profile = context.read<ProfileProvider>();
+    return menu.offersDelivery ?? profile.offersDelivery;
+  }
+
+  List<int> _effectiveHours() {
+    final menu = context.read<MenuProvider>();
+    final profile = context.read<ProfileProvider>();
+    final open = menu.openHour >= 0 ? menu.openHour : profile.openHour;
+    final close = menu.closeHour >= 0 ? menu.closeHour : profile.closeHour;
+    return List.generate(close - open + 1, (i) => open + i);
+  }
+
   double _calcTotalDiscount() {
     final cart = context.read<CartProvider>();
-    final profile = context.read<ProfileProvider>();
     double discount = cart.totalDiscount;
     final afterCat = cart.subtotal - discount;
-    if (profile.discountPercent > 0 && afterCat > 0) {
-      discount += afterCat * profile.discountPercent / 100;
+    final pct = _effectiveDiscount();
+    if (pct > 0 && afterCat > 0) {
+      discount += afterCat * pct / 100;
     }
     return discount;
   }
@@ -74,7 +100,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     if (profile.businessName.isNotEmpty) {
       sb.writeln('Business / ธุรกิจ: ${profile.businessName}');
     }
-    if (profile.offersDelivery) {
+    if (_effectiveDelivery()) {
       final typeText = _orderType == 'pickup'
           ? 'Pickup / รับเอง'
           : 'Delivery / จัดส่ง';
@@ -135,7 +161,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
     sb.writeln();
 
-    if (profile.offersDelivery) {
+    if (_effectiveDelivery()) {
       final typeText = _orderType == 'pickup'
           ? 'Pickup / รับเอง'
           : 'Delivery / จัดส่ง';
@@ -273,7 +299,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (profile.offersDelivery) ...[
+                if (_effectiveDelivery()) ...[
                   const Text('Pickup or Delivery? / รับเองหรือจัดส่ง?',
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
@@ -358,7 +384,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: profile.availableHours.map((hour) {
+                  children: _effectiveHours().map((hour) {
                     final isSelected = _selectedHour == hour;
                     final period = hour < 12 ? 'AM' : 'PM';
                     final display12 = hour > 12 ? hour - 12 : hour;
@@ -623,84 +649,84 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
 
-          if (profile.promptPayId.isNotEmpty && _calcFinalTotal() > 0) ...[
-            // Option 1: Pay from this phone (copy details to banking app)
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.green.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.green.shade200),
-              ),
-              child: Column(
-                children: [
-                  const Text(
-                    'Transfer to / โอนเงินไปที่',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Open banking app and transfer to:\nเปิดแอปธนาคารแล้วโอนเงินไปที่:',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 13, color: Colors.black54),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'PromptPay: ${profile.promptPayId}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Amount / จำนวน: ${_fmt(_calcFinalTotal())} THB',
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepOrange),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          icon: const Icon(Icons.copy, size: 16),
-                          label: const Text('Copy Acct'),
-                          onPressed: () {
-                            Clipboard.setData(
-                                ClipboardData(text: profile.promptPayId));
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Account number copied! / คัดลอกแล้ว!'),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          },
+          Builder(builder: (context) {
+            final effectivePromptPay = _effectivePromptPay();
+            if (effectivePromptPay.isNotEmpty && _calcFinalTotal() > 0) {
+              return Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.green.shade200),
+                ),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Transfer to / โอนเงินไปที่',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Open banking app and transfer to:\nเปิดแอปธนาคารแล้วโอนเงินไปที่:',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 13, color: Colors.black54),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'PromptPay: $effectivePromptPay',
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Amount / จำนวน: ${_fmt(_calcFinalTotal())} THB',
+                      style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.deepOrange),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            icon: const Icon(Icons.copy, size: 16),
+                            label: const Text('Copy Acct'),
+                            onPressed: () {
+                              Clipboard.setData(
+                                  ClipboardData(text: effectivePromptPay));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Account number copied! / คัดลอกแล้ว!'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          icon: const Icon(Icons.copy, size: 16),
-                          label: const Text('Copy Amt'),
-                          onPressed: () {
-                            Clipboard.setData(ClipboardData(
-                                text: _calcFinalTotal().toInt().toString()));
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          },
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            icon: const Icon(Icons.copy, size: 16),
+                            label: const Text('Copy Amt'),
+                            onPressed: () {
+                              Clipboard.setData(ClipboardData(
+                                  text: _calcFinalTotal().toInt().toString()));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-          ] else
-            Container(
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }
+            return Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.amber.shade50,
@@ -711,7 +737,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 'ยังไม่ได้ตั้งค่า PromptPay ID กรุณาไปตั้งค่าในหน้า Admin',
                 textAlign: TextAlign.center,
               ),
-            ),
+            );
+          }),
 
           const SizedBox(height: 16),
 

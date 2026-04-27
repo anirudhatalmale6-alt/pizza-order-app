@@ -288,10 +288,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 8),
           ],
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.asset('assets/logo.jpg', height: 100, fit: BoxFit.contain),
-          ),
+          if (menu.logoUrl.isNotEmpty)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                menu.logoUrl,
+                height: 100,
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) => ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset('assets/logo.jpg', height: 100, fit: BoxFit.contain),
+                ),
+              ),
+            )
+          else
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset('assets/logo.jpg', height: 100, fit: BoxFit.contain),
+            ),
           const SizedBox(height: 12),
           const Text(
             'Staff Member / พนักงาน',
