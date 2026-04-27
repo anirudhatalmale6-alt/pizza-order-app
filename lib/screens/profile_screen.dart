@@ -280,6 +280,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (menu.restaurantName.isNotEmpty) ...[
             Text(
               menu.restaurantName,
+              textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
