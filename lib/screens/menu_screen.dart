@@ -126,7 +126,7 @@ class _MenuScreenState extends State<MenuScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          tooltip: 'Switch staff',
+          tooltip: 'Home',
           onPressed: () {
             cart.clear();
             Navigator.pushReplacement(
