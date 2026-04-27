@@ -101,8 +101,7 @@ Color colorFromString(String name) {
 // ============ CATEGORY SELECTION SCREEN (Main Menu) ============
 
 class MenuScreen extends StatefulWidget {
-  final String? greeting;
-  const MenuScreen({super.key, this.greeting});
+  const MenuScreen({super.key});
 
   @override
   State<MenuScreen> createState() => _MenuScreenState();
@@ -117,18 +116,6 @@ class _MenuScreenState extends State<MenuScreen> {
     // Sync menu from Google Sheet every time a sales person starts an order
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MenuProvider>().syncFromSheet();
-      if (widget.greeting != null && widget.greeting!.isNotEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Hello ${widget.greeting}! / สวัสดี ${widget.greeting}!',
-              style: const TextStyle(fontSize: 16),
-            ),
-            backgroundColor: Colors.deepOrange,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
     });
   }
 
@@ -187,7 +174,6 @@ class _MenuScreenState extends State<MenuScreen> {
           icon: const Icon(Icons.arrow_back),
           tooltip: 'Switch staff',
           onPressed: () {
-            profile.clearSelection();
             cart.clear();
             Navigator.pushReplacement(
               context,
@@ -195,17 +181,7 @@ class _MenuScreenState extends State<MenuScreen> {
             );
           },
         ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Menu / เมนู', style: TextStyle(fontSize: 18)),
-            if (profile.customerName.isNotEmpty)
-              Text(
-                profile.customerName,
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-              ),
-          ],
-        ),
+        title: const Text('Menu / เมนู', style: TextStyle(fontSize: 18)),
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
         actions: [
