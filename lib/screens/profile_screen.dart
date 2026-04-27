@@ -245,7 +245,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: SizedBox(
                     width: double.infinity,
-                    height: 60,
+                    height: 80,
                     child: ElevatedButton.icon(
                       onPressed: _showNameDialog,
                       icon: const Icon(Icons.person_add, size: 28),
