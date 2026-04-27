@@ -22,17 +22,31 @@ class _AdminScreenState extends State<AdminScreen> {
         backgroundColor: Colors.grey.shade800,
         foregroundColor: Colors.white,
       ),
-      body: _SettingsTab(key: _settingsKey, onSave: () async {
-        await _settingsKey.currentState?._saveAll();
-        if (context.mounted) Navigator.of(context).pop();
-      }),
+      body: _SettingsTab(key: _settingsKey),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SizedBox(
+          height: 56,
+          child: ElevatedButton(
+            onPressed: () async {
+              await _settingsKey.currentState?._saveAll();
+              if (context.mounted) Navigator.of(context).pop();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.deepOrange,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+            ),
+            child: const Text('Save and Exit Settings', style: TextStyle(fontSize: 16)),
+          ),
+        ),
+      ),
     );
   }
 }
 
 class _SettingsTab extends StatefulWidget {
-  final VoidCallback? onSave;
-  const _SettingsTab({super.key, this.onSave});
+  const _SettingsTab({super.key});
 
   @override
   State<_SettingsTab> createState() => _SettingsTabState();
@@ -289,20 +303,7 @@ class _SettingsTabState extends State<_SettingsTab> {
           style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
         ),
 
-        const SizedBox(height: 32),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: widget.onSave,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepOrange,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-            ),
-            child: const Text('Save and Exit Settings', style: TextStyle(fontSize: 16)),
-          ),
-        ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 16),
       ],
     );
   }
