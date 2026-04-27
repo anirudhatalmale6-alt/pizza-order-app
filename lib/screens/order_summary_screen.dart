@@ -98,7 +98,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
     sb.writeln('From / จาก: ${profile.appName}');
     if (profile.businessName.isNotEmpty) {
-      sb.writeln('Business / ธุรกิจ: ${profile.businessName}');
+      sb.writeln('Seller / ผู้ขาย: ${profile.businessName}');
     }
     if (_effectiveDelivery()) {
       final typeText = _orderType == 'pickup'
@@ -157,7 +157,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
     sb.writeln('From / จาก: ${profile.appName}');
     if (profile.businessName.isNotEmpty) {
-      sb.writeln('Business / ธุรกิจ: ${profile.businessName}');
+      sb.writeln('Seller / ผู้ขาย: ${profile.businessName}');
     }
     sb.writeln();
 
@@ -850,10 +850,12 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       height: 48,
                       child: ElevatedButton.icon(
                         onPressed: () async {
+                          final sellerName = menu.restaurantName.isNotEmpty
+                              ? menu.restaurantName
+                              : profile.appName;
                           final slipText = Uri.encodeComponent(
-                            'Payment slip / สลิปการชำระเงิน\n'
-                            'Please attach the payment slip image.\n'
-                            'กรุณาแนบรูปสลิปการชำระเงิน');
+                            'Payment slip for $sellerName\n'
+                            'สลิปการชำระเงินสำหรับ $sellerName');
                           await context.read<CartProvider>().clear();
                           context.read<ProfileProvider>().clearSelection();
                           final launched = await launchUrl(

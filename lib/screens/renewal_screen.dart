@@ -58,7 +58,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
     final sb = StringBuffer();
     sb.writeln('RENEWAL PAYMENT / ชำระค่าต่ออายุ');
     sb.writeln('================================');
-    sb.writeln('Business / ธุรกิจ: ${profile.appName}');
+    sb.writeln('Seller / ผู้ขาย: ${profile.appName}');
     sb.writeln('Expiry Date / วันหมดอายุ: $expiryStr');
     if (menu.renewalPrice > 0) {
       sb.writeln('Amount / จำนวน: ${menu.renewalPrice.toInt()} THB');

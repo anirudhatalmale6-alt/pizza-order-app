@@ -153,13 +153,13 @@ class _SettingsTabState extends State<_SettingsTab> {
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        // Business Name
-        const Text('Business Name', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        // Seller Name
+        const Text('Seller Name', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         TextField(
           controller: _appNameCtrl,
           decoration: const InputDecoration(
-            labelText: 'Business Name',
+            labelText: 'Seller Name',
             hintText: "e.g., Shady Rest Guesthouse",
             border: OutlineInputBorder(),
           ),
