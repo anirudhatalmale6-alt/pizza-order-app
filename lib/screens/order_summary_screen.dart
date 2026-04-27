@@ -214,8 +214,10 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
     if (lineLink.isNotEmpty) {
       final encoded = Uri.encodeComponent(text);
-      final shareUrl = 'https://line.me/R/share?text=$encoded';
-      await launchUrl(Uri.parse(shareUrl), mode: LaunchMode.externalApplication);
+      final launched = await launchUrl(Uri.parse('line://msg/text/$encoded'), mode: LaunchMode.externalApplication);
+      if (!launched) {
+        await launchUrl(Uri.parse('https://line.me/R/share?text=$encoded'), mode: LaunchMode.externalApplication);
+      }
     } else {
       try {
         await Share.share(text);
@@ -848,10 +850,19 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       height: 48,
                       child: ElevatedButton.icon(
                         onPressed: () async {
+                          final slipText = Uri.encodeComponent(
+                            'Payment slip / สลิปการชำระเงิน\n'
+                            'Please attach the payment slip image.\n'
+                            'กรุณาแนบรูปสลิปการชำระเงิน');
                           await context.read<CartProvider>().clear();
                           context.read<ProfileProvider>().clearSelection();
-                          await launchUrl(Uri.parse(effectiveLineLink),
+                          final launched = await launchUrl(
+                              Uri.parse('line://msg/text/$slipText'),
                               mode: LaunchMode.externalApplication);
+                          if (!launched) {
+                            await launchUrl(Uri.parse(effectiveLineLink),
+                                mode: LaunchMode.externalApplication);
+                          }
                           if (context.mounted) {
                             Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(builder: (_) => const ProfileScreen()),
