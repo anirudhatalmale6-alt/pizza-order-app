@@ -213,7 +213,9 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final lineLink = menu.lineLink.isNotEmpty ? menu.lineLink : profile.lineDeepLink;
 
     if (lineLink.isNotEmpty) {
-      await launchUrl(Uri.parse(lineLink), mode: LaunchMode.externalApplication);
+      final encoded = Uri.encodeComponent(text);
+      final shareUrl = 'https://line.me/R/share?text=$encoded';
+      await launchUrl(Uri.parse(shareUrl), mode: LaunchMode.externalApplication);
     } else {
       try {
         await Share.share(text);
@@ -645,10 +647,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   }
                 }
               },
-              icon: const Icon(Icons.cancel_outlined, color: Colors.red),
+              icon: const Icon(Icons.cancel_outlined, color: Colors.white),
               label: const Text('Cancel Order / ยกเลิกออเดอร์',
-                  style: TextStyle(fontSize: 14, color: Colors.red)),
+                  style: TextStyle(fontSize: 14, color: Colors.white)),
               style: OutlinedButton.styleFrom(
+                backgroundColor: Colors.red,
                 side: const BorderSide(color: Colors.red),
               ),
             ),
@@ -657,6 +660,13 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           const SizedBox(height: 24),
 
           // Send order for confirmation
+          const Text(
+            'LINE will open with the order text ready to send. Choose the restaurant chat and tap Send.\n'
+            'LINE จะเปิดพร้อมข้อความออเดอร์ เลือกแชทร้านแล้วกดส่ง',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 13, color: Colors.grey, height: 1.4),
+          ),
+          const SizedBox(height: 8),
           SizedBox(
             height: 64,
             child: ElevatedButton.icon(
