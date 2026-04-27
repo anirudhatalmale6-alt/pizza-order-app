@@ -170,20 +170,6 @@ class _SettingsTabState extends State<_SettingsTab> {
 
         const SizedBox(height: 32),
 
-        // Business Name
-        const Text('Business Name', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _appNameCtrl,
-          decoration: const InputDecoration(
-            labelText: 'Business Name',
-            hintText: 'e.g., Shady Rest Guesthouse',
-            border: OutlineInputBorder(),
-          ),
-        ),
-
-        const SizedBox(height: 32),
-
         // Google Sheet Sync
         const Text('Google Sheet Sync', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
