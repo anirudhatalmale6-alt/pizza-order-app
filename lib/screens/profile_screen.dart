@@ -101,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text('New Sales Person / พนักงานขายใหม่',
+                const Text('New Seller / ผู้ขายใหม่',
                     style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
                 TextField(
@@ -172,7 +172,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text('Edit Sales Person / แก้ไขพนักงานขาย',
+                const Text('Edit Seller / แก้ไขผู้ขาย',
                     style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
                 TextField(
@@ -299,7 +299,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           const SizedBox(height: 12),
           const Text(
-            'Sales Person / พนักงานขาย',
+            'Seller / ผู้ขาย',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
@@ -318,7 +318,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Icon(Icons.person_add,
                             size: 60, color: Colors.grey.shade400),
                         const SizedBox(height: 8),
-                        const Text('No sales persons yet\nยังไม่มีพนักงานขาย',
+                        const Text('No sellers yet\nยังไม่มีผู้ขาย',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.grey)),
                       ],
@@ -395,7 +395,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: ElevatedButton.icon(
                   onPressed: () => _showNewCustomerDialog(context),
                   icon: const Icon(Icons.person_add),
-                  label: const Text('New Sales Person / พนักงานขายใหม่',
+                  label: const Text('New Seller / ผู้ขายใหม่',
                       style: TextStyle(fontSize: 16)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepOrange,
