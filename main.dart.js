@@ -26514,8 +26514,8 @@ a68(a,b){var s
 if(A.hn(a))return a
 s=a==null?null:B.c.cr(J.cl(a)).toLowerCase()
 if(s==null)s=""
-if(s==="true"||s==="yes"||s==="1")return!0
-if(s==="false"||s==="no"||s==="0")return!1
+if(s==="true"||s==="yes"||s==="y"||s==="1")return!0
+if(s==="false"||s==="no"||s==="n"||s==="0")return!1
 return b},
 aCk(a,b,c){var s
 if(B.RJ.q(0,b))a.m(0,"expires",A.aNW(c))
