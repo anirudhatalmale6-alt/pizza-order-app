@@ -93,40 +93,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog(
       context: context,
       builder: (ctx) => Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text('New Staff Member / พนักงานใหม่',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 16),
-                const Text('Staff Name / ชื่อพนักงาน',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
-                const SizedBox(height: 4),
+                const Text('New Sales Person / พนักงานขายใหม่',
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 12),
                 TextField(
                   controller: nameCtrl,
                   decoration: const InputDecoration(
-                    hintText: 'Enter name',
+                    labelText: 'Name / ชื่อ',
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: businessCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Business Name / ชื่อธุรกิจ',
                     border: OutlineInputBorder(),
                     isDense: true,
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text('Business Name / ชื่อธุรกิจ',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
-                const SizedBox(height: 4),
-                TextField(
-                  controller: businessCtrl,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter business name',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
-                ),
-                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -169,44 +164,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog(
       context: context,
       builder: (ctx) => Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text('Edit Staff / แก้ไขพนักงาน',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 16),
-                const Text('Staff Name / ชื่อพนักงาน',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
-                const SizedBox(height: 4),
+                const Text('Edit Sales Person / แก้ไขพนักงานขาย',
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 12),
                 TextField(
                   controller: nameCtrl,
                   decoration: const InputDecoration(
-                    hintText: 'Enter name',
+                    labelText: 'Name / ชื่อ',
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: businessCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Business Name / ชื่อธุรกิจ',
                     border: OutlineInputBorder(),
                     isDense: true,
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text('Business Name / ชื่อธุรกิจ',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
-                const SizedBox(height: 4),
-                TextField(
-                  controller: businessCtrl,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter business name',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Wrap(
-                  alignment: WrapAlignment.end,
-                  spacing: 8,
-                  runSpacing: 4,
+                Row(
                   children: [
                     TextButton(
                       onPressed: () async {
@@ -218,10 +205,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: const Text('Delete / ลบ',
                           style: TextStyle(color: Colors.red)),
                     ),
+                    const Spacer(),
                     TextButton(
                       onPressed: () => Navigator.pop(ctx),
                       child: const Text('Cancel / ยกเลิก'),
                     ),
+                    const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: () async {
                         final newName = nameCtrl.text.trim();
@@ -264,6 +253,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(profile.appName),
+          centerTitle: true,
           backgroundColor: Colors.deepOrange,
           foregroundColor: Colors.white,
           actions: [
@@ -309,12 +299,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           const SizedBox(height: 12),
           const Text(
-            'Staff Member / พนักงาน',
+            'Sales Person / พนักงานขาย',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           const Text(
-            'Select your name to start taking orders\nเลือกชื่อเพื่อเริ่มรับออเดอร์',
+            'Select your name to start\nเลือกชื่อเพื่อเริ่ม',
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey, fontSize: 14),
           ),
@@ -328,7 +318,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Icon(Icons.person_add,
                             size: 60, color: Colors.grey.shade400),
                         const SizedBox(height: 8),
-                        const Text('No staff members yet\nยังไม่มีพนักงาน',
+                        const Text('No sales persons yet\nยังไม่มีพนักงานขาย',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.grey)),
                       ],
@@ -405,7 +395,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: ElevatedButton.icon(
                   onPressed: () => _showNewCustomerDialog(context),
                   icon: const Icon(Icons.person_add),
-                  label: const Text('New Staff Member / พนักงานใหม่',
+                  label: const Text('New Sales Person / พนักงานขายใหม่',
                       style: TextStyle(fontSize: 16)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepOrange,

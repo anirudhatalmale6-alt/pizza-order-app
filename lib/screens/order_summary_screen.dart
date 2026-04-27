@@ -96,7 +96,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     if (_guestNameCtrl.text.trim().isNotEmpty) {
       sb.writeln('Guest / ชื่อผู้สั่ง: ${_guestNameCtrl.text.trim()}');
     }
-    sb.writeln('Staff / พนักงาน: ${profile.customerName}');
+    sb.writeln('Sales Person / พนักงานขาย: ${profile.customerName}');
     if (profile.businessName.isNotEmpty) {
       sb.writeln('Business / ธุรกิจ: ${profile.businessName}');
     }
@@ -155,7 +155,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     if (_guestNameCtrl.text.trim().isNotEmpty) {
       sb.writeln('Guest / ชื่อผู้สั่ง: ${_guestNameCtrl.text.trim()}');
     }
-    sb.writeln('Staff / พนักงาน: ${profile.customerName}');
+    sb.writeln('Sales Person / พนักงานขาย: ${profile.customerName}');
     if (profile.businessName.isNotEmpty) {
       sb.writeln('Business / ธุรกิจ: ${profile.businessName}');
     }

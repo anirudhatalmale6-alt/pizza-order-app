@@ -114,7 +114,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     super.initState();
-    // Sync menu from Google Sheet every time a staff member starts an order
+    // Sync menu from Google Sheet every time a sales person starts an order
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MenuProvider>().syncFromSheet();
       if (widget.greeting != null && widget.greeting!.isNotEmpty) {
