@@ -251,7 +251,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 TextField(
                   controller: _guestNameCtrl,
                   decoration: const InputDecoration(
-                    hintText: 'Enter guest name / ใส่ชื่อ',
+                    hintText: 'Enter customer name / ใส่ชื่อลูกค้า',
                     border: OutlineInputBorder(),
                     isDense: true,
                     prefixIcon: Icon(Icons.person_outline),
