@@ -67,7 +67,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   }
 
   double _calcCustomerTotal() {
-    return _calcFinalTotal() + _effectiveDeliveryFee();
+    final cart = context.read<CartProvider>();
+    return cart.subtotal + _effectiveDeliveryFee();
   }
 
   @override
@@ -494,17 +495,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       ],
                     ),
                   ],
-                  if (discountAmt > 0) ...[
-                    const SizedBox(height: 4),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Flexible(child: Text('You Earned / คุณได้รับ')),
-                        Text('-${_fmt(discountAmt)} THB',
-                            style: const TextStyle(color: Colors.green)),
-                      ],
-                    ),
-                  ],
                   const Divider(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -512,30 +502,41 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       const Flexible(
                         child: Text('Customer Pays / ลูกค้าจ่าย',
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
-                      ),
-                      Text('${_fmt(customerTotal)} THB',
-                          style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Flexible(
-                        child: Text('You Pay Shop / คุณจ่ายร้าน',
-                            style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
                       ),
-                      Text('${_fmt(sellerPays)} THB',
+                      Text('${_fmt(customerTotal)} THB',
                           style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: Colors.deepOrange)),
                     ],
                   ),
+                  if (discountAmt > 0) ...[
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Flexible(child: Text('You Earned / คุณได้รับ')),
+                        Text('${_fmt(discountAmt)} THB',
+                            style: const TextStyle(color: Colors.green)),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Flexible(
+                          child: Text('You Pay Restaurant / คุณจ่ายร้าน',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                        ),
+                        Text('${_fmt(sellerPays)} THB',
+                            style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             );
