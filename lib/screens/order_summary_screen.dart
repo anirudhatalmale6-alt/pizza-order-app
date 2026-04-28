@@ -715,8 +715,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       children: [
                         Expanded(
                           child: OutlinedButton.icon(
-                            icon: const Icon(Icons.copy, size: 16),
-                            label: const Text('Copy ID'),
+                            icon: const Icon(Icons.copy, size: 14),
+                            label: const Text('Copy PromptPay ID', style: TextStyle(fontSize: 11)),
                             onPressed: () {
                               Clipboard.setData(
                                   ClipboardData(text: effectivePromptPay));
@@ -732,8 +732,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: OutlinedButton.icon(
-                            icon: const Icon(Icons.copy, size: 16),
-                            label: const Text('Copy Amt'),
+                            icon: const Icon(Icons.copy, size: 14),
+                            label: const Text('Copy Amt', style: TextStyle(fontSize: 11)),
                             onPressed: () {
                               Clipboard.setData(ClipboardData(
                                   text: _calcCustomerTotal().toInt().toString()));
