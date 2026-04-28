@@ -716,7 +716,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                         Expanded(
                           child: OutlinedButton.icon(
                             icon: const Icon(Icons.copy, size: 16),
-                            label: const Text('Copy PromptPay ID'),
+                            label: const Text('Copy ID'),
                             onPressed: () {
                               Clipboard.setData(
                                   ClipboardData(text: effectivePromptPay));

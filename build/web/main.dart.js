@@ -86435,7 +86435,7 @@ A.oR.prototype={
 ao(){return new A.Qh(new A.bI(null,t.fd))}}
 A.Qh.prototype={
 N(a){var s=null
-return A.BQ(A.xK(s,!0,B.c2,s,B.j,s,B.Ya),new A.Gh(this.d),new A.bD(B.bf,A.cY(A.kY(!1,B.Yf,s,s,s,s,s,s,new A.ajk(this,a),s,A.eK(s,s,B.a9,s,s,s,s,s,s,B.j,s,s,B.n9,s,s,s,s,s,s)),56,s),s))}}
+return A.BQ(A.xK(s,!0,B.c2,s,B.j,s,B.Yb),new A.Gh(this.d),new A.bD(B.bf,A.cY(A.kY(!1,B.Yg,s,s,s,s,s,s,new A.ajk(this,a),s,A.eK(s,s,B.a9,s,s,s,s,s,s,B.j,s,s,B.n9,s,s,s,s,s,s)),56,s),s))}}
 A.ajk.prototype={
 $0(){var s=0,r=A.F(t.H),q=this,p
 var $async$$0=A.G(function(a,b){if(a===1)return A.C(b,r)
@@ -86521,7 +86521,7 @@ q=m.w
 p=q?l:m.gaeL()
 o=q?B.RU:B.I4
 n=t.p
-return A.awq(A.b([B.Xu,B.aK,k,B.hX,B.Yb,B.aK,B.Yp,B.aK,s,B.hX,B.Yk,B.aK,B.Yo,B.bg,r,B.bg,A.ct(A.b([A.dC(A.jS(o,A.br(q?"Syncing...":"Sync Now",l,l,l,l,l,l),p,A.eK(l,l,B.d1,l,l,l,l,l,l,B.j,l,l,B.jn,l,l,l,l,l,l))),B.dZ,A.dC(A.jS(B.HR,B.XW,new A.ark(m,a),A.eK(l,l,B.d0,l,l,l,l,l,l,B.j,l,l,B.jn,l,l,l,l,l,l)))],n),B.y,B.z,B.w),B.bS],n),B.Gw)},
+return A.awq(A.b([B.Xu,B.aK,k,B.hX,B.Yc,B.aK,B.Yp,B.aK,s,B.hX,B.Yl,B.aK,B.Yo,B.bg,r,B.bg,A.ct(A.b([A.dC(A.jS(o,A.br(q?"Syncing...":"Sync Now",l,l,l,l,l,l),p,A.eK(l,l,B.d1,l,l,l,l,l,l,B.j,l,l,B.jn,l,l,l,l,l,l))),B.dZ,A.dC(A.jS(B.HR,B.XX,new A.ark(m,a),A.eK(l,l,B.d0,l,l,l,l,l,l,B.j,l,l,B.jn,l,l,l,l,l,l)))],n),B.y,B.z,B.w),B.bS],n),B.Gw)},
 nk(){var s=0,r=A.F(t.H),q=this,p,o,n
 var $async$nk=A.G(function(a,b){if(a===1)return A.C(b,r)
 while(true)switch(s){case 0:n=q.c
@@ -86574,7 +86574,7 @@ $S:0}
 A.arj.prototype={
 $1(a){var s=null,r=this.a.e
 r=A.aCY(A.aCT(r.length===0?"Unknown error":r))
-return A.mo(A.b([A.kn(!1,B.i3,s,s,s,s,s,s,new A.are(a),s,s)],t.p),r,B.XZ)},
+return A.mo(A.b([A.kn(!1,B.i3,s,s,s,s,s,s,new A.are(a),s,s)],t.p),r,B.Y_)},
 $S:34}
 A.are.prototype={
 $0(){A.c4(this.a,!1).eW(null)
@@ -86595,7 +86595,7 @@ $.a6.k3$.push(new A.aoa(this))},
 N(a){var s=null,r=A.bx(a,!0,t.c),q=A.bx(a,!0,t.BW),p=A.bx(a,!0,t.O),o=A.hF(r.c,t.Fp),n=A.mU(s,s,B.HU,s,s,new A.ao5(q,a),s,s,"Home"),m=q.a,l=t.p,k=A.b([A.mU(s,s,B.nL,s,s,m.length===0?s:new A.ao6(a),s,s,s)],l)
 if(m.length!==0)k.push(A.N2(s,A.es(A.br(""+A.hF(m,t.A9).length,s,s,s,B.zH,s,s),B.t,B.lM,s,s,B.jq,s),s,s,s,4,4,s))
 n=A.xK(A.b([A.qW(B.a0,k,B.H,B.d9)],l),!0,B.a9,s,B.j,n,B.Xx)
-m=m.length===0?s:A.uY(!0,new A.bD(B.jo,A.ct(A.b([A.dC(A.cY(A.jS(B.HT,B.XT,new A.ao7(this,a,q),A.eK(s,s,B.cu,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s)),64,s)),B.dZ,A.dC(A.cY(A.jS(B.nM,A.br("View Order ("+A.hF(m,t.A9).length+")\n\u0e14\u0e39\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c",s,s,s,B.e0,B.ad,s),new A.ao8(a),A.eK(s,s,B.d1,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s)),64,s))],l),B.y,B.z,B.w),s),!0)
+m=m.length===0?s:A.uY(!0,new A.bD(B.jo,A.ct(A.b([A.dC(A.cY(A.jS(B.HT,B.XU,new A.ao7(this,a,q),A.eK(s,s,B.cu,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s)),64,s)),B.dZ,A.dC(A.cY(A.jS(B.nM,A.br("View Order ("+A.hF(m,t.A9).length+")\n\u0e14\u0e39\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c",s,s,s,B.e0,B.ad,s),new A.ao8(a),A.eK(s,s,B.d1,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s)),64,s))],l),B.y,B.z,B.w),s),!0)
 return A.BQ(n,new A.e8(new A.ao9(r,p,o),s),m)}}
 A.aoa.prototype={
 $1(a){var s=this.a.c
@@ -86619,7 +86619,7 @@ $S:77}
 A.ao9.prototype={
 $1(a){var s,r,q=null,p=this.a,o=p.galY(),n=p.z
 n=n.length!==0?n:this.b.w
-if(!o)return A.kP(new A.bD(B.Gx,A.dW(A.b([A.f4(B.nI,B.mb,q,80),B.e_,A.br("Sorry, "+n+" is closed today.\n\u0e02\u0e2d\u0e2d\u0e20\u0e31\u0e22 "+n+" \u0e1b\u0e34\u0e14\u0e27\u0e31\u0e19\u0e19\u0e35\u0e49",q,q,q,B.TY,B.ad,q),B.bS,B.Y1],t.p),B.y,B.dF,B.w),q),q,q)
+if(!o)return A.kP(new A.bD(B.Gx,A.dW(A.b([A.f4(B.nI,B.mb,q,80),B.e_,A.br("Sorry, "+n+" is closed today.\n\u0e02\u0e2d\u0e2d\u0e20\u0e31\u0e22 "+n+" \u0e1b\u0e34\u0e14\u0e27\u0e31\u0e19\u0e19\u0e35\u0e49",q,q,q,B.TY,B.ad,q),B.bS,B.Y2],t.p),B.y,B.dF,B.w),q),q,q)
 o=t.p
 s=A.b([],o)
 if(!p.f&&p.e.length!==0){p=A.db(8)
@@ -86657,7 +86657,7 @@ return A.E($async$$0,r)},
 $S:9}
 A.ao2.prototype={
 $1(a){var s=null
-return A.mo(A.b([A.kn(!1,B.zO,s,s,s,s,s,s,new A.anZ(a),s,s),A.kY(!1,B.XE,s,s,s,s,s,s,new A.ao_(a),s,A.eK(s,s,B.cu,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s))],t.p),B.Y8,B.zJ)},
+return A.mo(A.b([A.kn(!1,B.zO,s,s,s,s,s,s,new A.anZ(a),s,s),A.kY(!1,B.XE,s,s,s,s,s,s,new A.ao_(a),s,A.eK(s,s,B.cu,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s))],t.p),B.Y9,B.zJ)},
 $S:34}
 A.anZ.prototype={
 $0(){A.c4(this.a,!1).eW(!1)
@@ -86870,7 +86870,7 @@ s=A.xK(f,!1,B.a9,f,B.j,f,B.Yv)
 r=A.db(12)
 q=A.iN(B.mH,1)
 p=t.p
-r=A.es(A.dW(A.b([B.XJ,B.cA,B.Yj,B.aK,A.D0(!1,g.e,B.It,f,1,f,!1,f,f)],p),B.aH,B.z,B.w),B.t,new A.cC(B.iO,f,q,r,f,f,B.a4),f,f,B.bf,f)
+r=A.es(A.dW(A.b([B.XJ,B.cA,B.Yk,B.aK,A.D0(!1,g.e,B.It,f,1,f,!1,f,f)],p),B.aH,B.z,B.w),B.t,new A.cC(B.iO,f,q,r,f,f,B.a4),f,f,B.bf,f)
 q=A.db(12)
 o=A.iN(B.iS,1)
 n=A.b([],p)
@@ -86885,18 +86885,18 @@ k=m?B.a9:B.j
 j=A.db(8)
 i=A.iN(B.a9,1)
 h=A.f4(B.nF,m?B.j:B.a9,f,20)
-B.b.R(n,A.b([B.XU,B.aK,A.ct(A.b([l,B.dZ,A.dC(A.l6(f,A.es(A.ct(A.b([h,B.zb,A.br("Delivery\n\u0e08\u0e31\u0e14\u0e2a\u0e48\u0e07",f,f,f,A.dL(f,f,m?B.j:B.a9,f,f,f,f,f,f,f,f,13,f,f,B.jI,f,f,!0,f,f,f,f,f,f,f,f),B.ad,f)],p),B.y,B.dF,B.w),B.t,new A.cC(k,f,i,j,f,f,B.a4),f,f,B.n8,f),B.a8,!1,f,f,f,f,f,f,f,f,f,f,f,f,f,new A.aoL(g),f,f,f,f,f,f))],p),B.y,B.z,B.w),B.bS],p))}r=A.b([r,B.bg,A.es(A.dW(n,B.aH,B.z,B.w),B.t,new A.cC(B.iM,f,o,q,f,f,B.a4),f,f,B.bf,f),B.bS,B.YC,B.aK],p)
+B.b.R(n,A.b([B.XV,B.aK,A.ct(A.b([l,B.dZ,A.dC(A.l6(f,A.es(A.ct(A.b([h,B.zb,A.br("Delivery\n\u0e08\u0e31\u0e14\u0e2a\u0e48\u0e07",f,f,f,A.dL(f,f,m?B.j:B.a9,f,f,f,f,f,f,f,f,13,f,f,B.jI,f,f,!0,f,f,f,f,f,f,f,f),B.ad,f)],p),B.y,B.dF,B.w),B.t,new A.cC(k,f,i,j,f,f,B.a4),f,f,B.n8,f),B.a8,!1,f,f,f,f,f,f,f,f,f,f,f,f,f,new A.aoL(g),f,f,f,f,f,f))],p),B.y,B.z,B.w),B.bS],p))}r=A.b([r,B.bg,A.es(A.dW(n,B.aH,B.z,B.w),B.t,new A.cC(B.iM,f,o,q,f,f,B.a4),f,f,B.bf,f),B.bS,B.YC,B.aK],p)
 q=e.a
 B.b.R(r,A.aws(A.hF(q,t.A9).length,new A.aoM(e,c,a),!0,t.l7))
 r.push(B.mW)
 r.push(B.mW)
 r.push(new A.e8(new A.aoN(g,e),f))
 r.push(B.e_)
-r.push(A.cY(A.qe(B.nK,B.Y5,new A.aoO(a),f),52,f))
+r.push(A.cY(A.qe(B.nK,B.Y6,new A.aoO(a),f),52,f))
 r.push(B.bg)
-r.push(A.cY(A.qe(B.HO,B.Yc,new A.aoP(a),A.aOf(f,f,B.cu,f,f,f,f,f,f,f,f,f,f,f,f,B.AJ,f,f,f,f)),52,f))
+r.push(A.cY(A.qe(B.HO,B.Yd,new A.aoP(a),A.aOf(f,f,B.cu,f,f,f,f,f,f,f,f,f,f,f,f,B.AJ,f,f,f,f)),52,f))
 r.push(B.e_)
-r.push(B.Y4)
+r.push(B.Y5)
 r.push(B.aK)
 q=q.length===0||g.f?f:g.gadZ()
 o=g.f
@@ -87034,7 +87034,7 @@ return A.E($async$$0,r)},
 $S:9}
 A.aoC.prototype={
 $1(a){var s=null
-return A.mo(A.b([A.kn(!1,B.zO,s,s,s,s,s,s,new A.aos(a),s,s),A.kn(!1,B.Yd,s,s,s,s,s,s,new A.aot(a),s,s)],t.p),B.Xs,B.zJ)},
+return A.mo(A.b([A.kn(!1,B.zO,s,s,s,s,s,s,new A.aos(a),s,s),A.kn(!1,B.Ye,s,s,s,s,s,s,new A.aot(a),s,s)],t.p),B.Xs,B.zJ)},
 $S:34}
 A.aos.prototype={
 $0(){A.c4(this.a,!1).eW(!1)
@@ -87062,7 +87062,7 @@ q=q.length!==0?q:r.e
 if(q.length!==0&&m.wz()>0){l=A.db(12)
 p=A.iN(B.fw,1)
 o=t.p
-return A.es(A.dW(A.b([B.zL,B.cA,B.XP,B.bg,A.br("PromptPay: "+q,n,n,n,B.cB,n,n),B.cA,A.br("Amount / \u0e08\u0e33\u0e19\u0e27\u0e19: "+A.rs(m.wz())+" THB",n,n,n,B.zF,n,n),B.bg,A.ct(A.b([A.dC(A.qe(B.h3,B.Ym,new A.aow(q,a),n)),B.bE,A.dC(A.qe(B.h3,B.zN,new A.aox(m,a),n))],o),B.y,B.z,B.w)],o),B.y,B.z,B.w),B.t,new A.cC(B.fz,n,p,l,n,n,B.a4),n,n,B.bf,n)}return A.es(B.Xv,B.t,new A.cC(B.iL,n,n,A.db(12),n,n,B.a4),n,n,B.bf,n)},
+return A.es(A.dW(A.b([B.zL,B.cA,B.XQ,B.bg,A.br("PromptPay: "+q,n,n,n,B.cB,n,n),B.cA,A.br("Amount / \u0e08\u0e33\u0e19\u0e27\u0e19: "+A.rs(m.wz())+" THB",n,n,n,B.zF,n,n),B.bg,A.ct(A.b([A.dC(A.qe(B.h3,B.XN,new A.aow(q,a),n)),B.bE,A.dC(A.qe(B.h3,B.zN,new A.aox(m,a),n))],o),B.y,B.z,B.w)],o),B.y,B.z,B.w),B.t,new A.cC(B.fz,n,p,l,n,n,B.a4),n,n,B.bf,n)}return A.es(B.Xv,B.t,new A.cC(B.iL,n,n,A.db(12),n,n,B.a4),n,n,B.bf,n)},
 $S:215}
 A.aow.prototype={
 $0(){A.jM(new A.hY(this.a))
@@ -87154,8 +87154,8 @@ r=m.ch
 if(r.length!==0)q.push(A.Jv(A.db(12),A.aBo(r,new A.apC(),B.iC,120,o)))
 else q.push(A.Jv(A.db(12),A.aBn("assets/logo.jpg",B.iC,120)))
 q.push(B.hX)
-if(n.x.length===0)q.push(new A.bD(B.nc,A.cY(A.jS(B.HS,B.XN,this.gaeo(),A.eK(o,o,B.d0,o,o,o,o,o,o,B.j,o,o,o,o,new A.d6(A.db(12),B.q),o,o,o,o)),80,1/0),o))
-else q.push(new A.bD(B.nc,A.cY(A.jS(B.I0,B.Y7,new A.apD(a),A.eK(o,o,B.a9,o,o,o,o,o,o,B.j,o,o,o,o,new A.d6(A.db(12),B.q),o,o,o,o)),60,1/0),o))
+if(n.x.length===0)q.push(new A.bD(B.nc,A.cY(A.jS(B.HS,B.XO,this.gaeo(),A.eK(o,o,B.d0,o,o,o,o,o,o,B.j,o,o,o,o,new A.d6(A.db(12),B.q),o,o,o,o)),80,1/0),o))
+else q.push(new A.bD(B.nc,A.cY(A.jS(B.I0,B.Y8,new A.apD(a),A.eK(o,o,B.a9,o,o,o,o,o,o,B.j,o,o,o,o,new A.d6(A.db(12),B.q),o,o,o,o)),60,1/0),o))
 return new A.uB(A.BQ(s,A.kP(A.dW(q,B.y,B.dF,B.w),o,o),o),new A.apE(),!1,o,t.VM)}}
 A.apF.prototype={
 $1(a){var s,r=this.a,q=r.c
@@ -87167,7 +87167,7 @@ $S:6}
 A.apA.prototype={
 $1(a){var s=null,r=t.p,q=A.ct(A.b([A.f4(B.jK,B.dq,s,28),B.bE,B.GK],r),B.y,B.z,B.w),p=this.b
 p=A.br("Your subscription expires in "+p.gyX()+" day(s).\nPlease renew to avoid interruption.\n\n\u0e2a\u0e21\u0e31\u0e04\u0e23\u0e2a\u0e21\u0e32\u0e0a\u0e34\u0e01\u0e02\u0e2d\u0e07\u0e04\u0e38\u0e13\u0e08\u0e30\u0e2b\u0e21\u0e14\u0e2d\u0e32\u0e22\u0e38\u0e43\u0e19\u0e2d\u0e35\u0e01 "+p.gyX()+" \u0e27\u0e31\u0e19\n\u0e01\u0e23\u0e38\u0e13\u0e32\u0e15\u0e48\u0e2d\u0e2d\u0e32\u0e22\u0e38\u0e01\u0e48\u0e2d\u0e19\u0e2b\u0e21\u0e14",s,s,s,s,s,s)
-return A.mo(A.b([A.kn(!1,B.Y_,s,s,s,s,s,s,new A.apy(a),s,s),A.kY(!1,B.Y2,s,s,s,s,s,s,new A.apz(this.a,a),s,A.eK(s,s,B.a9,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s))],r),p,q)},
+return A.mo(A.b([A.kn(!1,B.Y0,s,s,s,s,s,s,new A.apy(a),s,s),A.kY(!1,B.Y3,s,s,s,s,s,s,new A.apz(this.a,a),s,A.eK(s,s,B.a9,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s))],r),p,q)},
 $S:34}
 A.apy.prototype={
 $0(){A.c4(this.a,!1).eW(null)
@@ -87217,7 +87217,7 @@ A.c4(this.b,!1).eW(null)}},
 $S:0}
 A.aps.prototype={
 $1(a){var s=null,r=this.b,q=this.a,p=A.D0(!0,r,B.Is,s,1,s,!0,new A.app(q,a),s)
-return A.mo(A.b([A.kn(!1,B.zM,s,s,s,s,s,s,new A.apq(a),s,s),A.kY(!1,B.i3,s,s,s,s,s,s,new A.apr(q,r,a),s,s)],t.p),p,B.Yi)},
+return A.mo(A.b([A.kn(!1,B.zM,s,s,s,s,s,s,new A.apq(a),s,s),A.kY(!1,B.i3,s,s,s,s,s,s,new A.apr(q,r,a),s,s)],t.p),p,B.Yj)},
 $S:34}
 A.app.prototype={
 $1(a){var s,r
@@ -87345,7 +87345,7 @@ s=A.br(f?"Subscription Expired / \u0e2b\u0e21\u0e14\u0e2d\u0e32\u0e22\u0e38":"Re
 r=f?B.cp:B.dq
 p=j.a.c
 s=A.xK(i,p,r,i,B.j,i,s)
-r=p&&j.r?A.uY(!0,new A.bD(B.jo,A.kY(!1,B.Y3,i,i,i,i,i,i,new A.aqq(a),i,A.eK(i,i,B.d1,i,i,i,i,i,i,B.j,i,i,B.n9,i,i,i,i,i,i)),i),!0):i
+r=p&&j.r?A.uY(!0,new A.bD(B.jo,A.kY(!1,B.Y4,i,i,i,i,i,i,new A.aqq(a),i,A.eK(i,i,B.d1,i,i,i,i,i,i,B.j,i,i,B.n9,i,i,i,i,i,i)),i),!0):i
 p=f?B.iX:B.iO
 o=A.db(16)
 n=A.iN(f?B.j1:B.m9,2)
@@ -87361,7 +87361,7 @@ p=A.b([A.es(A.dW(l,B.y,B.z,B.w),B.t,new A.cC(p,i,n,o,i,i,B.a4),i,i,B.fL,i),B.e_]
 o=g.e
 if(o.length!==0){n=A.db(12)
 m=A.iN(B.fw,1)
-o=A.b([B.zL,B.cA,B.XR,B.bg,A.br("PromptPay: "+o,i,i,i,B.cB,i,i)],k)
+o=A.b([B.zL,B.cA,B.XS,B.bg,A.br("PromptPay: "+o,i,i,i,B.cB,i,i)],k)
 l=h.w
 if(l>0)B.b.R(o,A.b([B.cA,A.br("Amount / \u0e08\u0e33\u0e19\u0e27\u0e19: "+B.d.a6(l)+" THB",i,i,i,B.zF,i,i)],k))
 o.push(B.bg)
@@ -87371,14 +87371,14 @@ o.push(A.ct(l,B.y,B.z,B.w))
 B.b.R(p,A.b([B.zK,B.aK,A.es(A.dW(o,B.y,B.z,B.w),B.t,new A.cC(B.fz,i,m,n,i,i,B.a4),i,i,B.bf,i)],k))}p.push(B.e_)
 p.push(B.Yy)
 p.push(B.cA)
-p.push(B.Yh)
+p.push(B.Yi)
 p.push(B.aK)
 if(j.e&&j.d!=null){o=A.db(12)
 n=j.d
 n.toString
-B.b.R(p,A.b([A.Jv(o,new A.mX(A.awR(i,i,new A.nk(n,1)),i,i,200,B.lN,i)),B.aK,A.aDi(B.HW,B.Y6,new A.aqt(j))],k))}else p.push(A.ct(A.b([A.dC(A.qe(B.I5,B.Yg,j.gacr(),i)),B.bE,A.dC(A.qe(B.HZ,B.XD,j.gaeO(),i))],k),B.y,B.z,B.w))
+B.b.R(p,A.b([A.Jv(o,new A.mX(A.awR(i,i,new A.nk(n,1)),i,i,200,B.lN,i)),B.aK,A.aDi(B.HW,B.Y7,new A.aqt(j))],k))}else p.push(A.ct(A.b([A.dC(A.qe(B.I5,B.Yh,j.gacr(),i)),B.bE,A.dC(A.qe(B.HZ,B.XD,j.gaeO(),i))],k),B.y,B.z,B.w))
 p.push(B.e_)
-p.push(A.cY(A.jS(B.HV,B.XY,j.gae0(),A.eK(i,i,B.fn,i,i,i,i,i,i,B.j,i,i,i,i,i,i,i,i,i)),56,i))
+p.push(A.cY(A.jS(B.HV,B.XZ,j.gae0(),A.eK(i,i,B.fn,i,i,i,i,i,i,B.j,i,i,i,i,i,i,i,i,i)),56,i))
 p.push(B.hX)
 return A.BQ(s,A.awq(p,B.bf),r)}}
 A.aqi.prototype={
@@ -87393,7 +87393,7 @@ s.e=!0},
 $S:0}
 A.aql.prototype={
 $1(a){var s=null
-return A.mo(A.b([A.kY(!1,B.Ye,s,s,s,s,s,s,new A.aqk(a),s,A.eK(s,s,B.fn,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s))],t.p),B.XF,B.XK)},
+return A.mo(A.b([A.kY(!1,B.Yf,s,s,s,s,s,s,new A.aqk(a),s,A.eK(s,s,B.fn,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s))],t.p),B.XF,B.XK)},
 $S:34}
 A.aqk.prototype={
 $0(){return A.c4(this.a,!1).ef()},
@@ -87403,7 +87403,7 @@ $0(){return this.a.r=!0},
 $S:0}
 A.aqn.prototype={
 $1(a){var s=null,r=t.p,q=A.ct(A.b([A.f4(B.nE,B.mG,s,28),B.bE,B.GI],r),B.y,B.z,B.w)
-return A.mo(A.b([A.kY(!1,B.i3,s,s,s,s,s,s,new A.aqj(a),s,s)],r),B.XO,q)},
+return A.mo(A.b([A.kY(!1,B.i3,s,s,s,s,s,s,new A.aqj(a),s,s)],r),B.XP,q)},
 $S:34}
 A.aqj.prototype={
 $0(){return A.c4(this.a,!1).ef()},
@@ -91978,19 +91978,19 @@ B.jE=new A.pq(3,"high")
 B.F=new A.N(0,0)
 B.GU=new A.KO(B.F,B.F)
 B.c7=new A.KS(1,"loose")
-B.XV=new A.ay("Subtotal / \u0e22\u0e2d\u0e14\u0e23\u0e27\u0e21",null,null,null,null,null,null,null,null)
-B.GV=new A.hy(1,B.c7,B.XV,null)
+B.XW=new A.ay("Subtotal / \u0e22\u0e2d\u0e14\u0e23\u0e27\u0e21",null,null,null,null,null,null,null,null)
+B.GV=new A.hy(1,B.c7,B.XW,null)
 B.aB=new A.i2(6)
 B.fa=new A.q(!0,null,null,null,null,null,16,B.aB,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.Xt=new A.ay("You Pay Restaurant / \u0e04\u0e38\u0e13\u0e08\u0e48\u0e32\u0e22\u0e23\u0e49\u0e32\u0e19",null,B.fa,null,null,null,null,null,null)
 B.GW=new A.hy(1,B.c7,B.Xt,null)
 B.cB=new A.q(!0,null,null,null,null,null,18,B.aB,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.XX=new A.ay("Customer Pays / \u0e25\u0e39\u0e01\u0e04\u0e49\u0e32\u0e08\u0e48\u0e32\u0e22",null,B.cB,null,null,null,null,null,null)
-B.GX=new A.hy(1,B.c7,B.XX,null)
+B.XY=new A.ay("Customer Pays / \u0e25\u0e39\u0e01\u0e04\u0e49\u0e32\u0e08\u0e48\u0e32\u0e22",null,B.cB,null,null,null,null,null,null)
+B.GX=new A.hy(1,B.c7,B.XY,null)
 B.Yt=new A.ay("You Earned / \u0e04\u0e38\u0e13\u0e44\u0e14\u0e49\u0e23\u0e31\u0e1a",null,null,null,null,null,null,null,null)
 B.GY=new A.hy(1,B.c7,B.Yt,null)
-B.Y9=new A.ay("Delivery Fee / \u0e04\u0e48\u0e32\u0e08\u0e31\u0e14\u0e2a\u0e48\u0e07",null,null,null,null,null,null,null,null)
-B.GZ=new A.hy(1,B.c7,B.Y9,null)
+B.Ya=new A.ay("Delivery Fee / \u0e04\u0e48\u0e32\u0e08\u0e31\u0e14\u0e2a\u0e48\u0e07",null,null,null,null,null,null,null,null)
+B.GZ=new A.hy(1,B.c7,B.Ya,null)
 B.H_=new A.zf(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.nw=new A.zg(0,"Start")
 B.fY=new A.zg(1,"Update")
@@ -92251,8 +92251,8 @@ B.MG=new A.c3([50,B.fz,100,B.D_,200,B.fw,300,B.Fb,400,B.E2,500,B.F4,600,B.mG,700
 B.d1=new A.dH(B.MG,1,0.2980392156862745,0.6862745098039216,0.3137254901960784,B.e)
 B.HX=new A.cS(B.nE,null,B.d1,null,null)
 B.bE=new A.ei(8,null,null,null)
-B.Y0=new A.ay("Sync OK!",null,null,null,null,null,null,null,null)
-B.JQ=A.b(s([B.HX,B.bE,B.Y0]),t.p)
+B.Y1=new A.ay("Sync OK!",null,null,null,null,null,null,null,null)
+B.JQ=A.b(s([B.HX,B.bE,B.Y1]),t.p)
 B.bn=A.b(s([2817806672,1698790995,2752977603,1579629206,1806384075,1167925233,1492823211,65227667,4197458005,1836494326,1993115793,1275262245,3622129660,3408578007,1144333952,2741155215,1521606217,465184103,250234264,3237895649,1966064386,4031545618,2537983395,4191382470,1603208167,2626819477,2054012907,1498584538,2210321453,561273043,1776306473,3368652356,2311222634,2039411832,1045993835,1907959773,1340194486,2911432727,2887829862,986611124,1256153880,823846274,860985184,2136171077,2003087840,2926295940,2692873756,722008468,1749577816,4249194265,1826526343,4168831671,3547573027,38499042,2401231703,2874500650,686535175,3266653955,2076542618,137876389,2267558130,2780767154,1778582202,2182540636,483363371,3027871634,4060607472,3798552225,4107953613,3188000469,1647628575,4272342154,1395537053,1442030240,3783918898,3958809717,3968011065,4016062634,2675006982,275692881,2317434617,115185213,88006062,3185986886,2371129781,1573155077,3557164143,357589247,4221049124,3921532567,1128303052,2665047927,1122545853,2341013384,1528424248,4006115803,175939911,256015593,512030921,0,2256537987,3979031112,1880170156,1918528590,4279172603,948244310,3584965918,959264295,3641641572,2791073825,1415289809,775300154,1728711857,3881276175,2532226258,2442861470,3317727311,551313826,1266113129,437394454,3130253834,715178213,3760340035,387650077,218697227,3347837613,2830511545,2837320904,435246981,125153100,3717852859,1618977789,637663135,4117912764,996558021,2130402100,692292470,3324234716,4243437160,4058298467,3694254026,2237874704,580326208,298222624,608863613,1035719416,855223825,2703869805,798891339,817028339,1384517100,3821107152,380840812,3111168409,1217663482,1693009698,2365368516,1072734234,746411736,2419270383,1313441735,3510163905,2731183358,198481974,2180359887,3732579624,2394413606,3215802276,2637835492,2457358349,3428805275,1182684258,328070850,3101200616,4147719774,2948825845,2153619390,2479909244,768962473,304467891,2578237499,2098729127,1671227502,3141262203,2015808777,408514292,3080383489,2588902312,1855317605,3875515006,3485212936,3893751782,2615655129,913263310,161475284,2091919830,2997105071,591342129,2493892144,1721906624,3159258167,3397581990,3499155632,3634836245,2550460746,3672916471,1355644686,4136703791,3595400845,2968470349,1303039060,76997855,3050413795,2288667675,523026872,1365591679,3932069124,898367837,1955068531,1091304238,493335386,3537605202,1443948851,1205234963,1641519756,211892090,351820174,1007938441,665439982,3378624309,3843875309,2974251580,3755121753,1945261375,3457423481,935818175,3455538154,2868731739,1866325780,3678697606,4088384129,3295197502,874788908,1084473951,3273463410,635616268,1228679307,2500722497,27801969,3003910366,3837057180,3243664528,2227927905,3056784752,1550600308,1471729730]),t.t)
 B.bo=A.b(s([1353184337,1399144830,3282310938,2522752826,3412831035,4047871263,2874735276,2466505547,1442459680,4134368941,2440481928,625738485,4242007375,3620416197,2151953702,2409849525,1230680542,1729870373,2551114309,3787521629,41234371,317738113,2744600205,3338261355,3881799427,2510066197,3950669247,3663286933,763608788,3542185048,694804553,1154009486,1787413109,2021232372,1799248025,3715217703,3058688446,397248752,1722556617,3023752829,407560035,2184256229,1613975959,1165972322,3765920945,2226023355,480281086,2485848313,1483229296,436028815,2272059028,3086515026,601060267,3791801202,1468997603,715871590,120122290,63092015,2591802758,2768779219,4068943920,2997206819,3127509762,1552029421,723308426,2461301159,4042393587,2715969870,3455375973,3586000134,526529745,2331944644,2639474228,2689987490,853641733,1978398372,971801355,2867814464,111112542,1360031421,4186579262,1023860118,2919579357,1186850381,3045938321,90031217,1876166148,4279586912,620468249,2548678102,3426959497,2006899047,3175278768,2290845959,945494503,3689859193,1191869601,3910091388,3374220536,0,2206629897,1223502642,2893025566,1316117100,4227796733,1446544655,517320253,658058550,1691946762,564550760,3511966619,976107044,2976320012,266819475,3533106868,2660342555,1338359936,2720062561,1766553434,370807324,179999714,3844776128,1138762300,488053522,185403662,2915535858,3114841645,3366526484,2233069911,1275557295,3151862254,4250959779,2670068215,3170202204,3309004356,880737115,1982415755,3703972811,1761406390,1676797112,3403428311,277177154,1076008723,538035844,2099530373,4164795346,288553390,1839278535,1261411869,4080055004,3964831245,3504587127,1813426987,2579067049,4199060497,577038663,3297574056,440397984,3626794326,4019204898,3343796615,3251714265,4272081548,906744984,3481400742,685669029,646887386,2764025151,3835509292,227702864,2613862250,1648787028,3256061430,3904428176,1593260334,4121936770,3196083615,2090061929,2838353263,3004310991,999926984,2809993232,1852021992,2075868123,158869197,4095236462,28809964,2828685187,1701746150,2129067946,147831841,3873969647,3650873274,3459673930,3557400554,3598495785,2947720241,824393514,815048134,3227951669,935087732,2798289660,2966458592,366520115,1251476721,4158319681,240176511,804688151,2379631990,1303441219,1414376140,3741619940,3820343710,461924940,3089050817,2136040774,82468509,1563790337,1937016826,776014843,1511876531,1389550482,861278441,323475053,2355222426,2047648055,2383738969,2302415851,3995576782,902390199,3991215329,1018251130,1507840668,1064563285,2043548696,3208103795,3939366739,1537932639,342834655,2262516856,2180231114,1053059257,741614648,1598071746,1925389590,203809468,2336832552,1100287487,1895934009,3736275976,2632234200,2428589668,1636092795,1890988757,1952214088,1113045200]),t.t)
 B.as=new A.eF(0,"icon")
@@ -93823,18 +93823,18 @@ B.S0=new A.ki(3,"hide")
 B.a0T=new A.ki(4,"remove")
 B.zh=new A.ki(5,"timeout")
 B.S1=new A.vi(null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.XQ=new A.ay("Amount copied! / \u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e08\u0e33\u0e19\u0e27\u0e19\u0e41\u0e25\u0e49\u0e27!",null,null,null,null,null,null,null,null)
-B.zi=new A.fb(B.XQ,null,null,null,null,null,null,null,null,null,null,null,null,B.bK,null,null,null,B.H,null)
+B.XR=new A.ay("Amount copied! / \u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e08\u0e33\u0e19\u0e27\u0e19\u0e41\u0e25\u0e49\u0e27!",null,null,null,null,null,null,null,null)
+B.zi=new A.fb(B.XR,null,null,null,null,null,null,null,null,null,null,null,null,B.bK,null,null,null,B.H,null)
 B.Yq=new A.ay("No option selected / \u0e22\u0e31\u0e07\u0e44\u0e21\u0e48\u0e44\u0e14\u0e49\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e15\u0e31\u0e27\u0e40\u0e25\u0e37\u0e2d\u0e01",null,null,null,null,null,null,null,null)
 B.zj=new A.fb(B.Yq,null,null,null,null,null,null,null,null,null,null,null,null,B.bK,null,null,null,B.H,null)
-B.XS=new A.ay("Receipt copied to clipboard! Paste in LINE.\n\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e43\u0e1a\u0e40\u0e2a\u0e23\u0e47\u0e08\u0e41\u0e25\u0e49\u0e27! \u0e27\u0e32\u0e07\u0e43\u0e19 LINE",null,null,null,null,null,null,null,null)
-B.S2=new A.fb(B.XS,null,null,null,null,null,null,null,null,null,null,null,null,B.jk,null,null,null,B.H,null)
+B.XT=new A.ay("Receipt copied to clipboard! Paste in LINE.\n\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e43\u0e1a\u0e40\u0e2a\u0e23\u0e47\u0e08\u0e41\u0e25\u0e49\u0e27! \u0e27\u0e32\u0e07\u0e43\u0e19 LINE",null,null,null,null,null,null,null,null)
+B.S2=new A.fb(B.XT,null,null,null,null,null,null,null,null,null,null,null,null,B.jk,null,null,null,B.H,null)
 B.Xw=new A.ay("No Sheet ID entered",null,null,null,null,null,null,null,null)
 B.S3=new A.fb(B.Xw,null,null,null,null,null,null,null,null,null,null,null,null,B.n2,null,null,null,B.H,null)
 B.YB=new A.ay("Account number copied! / \u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e41\u0e25\u0e49\u0e27!",null,null,null,null,null,null,null,null)
 B.S4=new A.fb(B.YB,null,null,null,null,null,null,null,null,null,null,null,null,B.bK,null,null,null,B.H,null)
-B.Yl=new A.ay("Wrong password",null,null,null,null,null,null,null,null)
-B.S5=new A.fb(B.Yl,null,null,null,null,null,null,null,null,null,null,null,null,B.bK,null,null,null,B.H,null)
+B.Ym=new A.ay("Wrong password",null,null,null,null,null,null,null,null)
+B.S5=new A.fb(B.Ym,null,null,null,null,null,null,null,null,null,null,null,null,B.bK,null,null,null,B.H,null)
 B.Yr=new A.ay("Order cancelled / \u0e22\u0e01\u0e40\u0e25\u0e34\u0e01\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c\u0e41\u0e25\u0e49\u0e27",null,null,null,null,null,null,null,null)
 B.S6=new A.fb(B.Yr,null,null,null,null,null,null,null,null,null,null,null,null,B.bK,null,null,null,B.H,null)
 B.XC=new A.ay("Order copied to clipboard! Paste in LINE.\n\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e41\u0e25\u0e49\u0e27! \u0e27\u0e32\u0e07\u0e43\u0e19 LINE",null,null,null,null,null,null,null,null)
@@ -94230,46 +94230,46 @@ B.XH=new A.ay("+ Add / \u0e40\u0e1e\u0e34\u0e48\u0e21",null,null,null,null,null,
 B.XJ=new A.ay("Customer Name / \u0e0a\u0e37\u0e48\u0e2d\u0e25\u0e39\u0e01\u0e04\u0e49\u0e32",null,B.fa,null,null,null,null,null,null)
 B.XK=new A.ay("Details Sent!\n\u0e2a\u0e48\u0e07\u0e23\u0e32\u0e22\u0e25\u0e30\u0e40\u0e2d\u0e35\u0e22\u0e14\u0e41\u0e25\u0e49\u0e27!",null,null,null,null,null,null,null,null)
 B.zK=new A.ay("Payment / \u0e01\u0e32\u0e23\u0e0a\u0e33\u0e23\u0e30\u0e40\u0e07\u0e34\u0e19",null,B.cB,null,null,null,null,null,null)
-B.XN=new A.ay("Please Enter Your Name\n\u0e01\u0e23\u0e38\u0e13\u0e32\u0e43\u0e2a\u0e48\u0e0a\u0e37\u0e48\u0e2d\u0e02\u0e2d\u0e07\u0e04\u0e38\u0e13",null,B.i2,B.ad,null,null,null,null,null)
+B.XN=new A.ay("Copy ID",null,null,null,null,null,null,null,null)
+B.XO=new A.ay("Please Enter Your Name\n\u0e01\u0e23\u0e38\u0e13\u0e32\u0e43\u0e2a\u0e48\u0e0a\u0e37\u0e48\u0e2d\u0e02\u0e2d\u0e07\u0e04\u0e38\u0e13",null,B.i2,B.ad,null,null,null,null,null)
 B.zL=new A.ay("Transfer to / \u0e42\u0e2d\u0e19\u0e40\u0e07\u0e34\u0e19\u0e44\u0e1b\u0e17\u0e35\u0e48",null,B.fa,null,null,null,null,null,null)
-B.XO=new A.ay("Your payment has been sent. The app will be restored within 12 hours.\n\n\u0e2a\u0e48\u0e07\u0e01\u0e32\u0e23\u0e0a\u0e33\u0e23\u0e30\u0e40\u0e07\u0e34\u0e19\u0e41\u0e25\u0e49\u0e27 \u0e41\u0e2d\u0e1b\u0e08\u0e30\u0e01\u0e25\u0e31\u0e1a\u0e21\u0e32\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19\u0e44\u0e14\u0e49\u0e20\u0e32\u0e22\u0e43\u0e19 12 \u0e0a\u0e31\u0e48\u0e27\u0e42\u0e21\u0e07",null,null,null,null,null,null,null,null)
-B.XP=new A.ay(u.r,null,B.zD,B.ad,null,null,null,null,null)
+B.XP=new A.ay("Your payment has been sent. The app will be restored within 12 hours.\n\n\u0e2a\u0e48\u0e07\u0e01\u0e32\u0e23\u0e0a\u0e33\u0e23\u0e30\u0e40\u0e07\u0e34\u0e19\u0e41\u0e25\u0e49\u0e27 \u0e41\u0e2d\u0e1b\u0e08\u0e30\u0e01\u0e25\u0e31\u0e1a\u0e21\u0e32\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19\u0e44\u0e14\u0e49\u0e20\u0e32\u0e22\u0e43\u0e19 12 \u0e0a\u0e31\u0e48\u0e27\u0e42\u0e21\u0e07",null,null,null,null,null,null,null,null)
+B.XQ=new A.ay(u.r,null,B.zD,B.ad,null,null,null,null,null)
 B.Vm=new A.q(!0,B.K,null,null,null,null,13,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.XR=new A.ay(u.r,null,B.Vm,B.ad,null,null,null,null,null)
-B.XT=new A.ay("Cancel Order\n\u0e22\u0e01\u0e40\u0e25\u0e34\u0e01\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c",null,B.e0,B.ad,null,null,null,null,null)
-B.XU=new A.ay("Pickup or Delivery? / \u0e23\u0e31\u0e1a\u0e40\u0e2d\u0e07\u0e2b\u0e23\u0e37\u0e2d\u0e08\u0e31\u0e14\u0e2a\u0e48\u0e07?",null,B.fa,null,null,null,null,null,null)
-B.XW=new A.ay("Open Sheet",null,null,null,null,null,null,null,null)
-B.XY=new A.ay("Send Renewal Receipt\n\u0e2a\u0e48\u0e07\u0e43\u0e1a\u0e40\u0e2a\u0e23\u0e47\u0e08\u0e15\u0e48\u0e2d\u0e2d\u0e32\u0e22\u0e38",null,B.kX,B.ad,null,null,null,null,null)
-B.XZ=new A.ay("Sync Result",null,null,null,null,null,null,null,null)
+B.XS=new A.ay(u.r,null,B.Vm,B.ad,null,null,null,null,null)
+B.XU=new A.ay("Cancel Order\n\u0e22\u0e01\u0e40\u0e25\u0e34\u0e01\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c",null,B.e0,B.ad,null,null,null,null,null)
+B.XV=new A.ay("Pickup or Delivery? / \u0e23\u0e31\u0e1a\u0e40\u0e2d\u0e07\u0e2b\u0e23\u0e37\u0e2d\u0e08\u0e31\u0e14\u0e2a\u0e48\u0e07?",null,B.fa,null,null,null,null,null,null)
+B.XX=new A.ay("Open Sheet",null,null,null,null,null,null,null,null)
+B.XZ=new A.ay("Send Renewal Receipt\n\u0e2a\u0e48\u0e07\u0e43\u0e1a\u0e40\u0e2a\u0e23\u0e47\u0e08\u0e15\u0e48\u0e2d\u0e2d\u0e32\u0e22\u0e38",null,B.kX,B.ad,null,null,null,null,null)
+B.Y_=new A.ay("Sync Result",null,null,null,null,null,null,null,null)
 B.zM=new A.ay("Cancel",null,null,null,null,null,null,null,null)
-B.Y_=new A.ay("Later / \u0e20\u0e32\u0e22\u0e2b\u0e25\u0e31\u0e07",null,null,null,null,null,null,null,null)
+B.Y0=new A.ay("Later / \u0e20\u0e32\u0e22\u0e2b\u0e25\u0e31\u0e07",null,null,null,null,null,null,null,null)
 B.Wh=new A.q(!0,B.K,null,null,null,null,16,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.Y1=new A.ay("We are not open today.\n\u0e27\u0e31\u0e19\u0e19\u0e35\u0e49\u0e44\u0e21\u0e48\u0e40\u0e1b\u0e34\u0e14\u0e17\u0e33\u0e01\u0e32\u0e23",null,B.Wh,B.ad,null,null,null,null,null)
-B.Y2=new A.ay("Renew Now / \u0e15\u0e48\u0e2d\u0e2d\u0e32\u0e22\u0e38",null,null,null,null,null,null,null,null)
-B.Y3=new A.ay("Continue to App / \u0e40\u0e02\u0e49\u0e32\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19\u0e15\u0e48\u0e2d",null,B.i2,null,null,null,null,null,null)
+B.Y2=new A.ay("We are not open today.\n\u0e27\u0e31\u0e19\u0e19\u0e35\u0e49\u0e44\u0e21\u0e48\u0e40\u0e1b\u0e34\u0e14\u0e17\u0e33\u0e01\u0e32\u0e23",null,B.Wh,B.ad,null,null,null,null,null)
+B.Y3=new A.ay("Renew Now / \u0e15\u0e48\u0e2d\u0e2d\u0e32\u0e22\u0e38",null,null,null,null,null,null,null,null)
+B.Y4=new A.ay("Continue to App / \u0e40\u0e02\u0e49\u0e32\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19\u0e15\u0e48\u0e2d",null,B.i2,null,null,null,null,null,null)
 B.Uk=new A.q(!0,B.dG,null,null,null,null,13,null,null,null,null,null,1.4,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.Y4=new A.ay("The restaurant chat will open in LINE with the order text copied. Paste the message and send.\n\u0e41\u0e0a\u0e17\u0e23\u0e49\u0e32\u0e19\u0e2d\u0e32\u0e2b\u0e32\u0e23\u0e08\u0e30\u0e40\u0e1b\u0e34\u0e14\u0e43\u0e19 LINE \u0e1e\u0e23\u0e49\u0e2d\u0e21\u0e02\u0e49\u0e2d\u0e04\u0e27\u0e32\u0e21\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c\u0e17\u0e35\u0e48\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01 \u0e27\u0e32\u0e07\u0e02\u0e49\u0e2d\u0e04\u0e27\u0e32\u0e21\u0e41\u0e25\u0e49\u0e27\u0e2a\u0e48\u0e07",null,B.Uk,B.ad,null,null,null,null,null)
-B.Y5=new A.ay("Return to Menu / \u0e01\u0e25\u0e31\u0e1a\u0e44\u0e1b\u0e40\u0e21\u0e19\u0e39",null,B.kX,null,null,null,null,null,null)
+B.Y5=new A.ay("The restaurant chat will open in LINE with the order text copied. Paste the message and send.\n\u0e41\u0e0a\u0e17\u0e23\u0e49\u0e32\u0e19\u0e2d\u0e32\u0e2b\u0e32\u0e23\u0e08\u0e30\u0e40\u0e1b\u0e34\u0e14\u0e43\u0e19 LINE \u0e1e\u0e23\u0e49\u0e2d\u0e21\u0e02\u0e49\u0e2d\u0e04\u0e27\u0e32\u0e21\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c\u0e17\u0e35\u0e48\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01 \u0e27\u0e32\u0e07\u0e02\u0e49\u0e2d\u0e04\u0e27\u0e32\u0e21\u0e41\u0e25\u0e49\u0e27\u0e2a\u0e48\u0e07",null,B.Uk,B.ad,null,null,null,null,null)
+B.Y6=new A.ay("Return to Menu / \u0e01\u0e25\u0e31\u0e1a\u0e44\u0e1b\u0e40\u0e21\u0e19\u0e39",null,B.kX,null,null,null,null,null,null)
 B.zI=new A.q(!0,B.cu,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.Y6=new A.ay("Remove / \u0e25\u0e1a",null,B.zI,null,null,null,null,null,null)
+B.Y7=new A.ay("Remove / \u0e25\u0e1a",null,B.zI,null,null,null,null,null,null)
 B.WZ=new A.q(!0,null,null,null,null,null,20,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.Y7=new A.ay("New Order / \u0e2a\u0e31\u0e48\u0e07\u0e2d\u0e32\u0e2b\u0e32\u0e23",null,B.WZ,null,null,null,null,null,null)
-B.Y8=new A.ay("Clear all items from the cart?\n\u0e25\u0e49\u0e32\u0e07\u0e23\u0e32\u0e22\u0e01\u0e32\u0e23\u0e17\u0e31\u0e49\u0e07\u0e2b\u0e21\u0e14?",null,null,null,null,null,null,null,null)
-B.Ya=new A.ay("Admin / \u0e15\u0e31\u0e49\u0e07\u0e04\u0e48\u0e32",null,null,null,null,null,null,null,null)
-B.Yb=new A.ay("Delivery Fee / \u0e04\u0e48\u0e32\u0e08\u0e31\u0e14\u0e2a\u0e48\u0e07",null,B.kY,null,null,null,null,null,null)
+B.Y8=new A.ay("New Order / \u0e2a\u0e31\u0e48\u0e07\u0e2d\u0e32\u0e2b\u0e32\u0e23",null,B.WZ,null,null,null,null,null,null)
+B.Y9=new A.ay("Clear all items from the cart?\n\u0e25\u0e49\u0e32\u0e07\u0e23\u0e32\u0e22\u0e01\u0e32\u0e23\u0e17\u0e31\u0e49\u0e07\u0e2b\u0e21\u0e14?",null,null,null,null,null,null,null,null)
+B.Yb=new A.ay("Admin / \u0e15\u0e31\u0e49\u0e07\u0e04\u0e48\u0e32",null,null,null,null,null,null,null,null)
+B.Yc=new A.ay("Delivery Fee / \u0e04\u0e48\u0e32\u0e08\u0e31\u0e14\u0e2a\u0e48\u0e07",null,B.kY,null,null,null,null,null,null)
 B.WU=new A.q(!0,B.j,null,null,null,null,14,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.Yc=new A.ay("Cancel Order / \u0e22\u0e01\u0e40\u0e25\u0e34\u0e01\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c",null,B.WU,null,null,null,null,null,null)
-B.Yd=new A.ay("Yes / \u0e43\u0e0a\u0e48",null,B.zI,null,null,null,null,null,null)
-B.Ye=new A.ay("Done / \u0e40\u0e2a\u0e23\u0e47\u0e08",null,null,null,null,null,null,null,null)
-B.Yf=new A.ay("Save and Exit Settings",null,B.i2,null,null,null,null,null,null)
+B.Yd=new A.ay("Cancel Order / \u0e22\u0e01\u0e40\u0e25\u0e34\u0e01\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c",null,B.WU,null,null,null,null,null,null)
+B.Ye=new A.ay("Yes / \u0e43\u0e0a\u0e48",null,B.zI,null,null,null,null,null,null)
+B.Yf=new A.ay("Done / \u0e40\u0e2a\u0e23\u0e47\u0e08",null,null,null,null,null,null,null,null)
+B.Yg=new A.ay("Save and Exit Settings",null,B.i2,null,null,null,null,null,null)
 B.zN=new A.ay("Copy Amt",null,null,null,null,null,null,null,null)
-B.Yg=new A.ay("Gallery / \u0e41\u0e01\u0e25\u0e40\u0e25\u0e2d\u0e23\u0e35",null,null,null,null,null,null,null,null)
+B.Yh=new A.ay("Gallery / \u0e41\u0e01\u0e25\u0e40\u0e25\u0e2d\u0e23\u0e35",null,null,null,null,null,null,null,null)
 B.i1=new A.q(!0,B.dG,null,null,null,null,12,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.Yh=new A.ay("Load payment slip from gallery or take a photo with camera.\n\u0e42\u0e2b\u0e25\u0e14\u0e2a\u0e25\u0e34\u0e1b\u0e08\u0e32\u0e01\u0e41\u0e01\u0e25\u0e40\u0e25\u0e2d\u0e23\u0e35\u0e2b\u0e23\u0e37\u0e2d\u0e16\u0e48\u0e32\u0e22\u0e23\u0e39\u0e1b\u0e14\u0e49\u0e27\u0e22\u0e01\u0e25\u0e49\u0e2d\u0e07",null,B.i1,null,null,null,null,null,null)
-B.Yi=new A.ay("Admin Access",null,null,null,null,null,null,null,null)
-B.Yj=new A.ay("Name for this order only / \u0e0a\u0e37\u0e48\u0e2d\u0e2a\u0e33\u0e2b\u0e23\u0e31\u0e1a\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c\u0e19\u0e35\u0e49\u0e40\u0e17\u0e48\u0e32\u0e19\u0e31\u0e49\u0e19",null,B.i1,null,null,null,null,null,null)
-B.Yk=new A.ay("Google Sheet Sync",null,B.kY,null,null,null,null,null,null)
-B.Ym=new A.ay("Copy PromptPay ID",null,null,null,null,null,null,null,null)
+B.Yi=new A.ay("Load payment slip from gallery or take a photo with camera.\n\u0e42\u0e2b\u0e25\u0e14\u0e2a\u0e25\u0e34\u0e1b\u0e08\u0e32\u0e01\u0e41\u0e01\u0e25\u0e40\u0e25\u0e2d\u0e23\u0e35\u0e2b\u0e23\u0e37\u0e2d\u0e16\u0e48\u0e32\u0e22\u0e23\u0e39\u0e1b\u0e14\u0e49\u0e27\u0e22\u0e01\u0e25\u0e49\u0e2d\u0e07",null,B.i1,null,null,null,null,null,null)
+B.Yj=new A.ay("Admin Access",null,null,null,null,null,null,null,null)
+B.Yk=new A.ay("Name for this order only / \u0e0a\u0e37\u0e48\u0e2d\u0e2a\u0e33\u0e2b\u0e23\u0e31\u0e1a\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c\u0e19\u0e35\u0e49\u0e40\u0e17\u0e48\u0e32\u0e19\u0e31\u0e49\u0e19",null,B.i1,null,null,null,null,null,null)
+B.Yl=new A.ay("Google Sheet Sync",null,B.kY,null,null,null,null,null,null)
 B.Yn=new A.ay("Copy Acct",null,null,null,null,null,null,null,null)
 B.Yo=new A.ay('Enter your Google Sheet ID to sync menu, options, categories and discounts.\nThe sheet must be shared as "Anyone with the link can view".',null,B.i1,null,null,null,null,null,null)
 B.Yp=new A.ay("Set a delivery fee for your customers. Leave empty or 0 for no delivery fee.\nThe delivery fee is added to the customer total but does NOT affect the discount or what you pay the shop.",null,B.i1,null,null,null,null,null,null)
