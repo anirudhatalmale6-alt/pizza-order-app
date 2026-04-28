@@ -403,6 +403,15 @@ class GoogleSheetService {
     return double.tryParse(val?.toString() ?? '') ?? 0;
   }
 
+  static int _parseHour(String value) {
+    if (value.contains(':')) {
+      return int.tryParse(value.split(':').first) ?? -1;
+    }
+    final n = int.tryParse(value) ?? -1;
+    if (n > 23) return -1;
+    return n;
+  }
+
   static bool _bool(dynamic val, [bool fallback = false]) {
     if (val is bool) return val;
     final s = val?.toString().trim().toLowerCase() ?? '';
@@ -436,9 +445,9 @@ class GoogleSheetService {
     } else if (_promptPayKeys.contains(key)) {
       result['promptpay'] = value;
     } else if (_openHourKeys.contains(key)) {
-      result['open_hour'] = int.tryParse(value) ?? -1;
+      result['open_hour'] = _parseHour(value);
     } else if (_closeHourKeys.contains(key)) {
-      result['close_hour'] = int.tryParse(value) ?? -1;
+      result['close_hour'] = _parseHour(value);
     } else if (_deliveryKeys.contains(key)) {
       result['delivery'] = _bool(value);
     } else if (_discountKeys.contains(key)) {
