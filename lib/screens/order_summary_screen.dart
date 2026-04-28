@@ -711,42 +711,40 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                           color: Colors.deepOrange),
                     ),
                     const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            icon: const Icon(Icons.copy, size: 14),
-                            label: const Text('Copy PromptPay ID', style: TextStyle(fontSize: 11)),
-                            onPressed: () {
-                              Clipboard.setData(
-                                  ClipboardData(text: effectivePromptPay));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Account number copied! / คัดลอกแล้ว!'),
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            icon: const Icon(Icons.copy, size: 14),
-                            label: const Text('Copy Amt', style: TextStyle(fontSize: 11)),
-                            onPressed: () {
-                              Clipboard.setData(ClipboardData(
-                                  text: _calcCustomerTotal().toInt().toString()));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        icon: const Icon(Icons.copy, size: 16),
+                        label: const Text('Copy PromptPay ID'),
+                        onPressed: () {
+                          Clipboard.setData(
+                              ClipboardData(text: effectivePromptPay));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Account number copied! / คัดลอกแล้ว!'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        icon: const Icon(Icons.copy, size: 16),
+                        label: const Text('Copy Amount'),
+                        onPressed: () {
+                          Clipboard.setData(ClipboardData(
+                              text: _calcCustomerTotal().toInt().toString()));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
