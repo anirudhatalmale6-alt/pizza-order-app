@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -22,7 +23,6 @@ class OrderSummaryScreen extends StatefulWidget {
 
 class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   String _orderType = 'pickup';
-  int? _selectedHour;
   final _guestNameCtrl = TextEditingController();
   bool _confirmationSent = false;
 
@@ -44,14 +44,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final menu = context.read<MenuProvider>();
     final profile = context.read<ProfileProvider>();
     return menu.offersDelivery ?? profile.offersDelivery;
-  }
-
-  List<int> _effectiveHours() {
-    final menu = context.read<MenuProvider>();
-    final profile = context.read<ProfileProvider>();
-    final open = menu.openHour >= 0 ? menu.openHour : profile.openHour;
-    final close = menu.closeHour >= 0 ? menu.closeHour : profile.closeHour;
-    return List.generate(close - open + 1, (i) => open + i);
   }
 
   double _calcTotalDiscount() {
@@ -105,11 +97,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           ? 'Pickup / รับเอง'
           : 'Delivery / จัดส่ง';
       sb.writeln('Type / ประเภท: $typeText');
-    }
-    if (_selectedHour != null) {
-      final period = _selectedHour! < 12 ? 'AM' : 'PM';
-      final display12 = _selectedHour! > 12 ? _selectedHour! - 12 : _selectedHour!;
-      sb.writeln('Time / เวลา: ${display12}:00 $period ($_selectedHour:00)');
     }
     sb.writeln();
     sb.writeln('Your Order / รายการ:');
@@ -167,11 +154,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           : 'Delivery / จัดส่ง';
       sb.writeln('Type / ประเภท: $typeText');
     }
-    if (_selectedHour != null) {
-      final period = _selectedHour! < 12 ? 'AM' : 'PM';
-      final display12 = _selectedHour! > 12 ? _selectedHour! - 12 : _selectedHour!;
-      sb.writeln('Time / เวลา: ${display12}:00 $period ($_selectedHour:00)');
-    }
     sb.writeln();
 
     sb.writeln('Your Order / รายการ:');
@@ -213,11 +195,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final lineLink = menu.lineLink.isNotEmpty ? menu.lineLink : profile.lineDeepLink;
 
     if (lineLink.isNotEmpty) {
-      final encoded = Uri.encodeComponent(text);
-      final launched = await launchUrl(Uri.parse('line://msg/text/$encoded'), mode: LaunchMode.externalApplication);
-      if (!launched) {
-        await launchUrl(Uri.parse('https://line.me/R/share?text=$encoded'), mode: LaunchMode.externalApplication);
-      }
+      await launchUrl(Uri.parse(lineLink), mode: LaunchMode.externalApplication);
     } else {
       try {
         await Share.share(text);
@@ -382,55 +360,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   ),
                   const SizedBox(height: 16),
                 ],
-                const Text('What time? / เวลาไหน?',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: _effectiveHours().map((hour) {
-                    final isSelected = _selectedHour == hour;
-                    final period = hour < 12 ? 'AM' : 'PM';
-                    final display12 = hour > 12 ? hour - 12 : hour;
-                    return GestureDetector(
-                      onTap: () => setState(() => _selectedHour = hour),
-                      child: Container(
-                        width: 90,
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        decoration: BoxDecoration(
-                          color: isSelected ? Colors.deepOrange : Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: isSelected
-                                ? Colors.deepOrange
-                                : Colors.grey.shade400,
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              '$display12 $period',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: isSelected ? Colors.white : Colors.black,
-                              ),
-                            ),
-                            Text(
-                              '$hour:00',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: isSelected
-                                    ? Colors.white70
-                                    : Colors.grey.shade600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
               ],
             ),
           ),
@@ -663,8 +592,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           // Send order for confirmation
           const Text(
-            'LINE will open with the order text ready to send. Choose the restaurant chat and tap Send.\n'
-            'LINE จะเปิดพร้อมข้อความออเดอร์ เลือกแชทร้านแล้วกดส่ง',
+            'The restaurant chat will open in LINE with the order text copied. Paste the message and send.\n'
+            'แชทร้านอาหารจะเปิดใน LINE พร้อมข้อความออเดอร์ที่คัดลอก วางข้อความแล้วส่ง',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 13, color: Colors.grey, height: 1.4),
           ),
@@ -767,7 +696,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                         Expanded(
                           child: OutlinedButton.icon(
                             icon: const Icon(Icons.copy, size: 16),
-                            label: const Text('Copy Acct'),
+                            label: const Text('Copy PromptPay ID'),
                             onPressed: () {
                               Clipboard.setData(
                                   ClipboardData(text: effectivePromptPay));
@@ -834,8 +763,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
                 const Text(
-                  'After you have paid, click the GREEN button below and when LINE opens attach the payment slip image from your Gallery and send the message.\n\n'
-                  'หลังจากชำระเงินแล้ว กดปุ่มสีเขียวด้านล่าง เมื่อ LINE เปิดขึ้นมา ให้แนบรูปสลิปจากแกลเลอรีแล้วส่งข้อความ',
+                  'After you have paid, tap the GREEN button below. The payment message will be sent via LINE. After sending, stay in LINE and tap + in the same chat to attach your payment slip image from Gallery.\n\n'
+                  'หลังจากชำระเงินแล้ว กดปุ่มสีเขียวด้านล่าง ข้อความจะถูกส่งผ่าน LINE หลังส่งแล้วอยู่ใน LINE กด + ในแชทเดิมเพื่อแนบรูปสลิปจากแกลเลอรี',
                   style: TextStyle(fontSize: 13, height: 1.4),
                 ),
                 Builder(builder: (context) {
@@ -850,21 +779,29 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       height: 48,
                       child: ElevatedButton.icon(
                         onPressed: () async {
-                          final sellerName = menu.restaurantName.isNotEmpty
+                          final restaurant = menu.restaurantName.isNotEmpty
                               ? menu.restaurantName
                               : profile.appName;
-                          final slipText = Uri.encodeComponent(
-                            'Payment slip for $sellerName\n'
-                            'สลิปการชำระเงินสำหรับ $sellerName');
+                          final seller = profile.sellerName.isNotEmpty
+                              ? profile.sellerName
+                              : '';
+                          final slipText = seller.isNotEmpty
+                            ? 'Payment slip from $seller for $restaurant\n'
+                              'สลิปการชำระเงินจาก $seller สำหรับ $restaurant'
+                            : 'Payment slip for $restaurant\n'
+                              'สลิปการชำระเงินสำหรับ $restaurant';
+                          final encoded = Uri.encodeComponent(slipText);
                           await context.read<CartProvider>().clear();
                           context.read<ProfileProvider>().clearSelection();
                           final launched = await launchUrl(
-                              Uri.parse('line://msg/text/$slipText'),
+                              Uri.parse('line://msg/text/$encoded'),
                               mode: LaunchMode.externalApplication);
                           if (!launched) {
-                            await launchUrl(Uri.parse(effectiveLineLink),
+                            await launchUrl(
+                                Uri.parse('https://line.me/R/share?text=$encoded'),
                                 mode: LaunchMode.externalApplication);
                           }
+                          await Future.delayed(const Duration(seconds: 2));
                           if (context.mounted) {
                             Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(builder: (_) => const ProfileScreen()),
@@ -873,8 +810,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                           }
                         },
                         icon: const Icon(Icons.chat_bubble, size: 20),
-                        label: Text('Open ${profile.appName} on LINE',
-                            style: const TextStyle(fontSize: 14)),
+                        label: const Text('Send Payment Message via LINE',
+                            style: TextStyle(fontSize: 14)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF06C755),
                           foregroundColor: Colors.white,

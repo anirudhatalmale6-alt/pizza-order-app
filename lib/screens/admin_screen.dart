@@ -56,18 +56,7 @@ class _SettingsTabState extends State<_SettingsTab> {
   late TextEditingController _sheetIdCtrl;
   late TextEditingController _appNameCtrl;
   late TextEditingController _sellerNameCtrl;
-  late int _openHour;
-  late int _closeHour;
   bool _syncing = false;
-
-  static const _allHours = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
-
-  String _hourLabel(int h) {
-    if (h == 0) return '12 AM';
-    if (h < 12) return '$h AM';
-    if (h == 12) return '12 PM';
-    return '${h - 12} PM';
-  }
 
   @override
   void initState() {
@@ -77,8 +66,6 @@ class _SettingsTabState extends State<_SettingsTab> {
     _sheetIdCtrl = TextEditingController(text: menu.sheetId);
     _appNameCtrl = TextEditingController(text: profile.appName);
     _sellerNameCtrl = TextEditingController(text: profile.sellerName);
-    _openHour = profile.openHour;
-    _closeHour = profile.closeHour;
   }
 
   @override
@@ -233,79 +220,6 @@ class _SettingsTabState extends State<_SettingsTab> {
           ],
         ),
 
-        const SizedBox(height: 32),
-
-        // Opening Hours
-        const Text('Opening Hours', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        const Text('Set the hours customers can choose for pickup/delivery',
-            style: TextStyle(color: Colors.grey, fontSize: 12)),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Open', style: TextStyle(fontWeight: FontWeight.w500)),
-                  const SizedBox(height: 4),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade400),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<int>(
-                        value: _openHour,
-                        isExpanded: true,
-                        items: _allHours
-                            .where((h) => h < _closeHour)
-                            .map((h) => DropdownMenuItem(value: h, child: Text(_hourLabel(h))))
-                            .toList(),
-                        onChanged: (v) => setState(() => _openHour = v!),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Close', style: TextStyle(fontWeight: FontWeight.w500)),
-                  const SizedBox(height: 4),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade400),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<int>(
-                        value: _closeHour,
-                        isExpanded: true,
-                        items: _allHours
-                            .where((h) => h > _openHour)
-                            .map((h) => DropdownMenuItem(value: h, child: Text(_hourLabel(h))))
-                            .toList(),
-                        onChanged: (v) => setState(() => _closeHour = v!),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Hours shown to customers: ${_hourLabel(_openHour)} - ${_hourLabel(_closeHour)}',
-          style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
-        ),
-
         const SizedBox(height: 16),
       ],
     );
@@ -316,7 +230,6 @@ class _SettingsTabState extends State<_SettingsTab> {
     final menu = context.read<MenuProvider>();
     await profile.saveSellerName(_sellerNameCtrl.text.trim());
     await profile.saveAppName(_appNameCtrl.text.trim());
-    await profile.saveOpeningHours(_openHour, _closeHour);
     await menu.saveSheetId(_sheetIdCtrl.text.trim());
   }
 }

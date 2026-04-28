@@ -171,16 +171,10 @@ class _MenuScreenState extends State<MenuScreen> {
         ],
       ),
       body: Builder(builder: (context) {
-        final now = DateTime.now();
-        final currentHour = now.hour;
         final isClosedDay = !menu.isOpenToday;
-        final effectiveOpen = menu.openHour >= 0 ? menu.openHour : profile.openHour;
-        final effectiveClose = menu.closeHour >= 0 ? menu.closeHour : profile.closeHour;
-        final isOutsideHours = currentHour < effectiveOpen || currentHour >= effectiveClose;
-        final isClosed = isClosedDay || isOutsideHours;
         final displayName = menu.restaurantName.isNotEmpty ? menu.restaurantName : profile.appName;
 
-        if (isClosed) {
+        if (isClosedDay) {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(32),
@@ -190,23 +184,16 @@ class _MenuScreenState extends State<MenuScreen> {
                   Icon(Icons.store, size: 80, color: Colors.grey.shade400),
                   const SizedBox(height: 24),
                   Text(
-                    'Sorry, $displayName is closed now.\nขออภัย $displayName ปิดแล้ว',
+                    'Sorry, $displayName is closed today.\nขออภัย $displayName ปิดวันนี้',
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  if (isClosedDay)
-                    const Text(
-                      'We are not open today.\nวันนี้ไม่เปิดทำการ',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16, color: Colors.black54),
-                    )
-                  else
-                    Text(
-                      'Opening hours: $effectiveOpen:00 - $effectiveClose:00\nเวลาเปิด: $effectiveOpen:00 - $effectiveClose:00',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 16, color: Colors.black54),
-                    ),
+                  const Text(
+                    'We are not open today.\nวันนี้ไม่เปิดทำการ',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Colors.black54),
+                  ),
                 ],
               ),
             ),
