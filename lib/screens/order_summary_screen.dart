@@ -123,21 +123,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
     sb.writeln();
     final subtotal = cart.subtotal;
-    final discountAmt = _calcTotalDiscount();
-    final deliveryFee = _effectiveDeliveryFee();
-    final customerTotal = _calcCustomerTotal();
-    if (discountAmt > 0 || deliveryFee > 0) {
-      sb.writeln('Subtotal / ยอดรวม: ${_fmt(subtotal)} THB');
-      if (deliveryFee > 0) {
-        sb.writeln('Delivery Fee / ค่าจัดส่ง: ${_fmt(deliveryFee)} THB');
-      }
-      if (discountAmt > 0) {
-        sb.writeln('Discount / ส่วนลด: -${_fmt(discountAmt)} THB');
-      }
-      sb.writeln('Total / ยอดสุทธิ: ${_fmt(customerTotal)} THB');
-    } else {
-      sb.writeln('Total / ยอดรวม: ${_fmt(subtotal)} THB');
-    }
+    sb.writeln('Total / ยอดรวม: ${_fmt(subtotal)} THB');
     sb.writeln();
     sb.writeln('ชำระโดย / Payment via PromptPay');
     sb.writeln('เวลา / Time: $now');
@@ -181,21 +167,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     }
     sb.writeln();
     final subtotal = cart.subtotal;
-    final discountAmt2 = _calcTotalDiscount();
-    final deliveryFee2 = _effectiveDeliveryFee();
-    final customerTotal2 = _calcCustomerTotal();
-    if (discountAmt2 > 0 || deliveryFee2 > 0) {
-      sb.writeln('Subtotal / ยอดรวม: ${_fmt(subtotal)} THB');
-      if (deliveryFee2 > 0) {
-        sb.writeln('Delivery Fee / ค่าจัดส่ง: ${_fmt(deliveryFee2)} THB');
-      }
-      if (discountAmt2 > 0) {
-        sb.writeln('Discount / ส่วนลด: -${_fmt(discountAmt2)} THB');
-      }
-      sb.writeln('Total / รวม: ${_fmt(customerTotal2)} THB');
-    } else {
-      sb.writeln('Total / รวม: ${_fmt(subtotal)} THB');
-    }
+    sb.writeln('Total / รวม: ${_fmt(subtotal)} THB');
     sb.writeln('================================');
     sb.writeln('Please confirm this order is OK');
     sb.writeln('กรุณายืนยันว่าออเดอร์ถูกต้อง');
