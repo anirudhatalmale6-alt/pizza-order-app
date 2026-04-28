@@ -56,6 +56,7 @@ class _SettingsTabState extends State<_SettingsTab> {
   late TextEditingController _sheetIdCtrl;
   late TextEditingController _appNameCtrl;
   late TextEditingController _sellerNameCtrl;
+  late TextEditingController _deliveryFeeCtrl;
   bool _syncing = false;
 
   @override
@@ -66,6 +67,9 @@ class _SettingsTabState extends State<_SettingsTab> {
     _sheetIdCtrl = TextEditingController(text: menu.sheetId);
     _appNameCtrl = TextEditingController(text: profile.appName);
     _sellerNameCtrl = TextEditingController(text: profile.sellerName);
+    _deliveryFeeCtrl = TextEditingController(
+      text: profile.deliveryFee > 0 ? profile.deliveryFee.toInt().toString() : '',
+    );
   }
 
   @override
@@ -73,6 +77,7 @@ class _SettingsTabState extends State<_SettingsTab> {
     _sheetIdCtrl.dispose();
     _appNameCtrl.dispose();
     _sellerNameCtrl.dispose();
+    _deliveryFeeCtrl.dispose();
     super.dispose();
   }
 
@@ -157,6 +162,28 @@ class _SettingsTabState extends State<_SettingsTab> {
 
         const SizedBox(height: 32),
 
+        // Delivery Fee
+        const Text('Delivery Fee / ค่าจัดส่ง', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        const Text(
+          'Set a delivery fee for your customers. Leave empty or 0 for no delivery fee.\n'
+          'The delivery fee is added to the customer total but does NOT affect the discount or what you pay the shop.',
+          style: TextStyle(color: Colors.grey, fontSize: 12),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _deliveryFeeCtrl,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(
+            labelText: 'Delivery Fee (THB)',
+            hintText: 'e.g., 50',
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.delivery_dining),
+          ),
+        ),
+
+        const SizedBox(height: 32),
+
         // Google Sheet Sync
         const Text('Google Sheet Sync', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
@@ -230,6 +257,7 @@ class _SettingsTabState extends State<_SettingsTab> {
     final menu = context.read<MenuProvider>();
     await profile.saveSellerName(_sellerNameCtrl.text.trim());
     await profile.saveAppName(_appNameCtrl.text.trim());
+    await profile.saveDeliveryFee(double.tryParse(_deliveryFeeCtrl.text.trim()) ?? 0);
     await menu.saveSheetId(_sheetIdCtrl.text.trim());
   }
 }

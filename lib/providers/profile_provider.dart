@@ -19,6 +19,7 @@ class ProfileProvider extends ChangeNotifier {
   String _logoBase64 = '';
   bool _offersDelivery = false;
   double _discountPercent = 0;
+  double _deliveryFee = 0;
 
   String get customerName => _currentCustomer?.name ?? '';
   String get businessName => _currentCustomer?.businessName ?? '';
@@ -32,6 +33,7 @@ class ProfileProvider extends ChangeNotifier {
   String get logoBase64 => _logoBase64;
   bool get offersDelivery => _offersDelivery;
   double get discountPercent => _discountPercent;
+  double get deliveryFee => _deliveryFee;
   Uint8List get logoBase64Bytes => _logoBase64.isNotEmpty ? base64Decode(_logoBase64) : Uint8List(0);
   List<int> get availableHours =>
       List.generate(_closeHour - _openHour + 1, (i) => _openHour + i);
@@ -52,6 +54,7 @@ class ProfileProvider extends ChangeNotifier {
     _logoBase64 = prefs.getString('logoBase64') ?? '';
     _offersDelivery = prefs.getBool('offersDelivery') ?? false;
     _discountPercent = prefs.getDouble('discountPercent') ?? 0;
+    _deliveryFee = prefs.getDouble('deliveryFee') ?? 0;
     notifyListeners();
   }
 
@@ -160,6 +163,13 @@ class ProfileProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     _discountPercent = percent;
     await prefs.setDouble('discountPercent', percent);
+    notifyListeners();
+  }
+
+  Future<void> saveDeliveryFee(double fee) async {
+    final prefs = await SharedPreferences.getInstance();
+    _deliveryFee = fee;
+    await prefs.setDouble('deliveryFee', fee);
     notifyListeners();
   }
 }

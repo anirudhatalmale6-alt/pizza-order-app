@@ -57,9 +57,17 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     return discount;
   }
 
+  double _effectiveDeliveryFee() {
+    return context.read<ProfileProvider>().deliveryFee;
+  }
+
   double _calcFinalTotal() {
     final cart = context.read<CartProvider>();
     return (cart.subtotal - _calcTotalDiscount()).clamp(0, double.infinity);
+  }
+
+  double _calcCustomerTotal() {
+    return _calcFinalTotal() + _effectiveDeliveryFee();
   }
 
   @override
@@ -116,11 +124,17 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     sb.writeln();
     final subtotal = cart.subtotal;
     final discountAmt = _calcTotalDiscount();
-    if (discountAmt > 0) {
-      final finalTotal = _calcFinalTotal();
+    final deliveryFee = _effectiveDeliveryFee();
+    final customerTotal = _calcCustomerTotal();
+    if (discountAmt > 0 || deliveryFee > 0) {
       sb.writeln('Subtotal / ยอดรวม: ${_fmt(subtotal)} THB');
-      sb.writeln('Discount / ส่วนลด: -${_fmt(discountAmt)} THB');
-      sb.writeln('Final Total / ยอดสุทธิ: ${_fmt(finalTotal)} THB');
+      if (deliveryFee > 0) {
+        sb.writeln('Delivery Fee / ค่าจัดส่ง: ${_fmt(deliveryFee)} THB');
+      }
+      if (discountAmt > 0) {
+        sb.writeln('Discount / ส่วนลด: -${_fmt(discountAmt)} THB');
+      }
+      sb.writeln('Total / ยอดสุทธิ: ${_fmt(customerTotal)} THB');
     } else {
       sb.writeln('Total / ยอดรวม: ${_fmt(subtotal)} THB');
     }
@@ -168,11 +182,17 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     sb.writeln();
     final subtotal = cart.subtotal;
     final discountAmt2 = _calcTotalDiscount();
-    if (discountAmt2 > 0) {
-      final finalTotal = _calcFinalTotal();
+    final deliveryFee2 = _effectiveDeliveryFee();
+    final customerTotal2 = _calcCustomerTotal();
+    if (discountAmt2 > 0 || deliveryFee2 > 0) {
       sb.writeln('Subtotal / ยอดรวม: ${_fmt(subtotal)} THB');
-      sb.writeln('Discount / ส่วนลด: -${_fmt(discountAmt2)} THB');
-      sb.writeln('Total / รวม: ${_fmt(finalTotal)} THB');
+      if (deliveryFee2 > 0) {
+        sb.writeln('Delivery Fee / ค่าจัดส่ง: ${_fmt(deliveryFee2)} THB');
+      }
+      if (discountAmt2 > 0) {
+        sb.writeln('Discount / ส่วนลด: -${_fmt(discountAmt2)} THB');
+      }
+      sb.writeln('Total / รวม: ${_fmt(customerTotal2)} THB');
     } else {
       sb.writeln('Total / รวม: ${_fmt(subtotal)} THB');
     }
@@ -474,7 +494,9 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           Builder(builder: (context) {
             final subtotal = cart.subtotal;
             final discountAmt = _calcTotalDiscount();
-            final finalTotal = _calcFinalTotal();
+            final deliveryFee = _effectiveDeliveryFee();
+            final customerTotal = _calcCustomerTotal();
+            final sellerPays = _calcFinalTotal();
             return Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -486,10 +508,20 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Flexible(child: Text('Customer to Pay / ลูกค้าจ่าย')),
+                      const Flexible(child: Text('Subtotal / ยอดรวม')),
                       Text('${_fmt(subtotal)} THB'),
                     ],
                   ),
+                  if (deliveryFee > 0) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Flexible(child: Text('Delivery Fee / ค่าจัดส่ง')),
+                        Text('+${_fmt(deliveryFee)} THB'),
+                      ],
+                    ),
+                  ],
                   if (discountAmt > 0) ...[
                     const SizedBox(height: 4),
                     Row(
@@ -506,11 +538,26 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Flexible(
-                        child: Text('You Pay / คุณจ่าย',
+                        child: Text('Customer Pays / ลูกค้าจ่าย',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                      ),
+                      Text('${_fmt(customerTotal)} THB',
+                          style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Flexible(
+                        child: Text('You Pay Shop / คุณจ่ายร้าน',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
                       ),
-                      Text('${_fmt(finalTotal)} THB',
+                      Text('${_fmt(sellerPays)} THB',
                           style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -657,7 +704,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           Builder(builder: (context) {
             final effectivePromptPay = _effectivePromptPay();
-            if (effectivePromptPay.isNotEmpty && _calcFinalTotal() > 0) {
+            if (effectivePromptPay.isNotEmpty && _calcCustomerTotal() > 0) {
               return Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -684,7 +731,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Amount / จำนวน: ${_fmt(_calcFinalTotal())} THB',
+                      'Amount / จำนวน: ${_fmt(_calcCustomerTotal())} THB',
                       style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -716,7 +763,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                             label: const Text('Copy Amt'),
                             onPressed: () {
                               Clipboard.setData(ClipboardData(
-                                  text: _calcFinalTotal().toInt().toString()));
+                                  text: _calcCustomerTotal().toInt().toString()));
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
