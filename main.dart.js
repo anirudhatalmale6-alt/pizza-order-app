@@ -87679,7 +87679,7 @@ r=g.x
 q=r?f:g.gafq()
 p=r?B.T7:B.J7
 o=t.p
-q=A.cv(A.b([A.dl(A.jX(p,A.be(r?"Syncing...":"Sync Now",f,f,f,f,f,f),q,A.eO(f,f,B.d4,f,f,f,f,f,f,B.j,f,f,B.jw,f,f,f,f,f,f))),B.e1,A.dl(A.jX(B.IU,B.Z9,new A.asq(g,a),A.eO(f,f,B.d3,f,f,f,f,f,f,B.j,f,f,B.jw,f,f,f,f,f,f)))],o),B.y,B.u,B.v)
+q=A.cv(A.b([A.dl(A.jX(p,A.be(r?"Syncing...":"Sync Now",f,f,f,f,f,f),q,A.eO(f,f,B.d4,f,f,f,f,f,f,B.j,f,f,B.jw,f,f,f,f,f,f))),B.e1,A.dl(A.jX(B.IU,B.Z8,new A.asq(g,a),A.eO(f,f,B.d3,f,f,f,f,f,f,B.j,f,f,B.jw,f,f,f,f,f,f)))],o),B.y,B.u,B.v)
 p=A.fM(B.cP,1)
 n=A.cW(8)
 m=g.r
@@ -87747,7 +87747,7 @@ $S:0}
 A.asn.prototype={
 $1(a){var s=null,r=this.a.e
 r=A.aEe(A.aE9(r.length===0?"Unknown error":r))
-return A.mz(A.b([A.kt(!1,B.i7,s,s,s,s,s,s,new A.asi(a),s,s)],t.p),r,B.Zb)},
+return A.mz(A.b([A.kt(!1,B.i7,s,s,s,s,s,s,new A.asi(a),s,s)],t.p),r,B.Za)},
 $S:31}
 A.asi.prototype={
 $0(){A.c0(this.a,!1).eI(null)
@@ -87800,7 +87800,7 @@ $.a5.k3$.push(new A.apb(this))},
 N(a){var s=null,r=A.bC(a,!0,t._),q=A.bC(a,!0,t.BW),p=A.bC(a,!0,t.O),o=A.hH(r.c,t.Fp),n=A.n6(s,s,B.IX,s,s,new A.ap6(q,a),s,s,"Home"),m=q.a,l=t.p,k=A.b([A.n6(s,s,B.nZ,s,s,m.length===0?s:new A.ap7(a),s,s,s)],l)
 if(m.length!==0)k.push(A.By(s,A.dG(A.be(""+A.hH(m,t.A9).length,s,s,s,B.A2,s,s),B.r,B.m4,s,s,B.jB,s),s,s,s,4,4,s))
 n=A.y2(A.b([A.o4(B.a2,k,B.C,B.cl,s)],l),!0,B.a7,s,B.j,n,B.YK)
-m=m.length===0?s:A.vb(!0,new A.bz(B.jz,A.cv(A.b([A.dl(A.cK(A.jX(B.IW,B.Z7,new A.ap8(this,a,q),A.eO(s,s,B.cA,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s)),64,s)),B.e1,A.dl(A.cK(A.jX(B.o_,A.be("View Order ("+A.hH(m,t.A9).length+")\n\u0e14\u0e39\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c",s,s,s,B.e3,B.ab,s),new A.ap9(a),A.eO(s,s,B.d4,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s)),64,s))],l),B.y,B.u,B.v),s),!0)
+m=m.length===0?s:A.vb(!0,new A.bz(B.jz,A.cv(A.b([A.dl(A.cK(A.jX(B.IW,B.Z6,new A.ap8(this,a,q),A.eO(s,s,B.cA,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s)),64,s)),B.e1,A.dl(A.cK(A.jX(B.o_,A.be("View Order ("+A.hH(m,t.A9).length+")\n\u0e14\u0e39\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c",s,s,s,B.e3,B.ab,s),new A.ap9(a),A.eO(s,s,B.d4,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s)),64,s))],l),B.y,B.u,B.v),s),!0)
 return A.Ci(n,new A.e0(new A.apa(r,p,o),s),m)}}
 A.apb.prototype={
 $1(a){var s=this.a.c
@@ -87865,7 +87865,7 @@ case 4:s=b===!0?2:3
 break
 case 2:s=5
 return A.r(q.c.P(0),$async$$0)
-case 5:if(q.a.c!=null)p.ac(t.Q).f.h5(B.Tl)
+case 5:if(q.a.c!=null)p.ac(t.Q).f.h5(B.Tk)
 case 3:return A.E(null,r)}})
 return A.F($async$$0,r)},
 $S:9}
@@ -88120,7 +88120,7 @@ k=m?B.a7:B.j
 j=A.cW(8)
 i=A.fM(B.a7,1)
 h=A.f6(B.Ip,m?B.j:B.a7,f,20)
-B.b.R(n,A.b([B.Z8,B.aG,A.cv(A.b([l,B.e1,A.dl(A.k2(f,A.dG(A.cv(A.b([h,B.zx,A.be("Delivery\n\u0e08\u0e31\u0e14\u0e2a\u0e48\u0e07",f,f,f,A.dv(f,f,m?B.j:B.a7,f,f,f,f,f,f,f,f,13,f,f,B.jT,f,f,!0,f,f,f,f,f,f,f,f),B.ab,f)],p),B.y,B.dJ,B.v),B.r,new A.cg(k,f,i,j,f,f,B.W),f,f,B.nn,f),B.a9,!1,f,f,f,f,f,f,f,f,f,f,f,f,f,new A.apO(g),f,f,f,f,f,f))],p),B.y,B.u,B.v),B.c1],p))}n.push(B.Z1)
+B.b.R(n,A.b([B.Z7,B.aG,A.cv(A.b([l,B.e1,A.dl(A.k2(f,A.dG(A.cv(A.b([h,B.zx,A.be("Delivery\n\u0e08\u0e31\u0e14\u0e2a\u0e48\u0e07",f,f,f,A.dv(f,f,m?B.j:B.a7,f,f,f,f,f,f,f,f,13,f,f,B.jT,f,f,!0,f,f,f,f,f,f,f,f),B.ab,f)],p),B.y,B.dJ,B.v),B.r,new A.cg(k,f,i,j,f,f,B.W),f,f,B.nn,f),B.a9,!1,f,f,f,f,f,f,f,f,f,f,f,f,f,new A.apO(g),f,f,f,f,f,f))],p),B.y,B.u,B.v),B.c1],p))}n.push(B.Z1)
 n.push(B.aG)
 m=g.a5V()
 l=A.a0(m).h("aa<1,pM>")
@@ -88159,7 +88159,7 @@ q.push(new A.e0(new A.apU(g),f))
 q.push(B.c1)
 r=A.cW(12)
 n=A.fM(B.fD,1)
-q.push(A.dG(A.dz(A.b([B.YL,B.bb,B.Zx,new A.e0(new A.apV(c,d),f)],p),B.ax,B.u,B.v),B.r,new A.cg(B.fG,f,n,r,f,f,B.W),f,f,B.bi,f))
+q.push(A.dG(A.dz(A.b([B.YL,B.bb,B.Zc,new A.e0(new A.apV(c,d),f)],p),B.ax,B.u,B.v),B.r,new A.cg(B.fG,f,n,r,f,f,B.W),f,f,B.bi,f))
 q.push(B.c1)
 return A.Ci(s,A.a8N(q,B.bi,f,!1),f)}}
 A.app.prototype={
@@ -88324,24 +88324,26 @@ s=this.b
 return new A.bz(B.Hl,A.cK(A.jX(B.J4,A.be("Open "+s.w+" on LINE",r,r,r,B.lb,r,r),new A.apx(q,s,a,p),A.eO(r,r,B.fu,r,r,r,r,r,r,B.j,r,r,r,r,r,r,r,r,r)),48,1/0),r)},
 $S:214}
 A.apx.prototype={
-$0(){var s=0,r=A.G(t.H),q=this,p,o
+$0(){var s=0,r=A.G(t.H),q=this,p,o,n
 var $async$$0=A.H(function(a,b){if(a===1)return A.D(b,r)
-while(true)switch(s){case 0:o=q.a.z
-o=o.length!==0?o:q.b.w
+while(true)switch(s){case 0:n=q.a.z
+n=n.length!==0?n:q.b.w
+p=q.b.x
+p=p.length!==0?p:""
 s=2
-return A.r(A.iV(new A.hw("Payment slip for "+o+"\n\u0e2a\u0e25\u0e34\u0e1b\u0e01\u0e32\u0e23\u0e0a\u0e33\u0e23\u0e30\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e33\u0e2b\u0e23\u0e31\u0e1a "+o)),$async$$0)
-case 2:p=q.c
-if(p.e!=null)p.ac(t.Q).f.h5(B.Tk)
+return A.r(A.iV(new A.hw(p.length!==0?"Payment slip from "+p+" for "+n+"\n\u0e2a\u0e25\u0e34\u0e1b\u0e01\u0e32\u0e23\u0e0a\u0e33\u0e23\u0e30\u0e40\u0e07\u0e34\u0e19\u0e08\u0e32\u0e01 "+p+" \u0e2a\u0e33\u0e2b\u0e23\u0e31\u0e1a "+n:"Payment slip for "+n+"\n\u0e2a\u0e25\u0e34\u0e1b\u0e01\u0e32\u0e23\u0e0a\u0e33\u0e23\u0e30\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e33\u0e2b\u0e23\u0e31\u0e1a "+n)),$async$$0)
+case 2:o=q.c
+if(o.e!=null)o.ac(t.Q).f.h5(B.Tl)
 s=3
-return A.r(A.bC(p,!1,t.BW).P(0),$async$$0)
-case 3:A.bC(p,!1,t.O).ao()
+return A.r(A.bC(o,!1,t.BW).P(0),$async$$0)
+case 3:A.bC(o,!1,t.O).ao()
 s=6
 return A.r(A.xz(A.er("line://nv/chat",0,null),B.eH),$async$$0)
 case 6:s=!b?4:5
 break
 case 4:s=7
 return A.r(A.xz(A.er(q.d,0,null),B.eH),$async$$0)
-case 7:case 5:if(p.e!=null)A.c0(p,!1).IJ(A.hI(new A.apr(),null,t.z),new A.aps())
+case 7:case 5:if(o.e!=null)A.c0(o,!1).IJ(A.hI(new A.apr(),null,t.z),new A.aps())
 return A.E(null,r)}})
 return A.F($async$$0,r)},
 $S:9}
@@ -88410,7 +88412,7 @@ $S:6}
 A.aqE.prototype={
 $1(a){var s=null,r=t.p,q=A.cv(A.b([A.f6(B.jV,B.du,s,28),B.bJ,B.HN],r),B.y,B.u,B.v),p=this.b
 p=A.be("Your subscription expires in "+p.gzh()+" day(s).\nPlease renew to avoid interruption.\n\n\u0e2a\u0e21\u0e31\u0e04\u0e23\u0e2a\u0e21\u0e32\u0e0a\u0e34\u0e01\u0e02\u0e2d\u0e07\u0e04\u0e38\u0e13\u0e08\u0e30\u0e2b\u0e21\u0e14\u0e2d\u0e32\u0e22\u0e38\u0e43\u0e19\u0e2d\u0e35\u0e01 "+p.gzh()+" \u0e27\u0e31\u0e19\n\u0e01\u0e23\u0e38\u0e13\u0e32\u0e15\u0e48\u0e2d\u0e2d\u0e32\u0e22\u0e38\u0e01\u0e48\u0e2d\u0e19\u0e2b\u0e21\u0e14",s,s,s,s,s,s)
-return A.mz(A.b([A.kt(!1,B.Zc,s,s,s,s,s,s,new A.aqC(a),s,s),A.l2(!1,B.Zg,s,s,s,s,s,s,new A.aqD(this.a,a),s,A.eO(s,s,B.a7,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s))],r),p,q)},
+return A.mz(A.b([A.kt(!1,B.Zb,s,s,s,s,s,s,new A.aqC(a),s,s),A.l2(!1,B.Zg,s,s,s,s,s,s,new A.aqD(this.a,a),s,A.eO(s,s,B.a7,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s))],r),p,q)},
 $S:31}
 A.aqC.prototype={
 $0(){A.c0(this.a,!1).eI(null)
@@ -88621,7 +88623,7 @@ n=j.d
 n.toString
 B.b.R(p,A.b([A.yF(o,new A.na(A.ay1(i,i,new A.nx(n,1)),i,i,200,B.m5,i),B.bk),B.aG,A.aEz(B.IZ,B.Zk,new A.arx(j))],k))}else p.push(A.cv(A.b([A.dl(A.qr(B.J8,B.Zs,j.gad1(),i)),B.bJ,A.dl(A.qr(B.J1,B.YP,j.gaft(),i))],k),B.y,B.u,B.v))
 p.push(B.e2)
-p.push(A.cK(A.jX(B.IY,B.Za,j.gaeE(),A.eO(i,i,B.fu,i,i,i,i,i,i,B.j,i,i,i,i,i,i,i,i,i)),56,i))
+p.push(A.cK(A.jX(B.IY,B.Z9,j.gaeE(),A.eO(i,i,B.fu,i,i,i,i,i,i,B.j,i,i,i,i,i,i,i,i,i)),56,i))
 p.push(B.i0)
 return A.Ci(s,A.a8N(p,B.bi,i,!1),r)}}
 A.arm.prototype={
@@ -93262,8 +93264,8 @@ B.HX=new A.Lk(B.E,B.E)
 B.cT=new A.Lo(1,"loose")
 B.ay=new A.i4(6)
 B.dd=new A.q(!0,null,null,null,null,null,18,B.ay,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.Zy=new A.az("You Pay / \u0e04\u0e38\u0e13\u0e08\u0e48\u0e32\u0e22",null,B.dd,null,null,null,null,null,null)
-B.HY=new A.j4(1,B.cT,B.Zy,null)
+B.Zx=new A.az("You Pay / \u0e04\u0e38\u0e13\u0e08\u0e48\u0e32\u0e22",null,B.dd,null,null,null,null,null,null)
+B.HY=new A.j4(1,B.cT,B.Zx,null)
 B.ZF=new A.az("You Earned / \u0e04\u0e38\u0e13\u0e44\u0e14\u0e49\u0e23\u0e31\u0e1a",null,null,null,null,null,null,null,null)
 B.HZ=new A.j4(1,B.cT,B.ZF,null)
 B.Zi=new A.az("Customer to Pay / \u0e25\u0e39\u0e01\u0e04\u0e49\u0e32\u0e08\u0e48\u0e32\u0e22",null,null,null,null,null,null,null,null)
@@ -95164,18 +95166,18 @@ B.Z3=new A.az("Amount copied! / \u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e08\u0e33
 B.zE=new A.eV(B.Z3,null,null,null,null,null,null,null,null,null,null,null,null,B.cd,null,null,null,B.C,null)
 B.ZC=new A.az("No option selected / \u0e22\u0e31\u0e07\u0e44\u0e21\u0e48\u0e44\u0e14\u0e49\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e15\u0e31\u0e27\u0e40\u0e25\u0e37\u0e2d\u0e01",null,null,null,null,null,null,null,null)
 B.zF=new A.eV(B.ZC,null,null,null,null,null,null,null,null,null,null,null,null,B.cd,null,null,null,B.C,null)
-B.Z6=new A.az("Receipt copied to clipboard! Paste in LINE.\n\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e43\u0e1a\u0e40\u0e2a\u0e23\u0e47\u0e08\u0e41\u0e25\u0e49\u0e27! \u0e27\u0e32\u0e07\u0e43\u0e19 LINE",null,null,null,null,null,null,null,null)
-B.Tg=new A.eV(B.Z6,null,null,null,null,null,null,null,null,null,null,null,null,B.fR,null,null,null,B.C,null)
+B.Z5=new A.az("Receipt copied to clipboard! Paste in LINE.\n\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e43\u0e1a\u0e40\u0e2a\u0e23\u0e47\u0e08\u0e41\u0e25\u0e49\u0e27! \u0e27\u0e32\u0e07\u0e43\u0e19 LINE",null,null,null,null,null,null,null,null)
+B.Tg=new A.eV(B.Z5,null,null,null,null,null,null,null,null,null,null,null,null,B.fR,null,null,null,B.C,null)
 B.YJ=new A.az("No Sheet ID entered",null,null,null,null,null,null,null,null)
 B.Th=new A.eV(B.YJ,null,null,null,null,null,null,null,null,null,null,null,null,B.ni,null,null,null,B.C,null)
 B.ZN=new A.az("Account number copied! / \u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e41\u0e25\u0e49\u0e27!",null,null,null,null,null,null,null,null)
 B.Ti=new A.eV(B.ZN,null,null,null,null,null,null,null,null,null,null,null,null,B.cd,null,null,null,B.C,null)
 B.Zz=new A.az("Wrong password",null,null,null,null,null,null,null,null)
 B.Tj=new A.eV(B.Zz,null,null,null,null,null,null,null,null,null,null,null,null,B.cd,null,null,null,B.C,null)
-B.Z5=new A.az("Text copied! Paste it in your LINE chat and attach the slip image.",null,null,null,null,null,null,null,null)
-B.Tk=new A.eV(B.Z5,null,null,null,null,null,null,null,null,null,null,null,null,B.fR,null,null,null,B.C,null)
 B.ZD=new A.az("Order cancelled / \u0e22\u0e01\u0e40\u0e25\u0e34\u0e01\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c\u0e41\u0e25\u0e49\u0e27",null,null,null,null,null,null,null,null)
-B.Tl=new A.eV(B.ZD,null,null,null,null,null,null,null,null,null,null,null,null,B.cd,null,null,null,B.C,null)
+B.Tk=new A.eV(B.ZD,null,null,null,null,null,null,null,null,null,null,null,null,B.cd,null,null,null,B.C,null)
+B.Zy=new A.az("Text copied! Attach your slip image first, then paste this text.",null,null,null,null,null,null,null,null)
+B.Tl=new A.eV(B.Zy,null,null,null,null,null,null,null,null,null,null,null,null,B.fR,null,null,null,B.C,null)
 B.YO=new A.az("Order copied to clipboard! Paste in LINE.\n\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e41\u0e25\u0e49\u0e27! \u0e27\u0e32\u0e07\u0e43\u0e19 LINE",null,null,null,null,null,null,null,null)
 B.Tm=new A.eV(B.YO,null,null,null,null,null,null,null,null,null,null,null,null,B.fR,null,null,null,B.C,null)
 B.YU=new A.az("Account copied! / \u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e41\u0e25\u0e49\u0e27!",null,null,null,null,null,null,null,null)
@@ -95579,13 +95581,15 @@ B.Z1=new A.az("What time? / \u0e40\u0e27\u0e25\u0e32\u0e44\u0e2b\u0e19?",null,B.
 B.Z2=new A.az("Opening Hours",null,B.lc,null,null,null,null,null,null)
 B.WA=new A.q(!0,B.K,null,null,null,null,13,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.Z4=new A.az(u.r,null,B.WA,B.ab,null,null,null,null,null)
-B.Z7=new A.az("Cancel Order\n\u0e22\u0e01\u0e40\u0e25\u0e34\u0e01\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c",null,B.e3,B.ab,null,null,null,null,null)
-B.Z8=new A.az("Pickup or Delivery? / \u0e23\u0e31\u0e1a\u0e40\u0e2d\u0e07\u0e2b\u0e23\u0e37\u0e2d\u0e08\u0e31\u0e14\u0e2a\u0e48\u0e07?",null,B.fi,null,null,null,null,null,null)
-B.Z9=new A.az("Open Sheet",null,null,null,null,null,null,null,null)
-B.Za=new A.az("Send Renewal Receipt\n\u0e2a\u0e48\u0e07\u0e43\u0e1a\u0e40\u0e2a\u0e23\u0e47\u0e08\u0e15\u0e48\u0e2d\u0e2d\u0e32\u0e22\u0e38",null,B.lb,B.ab,null,null,null,null,null)
-B.Zb=new A.az("Sync Result",null,null,null,null,null,null,null,null)
+B.Z6=new A.az("Cancel Order\n\u0e22\u0e01\u0e40\u0e25\u0e34\u0e01\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c",null,B.e3,B.ab,null,null,null,null,null)
+B.Z7=new A.az("Pickup or Delivery? / \u0e23\u0e31\u0e1a\u0e40\u0e2d\u0e07\u0e2b\u0e23\u0e37\u0e2d\u0e08\u0e31\u0e14\u0e2a\u0e48\u0e07?",null,B.fi,null,null,null,null,null,null)
+B.Z8=new A.az("Open Sheet",null,null,null,null,null,null,null,null)
+B.Z9=new A.az("Send Renewal Receipt\n\u0e2a\u0e48\u0e07\u0e43\u0e1a\u0e40\u0e2a\u0e23\u0e47\u0e08\u0e15\u0e48\u0e2d\u0e2d\u0e32\u0e22\u0e38",null,B.lb,B.ab,null,null,null,null,null)
+B.Za=new A.az("Sync Result",null,null,null,null,null,null,null,null)
 B.A9=new A.az("Cancel",null,null,null,null,null,null,null,null)
-B.Zc=new A.az("Later / \u0e20\u0e32\u0e22\u0e2b\u0e25\u0e31\u0e07",null,null,null,null,null,null,null,null)
+B.Zb=new A.az("Later / \u0e20\u0e32\u0e22\u0e2b\u0e25\u0e31\u0e07",null,null,null,null,null,null,null,null)
+B.Wl=new A.q(!0,null,null,null,null,null,13,null,null,null,null,null,1.4,null,null,null,null,null,null,null,null,null,null,null,null,null)
+B.Zc=new A.az("After you have paid, click the GREEN button below. LINE will open. Go to the restaurant chat, tap + to attach your payment slip image from Gallery, then send. After sending the image, paste the copied text and send that too.\n\n\u0e2b\u0e25\u0e31\u0e07\u0e08\u0e32\u0e01\u0e0a\u0e33\u0e23\u0e30\u0e40\u0e07\u0e34\u0e19\u0e41\u0e25\u0e49\u0e27 \u0e01\u0e14\u0e1b\u0e38\u0e48\u0e21\u0e2a\u0e35\u0e40\u0e02\u0e35\u0e22\u0e27\u0e14\u0e49\u0e32\u0e19\u0e25\u0e48\u0e32\u0e07 LINE \u0e08\u0e30\u0e40\u0e1b\u0e34\u0e14\u0e02\u0e36\u0e49\u0e19 \u0e44\u0e1b\u0e17\u0e35\u0e48\u0e41\u0e0a\u0e17\u0e23\u0e49\u0e32\u0e19\u0e2d\u0e32\u0e2b\u0e32\u0e23 \u0e01\u0e14 + \u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e41\u0e19\u0e1a\u0e23\u0e39\u0e1b\u0e2a\u0e25\u0e34\u0e1b\u0e08\u0e32\u0e01\u0e41\u0e01\u0e25\u0e40\u0e25\u0e2d\u0e23\u0e35 \u0e41\u0e25\u0e49\u0e27\u0e2a\u0e48\u0e07 \u0e2b\u0e25\u0e31\u0e07\u0e2a\u0e48\u0e07\u0e23\u0e39\u0e1b\u0e41\u0e25\u0e49\u0e27 \u0e27\u0e32\u0e07\u0e02\u0e49\u0e2d\u0e04\u0e27\u0e32\u0e21\u0e17\u0e35\u0e48\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e41\u0e25\u0e49\u0e27\u0e2a\u0e48\u0e07\u0e14\u0e49\u0e27\u0e22",null,B.Wl,null,null,null,null,null,null)
 B.A5=new A.q(!0,null,null,null,null,null,null,B.Y,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.Ze=new A.az("Open",null,B.A5,null,null,null,null,null,null)
 B.Zf=new A.az("We are not open today.\n\u0e27\u0e31\u0e19\u0e19\u0e35\u0e49\u0e44\u0e21\u0e48\u0e40\u0e1b\u0e34\u0e14\u0e17\u0e33\u0e01\u0e32\u0e23",null,B.A3,B.ab,null,null,null,null,null)
@@ -95610,8 +95614,6 @@ B.Zt=new A.az("Load payment slip from gallery or take a photo with camera.\n\u0e
 B.Zu=new A.az("Admin Access",null,null,null,null,null,null,null,null)
 B.Zv=new A.az("Name for this order only / \u0e0a\u0e37\u0e48\u0e2d\u0e2a\u0e33\u0e2b\u0e23\u0e31\u0e1a\u0e2d\u0e2d\u0e40\u0e14\u0e2d\u0e23\u0e4c\u0e19\u0e35\u0e49\u0e40\u0e17\u0e48\u0e32\u0e19\u0e31\u0e49\u0e19",null,B.i5,null,null,null,null,null,null)
 B.Zw=new A.az("Google Sheet Sync",null,B.lc,null,null,null,null,null,null)
-B.Wl=new A.q(!0,null,null,null,null,null,13,null,null,null,null,null,1.4,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.Zx=new A.az("After you have paid, click the GREEN button below. LINE will open. Go to the restaurant chat, paste the copied text, attach your payment slip image from Gallery, and send.\n\n\u0e2b\u0e25\u0e31\u0e07\u0e08\u0e32\u0e01\u0e0a\u0e33\u0e23\u0e30\u0e40\u0e07\u0e34\u0e19\u0e41\u0e25\u0e49\u0e27 \u0e01\u0e14\u0e1b\u0e38\u0e48\u0e21\u0e2a\u0e35\u0e40\u0e02\u0e35\u0e22\u0e27\u0e14\u0e49\u0e32\u0e19\u0e25\u0e48\u0e32\u0e07 LINE \u0e08\u0e30\u0e40\u0e1b\u0e34\u0e14\u0e02\u0e36\u0e49\u0e19 \u0e44\u0e1b\u0e17\u0e35\u0e48\u0e41\u0e0a\u0e17\u0e23\u0e49\u0e32\u0e19\u0e2d\u0e32\u0e2b\u0e32\u0e23 \u0e27\u0e32\u0e07\u0e02\u0e49\u0e2d\u0e04\u0e27\u0e32\u0e21\u0e17\u0e35\u0e48\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01 \u0e41\u0e19\u0e1a\u0e23\u0e39\u0e1b\u0e2a\u0e25\u0e34\u0e1b\u0e08\u0e32\u0e01\u0e41\u0e01\u0e25\u0e40\u0e25\u0e2d\u0e23\u0e35 \u0e41\u0e25\u0e49\u0e27\u0e2a\u0e48\u0e07",null,B.Wl,null,null,null,null,null,null)
 B.Ab=new A.az("Copy Acct",null,null,null,null,null,null,null,null)
 B.ZA=new A.az('Enter your Google Sheet ID to sync menu, options, categories and discounts.\nThe sheet must be shared as "Anyone with the link can view".',null,B.i5,null,null,null,null,null,null)
 B.ZB=new A.az("Close",null,B.A5,null,null,null,null,null,null)
