@@ -25,6 +25,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   String _orderType = 'pickup';
   final _guestNameCtrl = TextEditingController();
   bool _confirmationSent = false;
+  bool _orderComplete = false;
 
   static String _fmt(double v) => v == v.roundToDouble() ? v.toInt().toString() : v.toStringAsFixed(2);
 
@@ -670,177 +671,146 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           ),
           const SizedBox(height: 16),
 
-          // Payment
-          const Text('Payment / การชำระเงิน',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
+          // Order Complete button
+          if (!_orderComplete) ...[
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton.icon(
+                onPressed: () => setState(() => _orderComplete = true),
+                icon: const Icon(Icons.check_circle, size: 24),
+                label: const Text('Order Complete / ออเดอร์เสร็จสิ้น',
+                    style: TextStyle(fontSize: 16)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepOrange,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ),
+          ],
 
-          Builder(builder: (context) {
-            final effectivePromptPay = _effectivePromptPay();
-            if (effectivePromptPay.isNotEmpty && _calcCustomerTotal() > 0) {
+          // Payment section (visible after Order Complete)
+          if (_orderComplete) ...[
+            const Text('Payment / การชำระเงิน',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+
+            Builder(builder: (context) {
+              final effectivePromptPay = _effectivePromptPay();
+              if (effectivePromptPay.isNotEmpty && _calcCustomerTotal() > 0) {
+                return Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.green.shade200),
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Transfer to / โอนเงินไปที่',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Open banking app and transfer to:\nเปิดแอปธนาคารแล้วโอนเงินไปที่:',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 15, color: Colors.black87),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'PromptPay: $effectivePromptPay',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Amount / จำนวน: ${_fmt(_calcFinalTotal())} THB',
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.deepOrange),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.copy, size: 16),
+                          label: const Text('Copy PromptPay ID'),
+                          onPressed: () {
+                            Clipboard.setData(
+                                ClipboardData(text: effectivePromptPay));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Account number copied! / คัดลอกแล้ว!'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.copy, size: 16),
+                          label: const Text('Copy Amount'),
+                          onPressed: () {
+                            Clipboard.setData(ClipboardData(
+                                text: _calcFinalTotal().toInt().toString()));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
               return Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade50,
+                  color: Colors.amber.shade50,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.green.shade200),
                 ),
-                child: Column(
-                  children: [
-                    const Text(
-                      'Transfer to / โอนเงินไปที่',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Open banking app and transfer to:\nเปิดแอปธนาคารแล้วโอนเงินไปที่:',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 15, color: Colors.black87),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'PromptPay: $effectivePromptPay',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Amount / จำนวน: ${_fmt(_calcFinalTotal())} THB',
-                      style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.deepOrange),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        icon: const Icon(Icons.copy, size: 16),
-                        label: const Text('Copy PromptPay ID'),
-                        onPressed: () {
-                          Clipboard.setData(
-                              ClipboardData(text: effectivePromptPay));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Account number copied! / คัดลอกแล้ว!'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        icon: const Icon(Icons.copy, size: 16),
-                        label: const Text('Copy Amount'),
-                        onPressed: () {
-                          Clipboard.setData(ClipboardData(
-                              text: _calcFinalTotal().toInt().toString()));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+                child: const Text(
+                  'PromptPay ID not set. Go to Admin settings to configure.\n'
+                  'ยังไม่ได้ตั้งค่า PromptPay ID กรุณาไปตั้งค่าในหน้า Admin',
+                  textAlign: TextAlign.center,
                 ),
               );
-            }
-            return Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.amber.shade50,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Text(
-                'PromptPay ID not set. Go to Admin settings to configure.\n'
-                'ยังไม่ได้ตั้งค่า PromptPay ID กรุณาไปตั้งค่าในหน้า Admin',
-                textAlign: TextAlign.center,
-              ),
-            );
-          }),
+            }),
 
-          const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-          // Send payment slip instructions
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.green.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.green.shade200),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Send Payment Slip / ส่งสลิปการชำระ',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 12),
-                const Text(
-                  'After you have paid, tap the GREEN button below. The payment message will be sent via LINE. After sending, stay in LINE and tap + in the same chat to attach your payment slip image from Gallery.\n\n'
-                  'หลังจากชำระเงินแล้ว กดปุ่มสีเขียวด้านล่าง ข้อความจะถูกส่งผ่าน LINE หลังส่งแล้วอยู่ใน LINE กด + ในแชทเดิมเพื่อแนบรูปสลิปจากแกลเลอรี',
-                  style: TextStyle(fontSize: 13, height: 1.4),
+            // Done button to clear order and go home
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  await context.read<CartProvider>().clear();
+                  context.read<ProfileProvider>().clearSelection();
+                  if (context.mounted) {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                      (route) => false,
+                    );
+                  }
+                },
+                icon: const Icon(Icons.done_all, size: 24),
+                label: const Text('Done - New Order / เสร็จ - ออเดอร์ใหม่',
+                    style: TextStyle(fontSize: 16)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF06C755),
+                  foregroundColor: Colors.white,
                 ),
-                Builder(builder: (context) {
-                  final effectiveLineLink = menu.lineLink.isNotEmpty
-                      ? menu.lineLink
-                      : profile.lineDeepLink;
-                  if (effectiveLineLink.isEmpty) return const SizedBox.shrink();
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton.icon(
-                        onPressed: () async {
-                          final restaurant = menu.restaurantName.isNotEmpty
-                              ? menu.restaurantName
-                              : profile.appName;
-                          final seller = profile.sellerName.isNotEmpty
-                              ? profile.sellerName
-                              : '';
-                          final slipText = seller.isNotEmpty
-                            ? 'Payment slip from $seller for $restaurant\n'
-                              'สลิปการชำระเงินจาก $seller สำหรับ $restaurant'
-                            : 'Payment slip for $restaurant\n'
-                              'สลิปการชำระเงินสำหรับ $restaurant';
-                          final encoded = Uri.encodeComponent(slipText);
-                          await context.read<CartProvider>().clear();
-                          context.read<ProfileProvider>().clearSelection();
-                          final launched = await launchUrl(
-                              Uri.parse('line://msg/text/$encoded'),
-                              mode: LaunchMode.externalApplication);
-                          if (!launched) {
-                            await launchUrl(
-                                Uri.parse('https://line.me/R/share?text=$encoded'),
-                                mode: LaunchMode.externalApplication);
-                          }
-                          await Future.delayed(const Duration(seconds: 2));
-                          if (context.mounted) {
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                              (route) => false,
-                            );
-                          }
-                        },
-                        icon: const Icon(Icons.chat_bubble, size: 20),
-                        label: const Text('Send Payment Message via LINE',
-                            style: TextStyle(fontSize: 14)),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF06C755),
-                          foregroundColor: Colors.white,
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-              ],
+              ),
             ),
-          ),
+          ],
 
           const SizedBox(height: 16),
         ],
