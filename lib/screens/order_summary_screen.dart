@@ -26,6 +26,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   final _guestNameCtrl = TextEditingController();
   bool _confirmationSent = false;
   bool _orderComplete = false;
+  double _savedFinalTotal = 0;
+  double _savedCustomerTotal = 0;
 
   static String _fmt(double v) => v == v.roundToDouble() ? v.toInt().toString() : v.toStringAsFixed(2);
 
@@ -677,7 +679,12 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               width: double.infinity,
               height: 56,
               child: ElevatedButton.icon(
-                onPressed: () => setState(() => _orderComplete = true),
+                onPressed: () async {
+                  _savedFinalTotal = _calcFinalTotal();
+                  _savedCustomerTotal = _calcCustomerTotal();
+                  await context.read<CartProvider>().clear();
+                  setState(() => _orderComplete = true);
+                },
                 icon: const Icon(Icons.check_circle, size: 24),
                 label: const Text('Order Complete / ออเดอร์เสร็จสิ้น',
                     style: TextStyle(fontSize: 16)),
@@ -697,7 +704,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
             Builder(builder: (context) {
               final effectivePromptPay = _effectivePromptPay();
-              if (effectivePromptPay.isNotEmpty && _calcCustomerTotal() > 0) {
+              if (effectivePromptPay.isNotEmpty && _savedCustomerTotal > 0) {
                 return Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -724,7 +731,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Amount / จำนวน: ${_fmt(_calcFinalTotal())} THB',
+                        'Amount / จำนวน: ${_fmt(_savedFinalTotal)} THB',
                         style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -756,7 +763,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                           label: const Text('Copy Amount'),
                           onPressed: () {
                             Clipboard.setData(ClipboardData(
-                                text: _calcFinalTotal().toInt().toString()));
+                                text: _savedFinalTotal.toInt().toString()));
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
