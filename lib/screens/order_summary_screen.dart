@@ -704,7 +704,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Amount / จำนวน: ${_fmt(_calcCustomerTotal())} THB',
+                      'Amount / จำนวน: ${_fmt(_calcFinalTotal())} THB',
                       style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -736,7 +736,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                         label: const Text('Copy Amount'),
                         onPressed: () {
                           Clipboard.setData(ClipboardData(
-                              text: _calcCustomerTotal().toInt().toString()));
+                              text: _calcFinalTotal().toInt().toString()));
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
