@@ -27,7 +27,8 @@
       if (document.hidden) {
         hiddenAt = Date.now();
       } else if (hiddenAt > 0 && (Date.now() - hiddenAt) > 60000) {
-        location.reload();
+        var cart = localStorage.getItem('flutter.saved_cart');
+        if (!cart || cart === 'null' || cart === '[]') location.reload();
       }
     });
   </script>
