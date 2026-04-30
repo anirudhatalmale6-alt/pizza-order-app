@@ -22,5 +22,27 @@
 </head>
 <body>
 <script src="flutter_bootstrap.js" async></script>
+<script>
+// Recover from WebGL context loss when returning from banking/LINE apps
+(function() {
+  var hiddenAt = 0;
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'hidden') {
+      hiddenAt = Date.now();
+    } else if (document.visibilityState === 'visible' && hiddenAt > 0) {
+      var away = Date.now() - hiddenAt;
+      if (away > 10000) {
+        var c = document.querySelector('canvas');
+        if (c) {
+          var gl = c.getContext('webgl2') || c.getContext('webgl');
+          if (!gl || gl.isContextLost()) {
+            window.location.reload();
+          }
+        }
+      }
+    }
+  });
+})();
+</script>
 </body>
 </html>
