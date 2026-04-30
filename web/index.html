@@ -21,17 +21,6 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <script>
-    var hiddenAt = 0;
-    document.addEventListener('visibilitychange', function() {
-      if (document.hidden) {
-        hiddenAt = Date.now();
-      } else if (hiddenAt > 0 && (Date.now() - hiddenAt) > 60000) {
-        var cart = localStorage.getItem('flutter.saved_cart');
-        if (!cart || cart === 'null' || cart === '[]') location.reload();
-      }
-    });
-  </script>
-  <script src="flutter_bootstrap.js" async></script>
+<script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
