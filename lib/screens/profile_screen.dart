@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/cart_provider.dart';
 import '../providers/menu_provider.dart';
 import '../providers/profile_provider.dart';
@@ -40,16 +39,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  Future<void> _checkSavedCart() async {
-    final prefs = await SharedPreferences.getInstance();
-    final confirmed = prefs.getBool('order_confirmed') ?? false;
-    final cart = context.read<CartProvider>();
-    if (confirmed && !cart.isEmpty) {
-      cart.clear();
-      await prefs.remove('order_confirmed');
-    } else if (confirmed) {
-      await prefs.remove('order_confirmed');
-    }
+  void _checkSavedCart() {
+    // Cart is only cleared when "Order Complete" is tapped on the summary screen.
+    // If the browser killed the tab mid-order, the cart is preserved.
   }
 
   void _checkRenewalWindow() {
