@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/category_config.dart';
 import '../providers/cart_provider.dart';
@@ -185,6 +186,9 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     if (!mounted) return;
 
     setState(() => _confirmationSent = true);
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('order_confirmed', true);
 
     final menu = context.read<MenuProvider>();
     final profile = context.read<ProfileProvider>();
@@ -683,6 +687,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   _savedFinalTotal = _calcFinalTotal();
                   _savedCustomerTotal = _calcCustomerTotal();
                   await context.read<CartProvider>().clear();
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.remove('order_confirmed');
                   setState(() => _orderComplete = true);
                 },
                 icon: const Icon(Icons.check_circle, size: 24),
