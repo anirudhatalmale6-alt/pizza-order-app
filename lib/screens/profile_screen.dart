@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import '../providers/cart_provider.dart';
 import '../providers/menu_provider.dart';
 import '../providers/profile_provider.dart';
 import '../utils/platform_helper.dart';
 import 'admin_screen.dart';
 import 'menu_screen.dart';
+import 'order_summary_screen.dart';
 import 'renewal_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -28,6 +30,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkRenewalWindow();
+      _checkSavedCart();
     });
   }
 
@@ -35,6 +38,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void dispose() {
     _sellerNameCtrl.dispose();
     super.dispose();
+  }
+
+  void _checkSavedCart() {
+    final cart = context.read<CartProvider>();
+    if (!cart.isEmpty) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const OrderSummaryScreen()),
+      );
+    }
   }
 
   void _checkRenewalWindow() {
