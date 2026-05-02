@@ -22,19 +22,5 @@
 </head>
 <body>
 <script src="flutter_bootstrap.js" async></script>
-<script>
-(function() {
-  var hiddenAt = 0;
-  document.addEventListener('visibilitychange', function() {
-    if (document.visibilityState === 'hidden') {
-      hiddenAt = Date.now();
-    } else if (document.visibilityState === 'visible' && hiddenAt > 0) {
-      if (Date.now() - hiddenAt > 30000) {
-        window.location.reload();
-      }
-    }
-  });
-})();
-</script>
 </body>
 </html>
