@@ -199,7 +199,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Order copied to clipboard! Paste in LINE.\nคัดลอกแล้ว! วางใน LINE'),
+              content: Text('คัดลอกแล้ว! วางใน LINE\nOrder copied to clipboard! Paste in LINE.'),
               duration: Duration(seconds: 3),
             ),
           );
@@ -252,16 +252,16 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Customer Name / ชื่อลูกค้า',
+                const Text('ชื่อลูกค้า / Customer Name',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                const Text('Name for this order only / ชื่อสำหรับออเดอร์นี้เท่านั้น',
+                const Text('ชื่อสำหรับออเดอร์นี้เท่านั้น / Name for this order only',
                     style: TextStyle(color: Colors.grey, fontSize: 12)),
                 const SizedBox(height: 8),
                 TextField(
                   controller: _guestNameCtrl,
                   decoration: const InputDecoration(
-                    hintText: 'Enter customer name / ใส่ชื่อลูกค้า',
+                    hintText: 'ใส่ชื่อลูกค้า / Enter customer name',
                     border: OutlineInputBorder(),
                     isDense: true,
                     prefixIcon: Icon(Icons.person_outline),
@@ -285,7 +285,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (_effectiveDelivery()) ...[
-                  const Text('Pickup or Delivery? / รับเองหรือจัดส่ง?',
+                  const Text('รับเองหรือจัดส่ง? / Pickup or Delivery?',
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Row(
@@ -311,7 +311,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                                         : Colors.deepOrange,
                                     size: 20),
                                 const SizedBox(width: 6),
-                                Text('Pickup\nรับเอง',
+                                Text('รับเอง\nPickup',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         color: _orderType == 'pickup'
@@ -346,7 +346,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                                         : Colors.deepOrange,
                                     size: 20),
                                 const SizedBox(width: 6),
-                                Text('Delivery\nจัดส่ง',
+                                Text('จัดส่ง\nDelivery',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         color: _orderType == 'delivery'
@@ -370,7 +370,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           const SizedBox(height: 16),
 
           // Items
-          const Text('Your Order / รายการอาหาร',
+          const Text('รายการอาหาร / Your Order',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           ...List.generate(cart.items.length, (index) {
@@ -426,7 +426,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                         if (menu.toppingsForItem(item.productName, item.productType).isNotEmpty)
                           TextButton.icon(
                             icon: const Icon(Icons.edit, size: 18),
-                            label: const Text('Edit / แก้ไข'),
+                            label: const Text('แก้ไข / Edit'),
                             onPressed: () async {
                               final toppings = menu.toppingsForItem(item.productName, item.productType);
                               final selected = await showDialog<List<SelectedTopping>>(
@@ -491,7 +491,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Flexible(child: Text('Subtotal / ยอดรวม',
+                      const Flexible(child: Text('ยอดรวม / Subtotal',
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
                       Text('${_fmt(subtotal)} THB',
                           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
@@ -502,7 +502,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Flexible(child: Text('Delivery Fee / ค่าจัดส่ง',
+                        const Flexible(child: Text('ค่าจัดส่ง / Delivery Fee',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
                         Text('+${_fmt(deliveryFee)} THB',
                             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
@@ -514,7 +514,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Flexible(
-                        child: Text('Customer Pays / ลูกค้าจ่าย',
+                        child: Text('ลูกค้าจ่าย / Customer Pays',
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold,
                                 color: Colors.red)),
@@ -531,7 +531,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Flexible(child: Text('You Earned / คุณได้รับ',
+                        Flexible(child: Text('คุณได้รับ / You Earned',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green.shade700))),
                         Text('${_fmt(discountAmt)} THB',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green.shade700)),
@@ -542,7 +542,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Flexible(
-                          child: Text('You Pay Restaurant / คุณจ่ายร้าน',
+                          child: Text('คุณจ่ายร้าน / You Pay Restaurant',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold,
                                   color: Colors.indigo.shade800)),
@@ -573,7 +573,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 );
               },
               icon: const Icon(Icons.menu_book),
-              label: const Text('Return to Menu / กลับไปเมนู',
+              label: const Text('กลับไปเมนู / Return to Menu',
                   style: TextStyle(fontSize: 14)),
             ),
           ),
@@ -588,19 +588,19 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 final confirmed = await showDialog<bool>(
                   context: context,
                   builder: (ctx) => AlertDialog(
-                    title: const Text('Cancel Order? / ยกเลิกออเดอร์?'),
+                    title: const Text('ยกเลิกออเดอร์? / Cancel Order?'),
                     content: const Text(
-                      'This will clear your cart and return to the home screen.\n'
-                      'ระบบจะล้างตะกร้าและกลับไปหน้าหลัก',
+                      'ระบบจะล้างตะกร้าและกลับไปหน้าหลัก\n'
+                      'This will clear your cart and return to the home screen.',
                     ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text('No / ไม่'),
+                        child: const Text('ไม่ / No'),
                       ),
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, true),
-                        child: const Text('Yes / ใช่',
+                        child: const Text('ใช่ / Yes',
                             style: TextStyle(color: Colors.red)),
                       ),
                     ],
@@ -617,7 +617,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 }
               },
               icon: const Icon(Icons.cancel_outlined, color: Colors.white),
-              label: const Text('Cancel Order / ยกเลิกออเดอร์',
+              label: const Text('ยกเลิกออเดอร์ / Cancel Order',
                   style: TextStyle(fontSize: 14, color: Colors.white)),
               style: OutlinedButton.styleFrom(
                 backgroundColor: Colors.red,
@@ -630,8 +630,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
           // Send order for confirmation
           const Text(
-            'The restaurant chat will open in LINE with the order text copied. Paste the message and send.\n'
-            'แชทร้านอาหารจะเปิดใน LINE พร้อมข้อความออเดอร์ที่คัดลอก วางข้อความแล้วส่ง',
+            'แชทร้านอาหารจะเปิดใน LINE พร้อมข้อความออเดอร์ที่คัดลอก วางข้อความแล้วส่ง\n'
+            'The restaurant chat will open in LINE with the order text copied. Paste the message and send.',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 13, color: Colors.grey, height: 1.4),
           ),
@@ -642,8 +642,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               onPressed: (cart.isEmpty || _confirmationSent) ? null : _sendConfirmation,
               icon: Icon(_confirmationSent ? Icons.check : Icons.send, size: 22),
               label: Text(_confirmationSent
-                  ? 'Sent! / ส่งแล้ว!'
-                  : 'Send to shop for confirmation\nส่งไปร้านเพื่อยืนยัน',
+                  ? 'ส่งแล้ว! / Sent!'
+                  : 'ส่งไปร้านเพื่อยืนยัน\nSend to shop for confirmation',
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 13)),
               style: ElevatedButton.styleFrom(
@@ -674,7 +674,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   },
                   icon: const Icon(Icons.check_circle, size: 24),
                   label: Text(
-                    'Order Complete - Collect ${_fmt(custTotal)} and pay restaurant ${_fmt(sellerPays)}\nออเดอร์เสร็จ - เก็บ ${_fmt(custTotal)} แล้วจ่ายร้าน ${_fmt(sellerPays)}',
+                    'ออเดอร์เสร็จ - เก็บ ${_fmt(custTotal)} แล้วจ่ายร้าน ${_fmt(sellerPays)}\nOrder Complete - Collect ${_fmt(custTotal)} and pay restaurant ${_fmt(sellerPays)}',
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 13),
                   ),
@@ -724,7 +724,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            'Wait for a reply from $name on LINE before you take payment.\n\nรอการตอบกลับจาก $name ทาง LINE ก่อนเก็บเงิน',
+            'รอการตอบกลับจาก $name ทาง LINE ก่อนเก็บเงิน\n\nWait for a reply from $name on LINE before you take payment.',
             style: TextStyle(fontSize: 16, color: Colors.red.shade700, fontWeight: FontWeight.w500),
           ),
         ],
@@ -745,12 +745,12 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         child: Column(
           children: [
             const Text(
-              'Transfer to / โอนเงินไปที่',
+              'โอนเงินไปที่ / Transfer to',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
             const Text(
-              'Open banking app and transfer to:\nเปิดแอปธนาคารแล้วโอนเงินไปที่:',
+              'เปิดแอปธนาคารแล้วโอนเงินไปที่:\nOpen banking app and transfer to:',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 15, color: Colors.black87),
             ),
@@ -761,7 +761,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Amount / จำนวน: ${_fmt(_savedFinalTotal)} THB',
+              'จำนวน / Amount: ${_fmt(_savedFinalTotal)} THB',
               style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -777,7 +777,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   Clipboard.setData(ClipboardData(text: effectivePromptPay));
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Account number copied! / คัดลอกแล้ว!'),
+                      content: Text('คัดลอกแล้ว! / Account number copied!'),
                       duration: Duration(seconds: 2),
                     ),
                   );
@@ -795,7 +795,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       text: _savedFinalTotal.toInt().toString()));
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
+                      content: Text('คัดลอกจำนวนแล้ว! / Amount copied!'),
                       duration: Duration(seconds: 2),
                     ),
                   );
@@ -813,8 +813,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: const Text(
-        'PromptPay ID not set. Go to Admin settings to configure.\n'
-        'ยังไม่ได้ตั้งค่า PromptPay ID กรุณาไปตั้งค่าในหน้า Admin',
+        'ยังไม่ได้ตั้งค่า PromptPay ID กรุณาไปตั้งค่าในหน้า Admin\n'
+        'PromptPay ID not set. Go to Admin settings to configure.',
         textAlign: TextAlign.center,
       ),
     );
@@ -839,7 +839,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               }
             },
             icon: const Icon(Icons.done_all, size: 24),
-            label: const Text('Restaurant Paid / จ่ายร้านแล้ว',
+            label: const Text('จ่ายร้านแล้ว / Restaurant Paid',
                 style: TextStyle(fontSize: 16)),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF06C755),

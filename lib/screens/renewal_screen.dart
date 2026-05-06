@@ -56,12 +56,12 @@ class _RenewalScreenState extends State<RenewalScreen> {
         : 'Unknown';
 
     final sb = StringBuffer();
-    sb.writeln('RENEWAL PAYMENT / ชำระค่าต่ออายุ');
+    sb.writeln('ชำระค่าต่ออายุ / RENEWAL PAYMENT');
     sb.writeln('================================');
-    sb.writeln('Business / ธุรกิจ: ${profile.appName}');
-    sb.writeln('Expiry Date / วันหมดอายุ: $expiryStr');
+    sb.writeln('ธุรกิจ / Business: ${profile.appName}');
+    sb.writeln('วันหมดอายุ / Expiry Date: $expiryStr');
     if (menu.renewalPrice > 0) {
-      sb.writeln('Amount / จำนวน: ${menu.renewalPrice.toInt()} THB');
+      sb.writeln('จำนวน / Amount: ${menu.renewalPrice.toInt()} THB');
     }
     sb.writeln();
     sb.writeln('ชำระโดย / Payment via PromptPay');
@@ -80,7 +80,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Receipt copied to clipboard! Paste in LINE.\nคัดลอกใบเสร็จแล้ว! วางใน LINE'),
+            content: Text('คัดลอกใบเสร็จแล้ว! วางใน LINE\nReceipt copied to clipboard! Paste in LINE.'),
             duration: Duration(seconds: 3),
           ),
         );
@@ -92,10 +92,10 @@ class _RenewalScreenState extends State<RenewalScreen> {
         context: context,
         barrierDismissible: false,
         builder: (ctx) => AlertDialog(
-          title: const Text('Details Sent!\nส่งรายละเอียดแล้ว!'),
+          title: const Text('ส่งรายละเอียดแล้ว!\nDetails Sent!'),
           content: const Text(
-            'Now open LINE and send the payment slip photo from your gallery.\n\n'
-            'เปิด LINE แล้วส่งรูปสลิปจากแกลเลอรีของคุณ',
+            'เปิด LINE แล้วส่งรูปสลิปจากแกลเลอรีของคุณ\n\n'
+            'Now open LINE and send the payment slip photo from your gallery.',
           ),
           actions: [
             ElevatedButton(
@@ -104,7 +104,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
                 backgroundColor: const Color(0xFF06C755),
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Done / เสร็จ'),
+              child: const Text('เสร็จ / Done'),
             ),
           ],
         ),
@@ -122,12 +122,12 @@ class _RenewalScreenState extends State<RenewalScreen> {
               children: [
                 Icon(Icons.check_circle, color: Colors.green.shade600, size: 28),
                 const SizedBox(width: 8),
-                const Expanded(child: Text('Thank You!\nขอบคุณ!')),
+                const Expanded(child: Text('ขอบคุณ!\nThank You!')),
               ],
             ),
             content: const Text(
-              'Your payment has been sent. The app will be restored within 12 hours.\n\n'
-              'ส่งการชำระเงินแล้ว แอปจะกลับมาใช้งานได้ภายใน 12 ชั่วโมง',
+              'ส่งการชำระเงินแล้ว แอปจะกลับมาใช้งานได้ภายใน 12 ชั่วโมง\n\n'
+              'Your payment has been sent. The app will be restored within 12 hours.',
             ),
             actions: [
               ElevatedButton(
@@ -150,7 +150,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
       if (!menu.isExpired && !menu.isInRenewalWindow) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Subscription active! Returning to app.\nสมัครสมาชิกเรียบร้อย! กลับไปแอป'),
+            content: Text('สมัครสมาชิกเรียบร้อย! กลับไปแอป\nSubscription active! Returning to app.'),
             backgroundColor: Colors.green,
           ),
         );
@@ -161,8 +161,8 @@ class _RenewalScreenState extends State<RenewalScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(menu.isExpired
-                ? 'Still expired. Please contact for renewal.\nยังหมดอายุอยู่ กรุณาติดต่อต่ออายุ'
-                : 'Synced. Expiry date updated.\nซิงค์แล้ว อัปเดตวันหมดอายุ'),
+                ? 'ยังหมดอายุอยู่ กรุณาติดต่อต่ออายุ\nStill expired. Please contact for renewal.'
+                : 'ซิงค์แล้ว อัปเดตวันหมดอายุ\nSynced. Expiry date updated.'),
           ),
         );
       }
@@ -181,8 +181,8 @@ class _RenewalScreenState extends State<RenewalScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(isExpired
-            ? 'Subscription Expired / หมดอายุ'
-            : 'Renewal / ต่ออายุ'),
+            ? 'หมดอายุ / Subscription Expired'
+            : 'ต่ออายุ / Renewal'),
         backgroundColor: isExpired ? Colors.red.shade700 : Colors.orange.shade700,
         foregroundColor: Colors.white,
         automaticallyImplyLeading: widget.canContinue,
@@ -198,7 +198,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: const Text('Continue to App / เข้าใช้งานต่อ',
+                  child: const Text('เข้าใช้งานต่อ / Continue to App',
                       style: TextStyle(fontSize: 16)),
                 ),
               ),
@@ -228,8 +228,8 @@ class _RenewalScreenState extends State<RenewalScreen> {
                 const SizedBox(height: 12),
                 Text(
                   isExpired
-                      ? 'Subscription Expired\nหมดอายุการใช้งาน'
-                      : 'Subscription Expiring Soon\nใกล้หมดอายุ',
+                      ? 'หมดอายุการใช้งาน\nSubscription Expired'
+                      : 'ใกล้หมดอายุ\nSubscription Expiring Soon',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 22,
@@ -241,8 +241,8 @@ class _RenewalScreenState extends State<RenewalScreen> {
                 if (expiryStr.isNotEmpty)
                   Text(
                     isExpired
-                        ? 'Expired on / หมดอายุเมื่อ: $expiryStr'
-                        : 'Expires on / หมดอายุ: $expiryStr (${menu.daysUntilExpiry} days)',
+                        ? 'หมดอายุเมื่อ / Expired on: $expiryStr'
+                        : 'หมดอายุ / Expires on: $expiryStr (${menu.daysUntilExpiry} days)',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,
@@ -252,8 +252,8 @@ class _RenewalScreenState extends State<RenewalScreen> {
                 const SizedBox(height: 12),
                 Text(
                   isExpired
-                      ? 'Please renew your subscription to continue using the app.\nกรุณาต่ออายุเพื่อใช้งานแอปต่อ'
-                      : 'Please renew soon to avoid interruption.\nกรุณาต่ออายุก่อนหมด',
+                      ? 'กรุณาต่ออายุเพื่อใช้งานแอปต่อ\nPlease renew your subscription to continue using the app.'
+                      : 'กรุณาต่ออายุก่อนหมด\nPlease renew soon to avoid interruption.',
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 14, color: Colors.black54),
                 ),
@@ -265,7 +265,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
 
           // PromptPay payment section
           if (profile.promptPayId.isNotEmpty) ...[
-            const Text('Payment / การชำระเงิน',
+            const Text('การชำระเงิน / Payment',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Container(
@@ -278,12 +278,12 @@ class _RenewalScreenState extends State<RenewalScreen> {
               child: Column(
                 children: [
                   const Text(
-                    'Transfer to / โอนเงินไปที่',
+                    'โอนเงินไปที่ / Transfer to',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   const Text(
-                    'Open banking app and transfer to:\nเปิดแอปธนาคารแล้วโอนเงินไปที่:',
+                    'เปิดแอปธนาคารแล้วโอนเงินไปที่:\nOpen banking app and transfer to:',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 13, color: Colors.black54),
                   ),
@@ -295,7 +295,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
                   if (menu.renewalPrice > 0) ...[
                     const SizedBox(height: 4),
                     Text(
-                      'Amount / จำนวน: ${menu.renewalPrice.toInt()} THB',
+                      'จำนวน / Amount: ${menu.renewalPrice.toInt()} THB',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -314,7 +314,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
                             Clipboard.setData(ClipboardData(text: profile.promptPayId));
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Account copied! / คัดลอกแล้ว!'),
+                                content: Text('คัดลอกแล้ว! / Account copied!'),
                                 duration: Duration(seconds: 2),
                               ),
                             );
@@ -332,7 +332,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
                                   ClipboardData(text: menu.renewalPrice.toInt().toString()));
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
+                                  content: Text('คัดลอกจำนวนแล้ว! / Amount copied!'),
                                   duration: Duration(seconds: 2),
                                 ),
                               );
@@ -350,12 +350,12 @@ class _RenewalScreenState extends State<RenewalScreen> {
           const SizedBox(height: 24),
 
           // Payment screenshot
-          const Text('Payment Screenshot / สลิปการชำระ',
+          const Text('สลิปการชำระ / Payment Screenshot',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
           const Text(
-            'Load payment slip from gallery or take a photo with camera.\n'
-            'โหลดสลิปจากแกลเลอรีหรือถ่ายรูปด้วยกล้อง',
+            'โหลดสลิปจากแกลเลอรีหรือถ่ายรูปด้วยกล้อง\n'
+            'Load payment slip from gallery or take a photo with camera.',
             style: TextStyle(color: Colors.grey, fontSize: 12),
           ),
           const SizedBox(height: 8),
@@ -372,7 +372,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
                 _hasScreenshot = false;
               }),
               icon: const Icon(Icons.close, color: Colors.red),
-              label: const Text('Remove / ลบ',
+              label: const Text('ลบ / Remove',
                   style: TextStyle(color: Colors.red)),
             ),
           ] else
@@ -382,7 +382,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
                   child: OutlinedButton.icon(
                     onPressed: _pickScreenshot,
                     icon: const Icon(Icons.photo_library),
-                    label: const Text('Gallery / แกลเลอรี'),
+                    label: const Text('แกลเลอรี / Gallery'),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -390,7 +390,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
                   child: OutlinedButton.icon(
                     onPressed: _takeScreenshot,
                     icon: const Icon(Icons.camera_alt),
-                    label: const Text('Camera / กล้อง'),
+                    label: const Text('กล้อง / Camera'),
                   ),
                 ),
               ],
@@ -405,7 +405,7 @@ class _RenewalScreenState extends State<RenewalScreen> {
               onPressed: _sendReceipt,
               icon: const Icon(Icons.send, size: 22),
               label: const Text(
-                'Send Renewal Receipt\nส่งใบเสร็จต่ออายุ',
+                'ส่งใบเสร็จต่ออายุ\nSend Renewal Receipt',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 14),
               ),

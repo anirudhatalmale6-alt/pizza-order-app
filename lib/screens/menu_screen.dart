@@ -135,7 +135,7 @@ class _MenuScreenState extends State<MenuScreen> {
             );
           },
         ),
-        title: const Text('Menu / เมนู', style: TextStyle(fontSize: 18)),
+        title: const Text('เมนู / Menu', style: TextStyle(fontSize: 18)),
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
         actions: [
@@ -184,13 +184,13 @@ class _MenuScreenState extends State<MenuScreen> {
                   Icon(Icons.store, size: 80, color: Colors.grey.shade400),
                   const SizedBox(height: 24),
                   Text(
-                    'Sorry, $displayName is closed today.\nขออภัย $displayName ปิดวันนี้',
+                    'ขออภัย $displayName ปิดวันนี้\nSorry, $displayName is closed today.',
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
                   const Text(
-                    'We are not open today.\nวันนี้ไม่เปิดทำการ',
+                    'วันนี้ไม่เปิดทำการ\nWe are not open today.',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
@@ -298,12 +298,12 @@ class _MenuScreenState extends State<MenuScreen> {
                             final confirm = await showDialog<bool>(
                               context: context,
                               builder: (ctx) => AlertDialog(
-                                title: const Text('Cancel Order? / ยกเลิกออเดอร์?'),
-                                content: const Text('Clear all items from the cart?\nล้างรายการทั้งหมด?'),
+                                title: const Text('ยกเลิกออเดอร์? / Cancel Order?'),
+                                content: const Text('ล้างรายการทั้งหมด?\nClear all items from the cart?'),
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.pop(ctx, false),
-                                    child: const Text('No / ไม่'),
+                                    child: const Text('ไม่ / No'),
                                   ),
                                   ElevatedButton(
                                     onPressed: () => Navigator.pop(ctx, true),
@@ -311,7 +311,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                       backgroundColor: Colors.red,
                                       foregroundColor: Colors.white,
                                     ),
-                                    child: const Text('Yes / ใช่'),
+                                    child: const Text('ใช่ / Yes'),
                                   ),
                                 ],
                               ),
@@ -321,7 +321,7 @@ class _MenuScreenState extends State<MenuScreen> {
                               if (mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Order cancelled / ยกเลิกออเดอร์แล้ว'),
+                                    content: Text('ยกเลิกออเดอร์แล้ว / Order cancelled'),
                                     duration: Duration(seconds: 2),
                                   ),
                                 );
@@ -329,7 +329,7 @@ class _MenuScreenState extends State<MenuScreen> {
                             }
                           },
                           icon: const Icon(Icons.cancel),
-                          label: const Text('Cancel Order\nยกเลิกออเดอร์',
+                          label: const Text('ยกเลิกออเดอร์\nCancel Order',
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 13)),
                           style: ElevatedButton.styleFrom(
@@ -349,7 +349,7 @@ class _MenuScreenState extends State<MenuScreen> {
                             MaterialPageRoute(builder: (_) => const OrderSummaryScreen()),
                           ),
                           icon: const Icon(Icons.receipt_long),
-                          label: Text('View Order (${cart.items.length})\nดูออเดอร์',
+                          label: Text('ดูออเดอร์ (${cart.items.length})\nView Order',
                               textAlign: TextAlign.center,
                               style: const TextStyle(fontSize: 13)),
                           style: ElevatedButton.styleFrom(
@@ -392,7 +392,7 @@ class CategoryItemsScreen extends StatelessWidget {
         if (cartItem.itemTotal <= 0) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('No option selected / ยังไม่ได้เลือกตัวเลือก'),
+              content: Text('ยังไม่ได้เลือกตัวเลือก / No option selected'),
               duration: Duration(seconds: 2),
             ),
           );
@@ -401,7 +401,7 @@ class CategoryItemsScreen extends StatelessWidget {
         cart.addItem(cartItem);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${item.name} added / เพิ่ม${item.nameThai}แล้ว'),
+            content: Text('เพิ่ม${item.nameThai}แล้ว / ${item.name} added'),
             duration: const Duration(seconds: 1),
           ),
         );
@@ -411,7 +411,7 @@ class CategoryItemsScreen extends StatelessWidget {
     if (item.price <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('No option selected / ยังไม่ได้เลือกตัวเลือก'),
+          content: Text('ยังไม่ได้เลือกตัวเลือก / No option selected'),
           duration: Duration(seconds: 2),
         ),
       );
@@ -425,7 +425,7 @@ class CategoryItemsScreen extends StatelessWidget {
     ));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${item.name} added / เพิ่ม${item.nameThai}แล้ว'),
+        content: Text('เพิ่ม${item.nameThai}แล้ว / ${item.name} added'),
         duration: const Duration(seconds: 1),
       ),
     );
@@ -444,7 +444,7 @@ class CategoryItemsScreen extends StatelessWidget {
           children: [
             Icon(iconFromString(category.icon), size: 24),
             const SizedBox(width: 8),
-            Text('${category.label} / ${category.labelThai}'),
+            Text('${category.labelThai} / ${category.label}'),
           ],
         ),
         backgroundColor: color,
@@ -483,7 +483,7 @@ class CategoryItemsScreen extends StatelessWidget {
       ),
       body: items.isEmpty
           ? const Center(
-              child: Text('No items in this category\nยังไม่มีรายการในหมวดนี้',
+              child: Text('ยังไม่มีรายการในหมวดนี้\nNo items in this category',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.grey)),
             )
@@ -513,7 +513,7 @@ class CategoryItemsScreen extends StatelessWidget {
                       child: ElevatedButton.icon(
                         onPressed: () => Navigator.pop(context),
                         icon: const Icon(Icons.menu_book),
-                        label: const Text('Return to Menu\nกลับไปเมนู',
+                        label: const Text('กลับไปเมนู\nReturn to Menu',
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 13)),
                         style: ElevatedButton.styleFrom(
@@ -532,7 +532,7 @@ class CategoryItemsScreen extends StatelessWidget {
                           onPressed: () => Navigator.push(context,
                               MaterialPageRoute(builder: (_) => const OrderSummaryScreen())),
                           icon: const Icon(Icons.receipt_long),
-                          label: Text('View Order (${cart.items.length})\nดูออเดอร์',
+                          label: Text('ดูออเดอร์ (${cart.items.length})\nView Order',
                               textAlign: TextAlign.center,
                               style: const TextStyle(fontSize: 13)),
                           style: ElevatedButton.styleFrom(
@@ -635,7 +635,7 @@ class _MenuItemCard extends StatelessWidget {
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                         ),
-                        child: const Text('+ Add / เพิ่ม'),
+                        child: const Text('+ เพิ่ม / Add'),
                       ),
                     ],
                   ),

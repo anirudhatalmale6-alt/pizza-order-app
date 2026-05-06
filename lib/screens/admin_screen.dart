@@ -18,7 +18,7 @@ class _AdminScreenState extends State<AdminScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Admin / ตั้งค่า'),
+        title: const Text('ตั้งค่า / Admin'),
         backgroundColor: Colors.grey.shade800,
         foregroundColor: Colors.white,
       ),
@@ -149,7 +149,7 @@ class _SettingsTabState extends State<_SettingsTab> {
       padding: const EdgeInsets.all(24),
       children: [
         // Seller Name
-        const Text('Seller Name / ชื่อผู้ขาย', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text('ชื่อผู้ขาย / Seller Name', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         TextField(
           controller: _sellerNameCtrl,
@@ -163,7 +163,7 @@ class _SettingsTabState extends State<_SettingsTab> {
         const SizedBox(height: 32),
 
         // Delivery Fee
-        const Text('Delivery Fee / ค่าจัดส่ง', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text('ค่าจัดส่ง / Delivery Fee', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         const Text(
           'Set a delivery fee for your customers. Leave empty or 0 for no delivery fee.\n'

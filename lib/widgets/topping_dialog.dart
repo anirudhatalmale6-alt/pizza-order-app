@@ -40,7 +40,7 @@ class _ToppingDialogState extends State<ToppingDialog> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Customize ${widget.categoryLabel} / เลือกตัวเลือก',
+              Text('เลือกตัวเลือก / Customize ${widget.categoryLabel}',
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Text('${widget.availableToppings.length} options available',
@@ -113,7 +113,7 @@ class _ToppingDialogState extends State<ToppingDialog> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel / ยกเลิก'),
+                    child: const Text('ยกเลิก / Cancel'),
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton(
@@ -132,7 +132,7 @@ class _ToppingDialogState extends State<ToppingDialog> {
                       backgroundColor: Colors.deepOrange,
                       foregroundColor: Colors.white,
                     ),
-                    child: Text(widget.isEditing ? 'Update / อัปเดต' : 'Add ${widget.categoryLabel} / เพิ่ม'),
+                    child: Text(widget.isEditing ? 'อัปเดต / Update' : 'เพิ่ม / Add ${widget.categoryLabel}'),
                   ),
                 ],
               ),

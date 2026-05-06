@@ -62,19 +62,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Icon(Icons.warning_amber_rounded, color: Colors.orange.shade700, size: 28),
             const SizedBox(width: 8),
-            const Expanded(child: Text('Subscription Expiring\nใกล้หมดอายุ')),
+            const Expanded(child: Text('ใกล้หมดอายุ\nSubscription Expiring')),
           ],
         ),
         content: Text(
-          'Your subscription expires in ${menu.daysUntilExpiry} day(s).\n'
-          'Please renew to avoid interruption.\n\n'
           'สมัครสมาชิกของคุณจะหมดอายุในอีก ${menu.daysUntilExpiry} วัน\n'
-          'กรุณาต่ออายุก่อนหมด',
+          'กรุณาต่ออายุก่อนหมด\n\n'
+          'Your subscription expires in ${menu.daysUntilExpiry} day(s).\n'
+          'Please renew to avoid interruption.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Later / ภายหลัง'),
+            child: const Text('ภายหลัง / Later'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -90,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               backgroundColor: Colors.deepOrange,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Renew Now / ต่ออายุ'),
+            child: const Text('ต่ออายุ / Renew Now'),
           ),
         ],
       ),
@@ -103,12 +103,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: const Text('Seller Name / ชื่อผู้ขาย'),
+        title: const Text('ชื่อผู้ขาย / Seller Name'),
         content: TextField(
           controller: _sellerNameCtrl,
           autofocus: true,
           decoration: const InputDecoration(
-            hintText: 'Enter your name / ใส่ชื่อของคุณ',
+            hintText: 'ใส่ชื่อของคุณ / Enter your name',
             border: OutlineInputBorder(),
           ),
           onSubmitted: (val) {
@@ -207,7 +207,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           actions: [
             IconButton(
               icon: const Icon(Icons.settings),
-              tooltip: 'Admin / ตั้งค่า',
+              tooltip: 'ตั้งค่า / Admin',
               onPressed: _openAdmin,
             ),
           ],
@@ -256,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: ElevatedButton.icon(
                       onPressed: _showNameDialog,
                       icon: const Icon(Icons.person_add, size: 28),
-                      label: const Text('Please Enter Your Name\nกรุณาใส่ชื่อของคุณ',
+                      label: const Text('กรุณาใส่ชื่อของคุณ\nPlease Enter Your Name',
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: 16)),
                       style: ElevatedButton.styleFrom(
@@ -283,7 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       icon: const Icon(Icons.restaurant_menu, size: 28),
-                      label: const Text('New Order / สั่งอาหาร',
+                      label: const Text('สั่งอาหาร / New Order',
                           style: TextStyle(fontSize: 20)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.deepOrange,
