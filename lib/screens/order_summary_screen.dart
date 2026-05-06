@@ -664,7 +664,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               final restaurantName = menu.restaurantName.isNotEmpty ? menu.restaurantName : profile.appName;
               return SizedBox(
                 width: double.infinity,
-                height: 64,
+                height: 84,
                 child: ElevatedButton.icon(
                   onPressed: () async {
                     _savedFinalTotal = _calcFinalTotal();
