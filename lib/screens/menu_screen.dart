@@ -261,12 +261,16 @@ class _MenuScreenState extends State<MenuScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(cat.label,
-                                      style: TextStyle(
-                                          fontSize: 20, fontWeight: FontWeight.bold, color: color)),
-                                  if (cat.labelThai.isNotEmpty)
+                                  if (cat.labelThai.isNotEmpty) ...[
                                     Text(cat.labelThai,
+                                        style: TextStyle(
+                                            fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+                                    Text(cat.label,
                                         style: TextStyle(fontSize: 15, color: color.withOpacity(0.8))),
+                                  ] else
+                                    Text(cat.label,
+                                        style: TextStyle(
+                                            fontSize: 20, fontWeight: FontWeight.bold, color: color)),
                                 ],
                               ),
                             ),
