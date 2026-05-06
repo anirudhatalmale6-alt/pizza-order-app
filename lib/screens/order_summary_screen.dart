@@ -516,13 +516,14 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       const Flexible(
                         child: Text('Customer Pays / ลูกค้าจ่าย',
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
+                                fontSize: 16, fontWeight: FontWeight.bold,
+                                color: Colors.red)),
                       ),
                       Text('${_fmt(customerTotal)} THB',
                           style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Colors.deepOrange)),
+                              color: Colors.red)),
                     ],
                   ),
                   if (discountAmt > 0) ...[
@@ -530,25 +531,27 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Flexible(child: Text('You Earned / คุณได้รับ',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                        Flexible(child: Text('You Earned / คุณได้รับ',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green.shade700))),
                         Text('${_fmt(discountAmt)} THB',
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green.shade700)),
                       ],
                     ),
                     const SizedBox(height: 4),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Flexible(
+                        Flexible(
                           child: Text('You Pay Restaurant / คุณจ่ายร้าน',
                               style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                                  fontSize: 16, fontWeight: FontWeight.bold,
+                                  color: Colors.indigo.shade800)),
                         ),
                         Text('${_fmt(sellerPays)} THB',
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.bold)),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.indigo.shade800)),
                       ],
                     ),
                   ],
