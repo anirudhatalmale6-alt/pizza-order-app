@@ -87062,9 +87062,8 @@ A.aoD.prototype={
 $1(a){return!1},
 $S:111}
 A.aoR.prototype={
-$1(a){var s=null,r=this.a,q=r.Cn(),p=r.Co(),o=this.b.z
-o=o.length!==0?o:this.c.w
-return A.cH(A.iY(B.I0,A.bj("Order Complete - Collect "+A.m2(q)+" and Pay "+o+" "+A.m2(p),s,s,s,B.d8,B.a8,s),new A.aoy(r,a),A.eu(s,s,B.aa,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s)),64,1/0)},
+$1(a){var s=null,r=this.a,q=r.Cn(),p=r.Co()
+return A.cH(A.iY(B.I0,A.bj("Order Complete - Collect "+A.m2(q)+" and pay restaurant "+A.m2(p),s,s,s,B.d8,B.a8,s),new A.aoy(r,a),A.eu(s,s,B.aa,s,s,s,s,s,s,B.j,s,s,s,s,s,s,s,s,s)),64,1/0)},
 $S:545}
 A.aoy.prototype={
 $0(){var s=0,r=A.F(t.H),q=this,p

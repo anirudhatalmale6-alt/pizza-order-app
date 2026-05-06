@@ -674,7 +674,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   },
                   icon: const Icon(Icons.check_circle, size: 24),
                   label: Text(
-                    'Order Complete - Collect ${_fmt(custTotal)} and Pay $restaurantName ${_fmt(sellerPays)}',
+                    'Order Complete - Collect ${_fmt(custTotal)} and pay restaurant ${_fmt(sellerPays)}',
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 13),
                   ),
