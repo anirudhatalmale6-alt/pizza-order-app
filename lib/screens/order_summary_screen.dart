@@ -234,6 +234,13 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          if (_orderComplete) ...[
+            // Post-completion view: IMPORTANT box + Payment only
+            _buildImportantBox(menu, profile),
+            const SizedBox(height: 16),
+            _buildPaymentSection(),
+            const SizedBox(height: 16),
+          ] else ...[
           // Customer Name (not saved, one-time use)
           Container(
             padding: const EdgeInsets.all(16),
@@ -484,8 +491,10 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Flexible(child: Text('Subtotal / ยอดรวม')),
-                      Text('${_fmt(subtotal)} THB'),
+                      const Flexible(child: Text('Subtotal / ยอดรวม',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                      Text('${_fmt(subtotal)} THB',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     ],
                   ),
                   if (deliveryFee > 0) ...[
@@ -493,8 +502,10 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Flexible(child: Text('Delivery Fee / ค่าจัดส่ง')),
-                        Text('+${_fmt(deliveryFee)} THB'),
+                        const Flexible(child: Text('Delivery Fee / ค่าจัดส่ง',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                        Text('+${_fmt(deliveryFee)} THB',
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],
@@ -505,11 +516,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                       const Flexible(
                         child: Text('Customer Pays / ลูกค้าจ่าย',
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
+                                fontSize: 16, fontWeight: FontWeight.bold)),
                       ),
                       Text('${_fmt(customerTotal)} THB',
                           style: const TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.deepOrange)),
                     ],
@@ -519,9 +530,10 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Flexible(child: Text('You Earned / คุณได้รับ')),
+                        const Flexible(child: Text('You Earned / คุณได้รับ',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
                         Text('${_fmt(discountAmt)} THB',
-                            style: const TextStyle(color: Colors.green)),
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -535,7 +547,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                         ),
                         Text('${_fmt(sellerPays)} THB',
                             style: const TextStyle(
-                                fontSize: 18,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold)),
                       ],
                     ),
@@ -638,189 +650,199 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.red.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.red.shade300, width: 2),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.warning_amber_rounded, color: Colors.red.shade700, size: 32),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'IMPORTANT',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red.shade700,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Wait for a reply from ${menu.restaurantName.isNotEmpty ? menu.restaurantName : profile.appName} on LINE before you take payment.\n\nรอการตอบกลับจาก ${menu.restaurantName.isNotEmpty ? menu.restaurantName : profile.appName} ทาง LINE ก่อนเก็บเงิน',
-                  style: TextStyle(fontSize: 16, color: Colors.red.shade700, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-          ),
+          _buildImportantBox(menu, profile),
           const SizedBox(height: 16),
 
           // Order Complete button
           if (!_orderComplete) ...[
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton.icon(
-                onPressed: () async {
-                  _savedFinalTotal = _calcFinalTotal();
-                  _savedCustomerTotal = _calcCustomerTotal();
-                  await context.read<CartProvider>().clear();
-                  setState(() => _orderComplete = true);
-                },
-                icon: const Icon(Icons.check_circle, size: 24),
-                label: const Text('Order Complete / ออเดอร์เสร็จสิ้น',
-                    style: TextStyle(fontSize: 16)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepOrange,
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ),
-          ],
-
-          // Payment section (visible after Order Complete)
-          if (_orderComplete) ...[
-            const Text('Payment / การชำระเงิน',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-
             Builder(builder: (context) {
-              final effectivePromptPay = _effectivePromptPay();
-              if (effectivePromptPay.isNotEmpty && _savedCustomerTotal > 0) {
-                return Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.green.shade200),
+              final custTotal = _calcCustomerTotal();
+              final restaurantName = menu.restaurantName.isNotEmpty ? menu.restaurantName : profile.appName;
+              return SizedBox(
+                width: double.infinity,
+                height: 72,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    _savedFinalTotal = _calcFinalTotal();
+                    _savedCustomerTotal = _calcCustomerTotal();
+                    await context.read<CartProvider>().clear();
+                    setState(() => _orderComplete = true);
+                  },
+                  icon: const Icon(Icons.check_circle, size: 24),
+                  label: Text(
+                    'Order Complete - Collect ${_fmt(custTotal)} THB from customer and Pay $restaurantName\nออเดอร์เสร็จ - เก็บ ${_fmt(custTotal)} บาท จากลูกค้า แล้วจ่าย $restaurantName',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 13),
                   ),
-                  child: Column(
-                    children: [
-                      const Text(
-                        'Transfer to / โอนเงินไปที่',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Open banking app and transfer to:\nเปิดแอปธนาคารแล้วโอนเงินไปที่:',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 15, color: Colors.black87),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'PromptPay: $effectivePromptPay',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Amount / จำนวน: ${_fmt(_savedFinalTotal)} THB',
-                        style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.deepOrange),
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          icon: const Icon(Icons.copy, size: 16),
-                          label: const Text('Copy PromptPay ID'),
-                          onPressed: () {
-                            Clipboard.setData(
-                                ClipboardData(text: effectivePromptPay));
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Account number copied! / คัดลอกแล้ว!'),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          icon: const Icon(Icons.copy, size: 16),
-                          label: const Text('Copy Amount'),
-                          onPressed: () {
-                            Clipboard.setData(ClipboardData(
-                                text: _savedFinalTotal.toInt().toString()));
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepOrange,
+                    foregroundColor: Colors.white,
                   ),
-                );
-              }
-              return Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.amber.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Text(
-                  'PromptPay ID not set. Go to Admin settings to configure.\n'
-                  'ยังไม่ได้ตั้งค่า PromptPay ID กรุณาไปตั้งค่าในหน้า Admin',
-                  textAlign: TextAlign.center,
                 ),
               );
             }),
-
-            const SizedBox(height: 16),
-
-            // Done button to clear order and go home
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton.icon(
-                onPressed: () async {
-                  await context.read<CartProvider>().clear();
-                  context.read<ProfileProvider>().clearSelection();
-                  if (context.mounted) {
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                      (route) => false,
-                    );
-                  }
-                },
-                icon: const Icon(Icons.done_all, size: 24),
-                label: const Text('Done - New Order / เสร็จ - ออเดอร์ใหม่',
-                    style: TextStyle(fontSize: 16)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF06C755),
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ),
           ],
 
           const SizedBox(height: 16),
+          ], // end else (!_orderComplete)
         ],
+      ),
+      bottomNavigationBar: _orderComplete ? _buildRestaurantPaidButton() : null,
+    );
+  }
+
+  Widget _buildImportantBox(MenuProvider menu, ProfileProvider profile) {
+    final name = menu.restaurantName.isNotEmpty ? menu.restaurantName : profile.appName;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.red.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.red.shade300, width: 2),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.red.shade700, size: 32),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'IMPORTANT',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red.shade700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Wait for a reply from $name on LINE before you take payment.\n\nรอการตอบกลับจาก $name ทาง LINE ก่อนเก็บเงิน',
+            style: TextStyle(fontSize: 16, color: Colors.red.shade700, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaymentSection() {
+    final effectivePromptPay = _effectivePromptPay();
+    if (effectivePromptPay.isNotEmpty && _savedCustomerTotal > 0) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.green.shade50,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.green.shade200),
+        ),
+        child: Column(
+          children: [
+            const Text(
+              'Transfer to / โอนเงินไปที่',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Open banking app and transfer to:\nเปิดแอปธนาคารแล้วโอนเงินไปที่:',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 15, color: Colors.black87),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'PromptPay: $effectivePromptPay',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Amount / จำนวน: ${_fmt(_savedFinalTotal)} THB',
+              style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.deepOrange),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.copy, size: 16),
+                label: const Text('Copy PromptPay ID'),
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: effectivePromptPay));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Account number copied! / คัดลอกแล้ว!'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.copy, size: 16),
+                label: const Text('Copy Amount'),
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(
+                      text: _savedFinalTotal.toInt().toString()));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Amount copied! / คัดลอกจำนวนแล้ว!'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.amber.shade50,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Text(
+        'PromptPay ID not set. Go to Admin settings to configure.\n'
+        'ยังไม่ได้ตั้งค่า PromptPay ID กรุณาไปตั้งค่าในหน้า Admin',
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildRestaurantPaidButton() {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SizedBox(
+          width: double.infinity,
+          height: 56,
+          child: ElevatedButton.icon(
+            onPressed: () async {
+              await context.read<CartProvider>().clear();
+              context.read<ProfileProvider>().clearSelection();
+              if (context.mounted) {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                  (route) => false,
+                );
+              }
+            },
+            icon: const Icon(Icons.done_all, size: 24),
+            label: const Text('Restaurant Paid / จ่ายร้านแล้ว',
+                style: TextStyle(fontSize: 16)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF06C755),
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ),
       ),
     );
   }
