@@ -660,10 +660,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           if (!_orderComplete) ...[
             Builder(builder: (context) {
               final custTotal = _calcCustomerTotal();
+              final sellerPays = _calcFinalTotal();
               final restaurantName = menu.restaurantName.isNotEmpty ? menu.restaurantName : profile.appName;
               return SizedBox(
                 width: double.infinity,
-                height: 72,
+                height: 64,
                 child: ElevatedButton.icon(
                   onPressed: () async {
                     _savedFinalTotal = _calcFinalTotal();
@@ -673,7 +674,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   },
                   icon: const Icon(Icons.check_circle, size: 24),
                   label: Text(
-                    'Order Complete - Collect ${_fmt(custTotal)} THB from customer and Pay $restaurantName\nออเดอร์เสร็จ - เก็บ ${_fmt(custTotal)} บาท จากลูกค้า แล้วจ่าย $restaurantName',
+                    'Order Complete - Collect ${_fmt(custTotal)} and Pay $restaurantName ${_fmt(sellerPays)}',
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 13),
                   ),
